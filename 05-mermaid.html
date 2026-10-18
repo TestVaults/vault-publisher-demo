@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mermaid &middot; Spike Site</title>
+
+<meta property="og:title" content="Mermaid">
+<meta property="og:type" content="article">
+
+<link rel="stylesheet" href="./assets/obsidian.css">
+<link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+<a class="osp-skip-link" href="#osp-main">Skip to content</a>
+<div class="osp-shell">
+  <header class="osp-header">
+    <a class="osp-site-name" href="./index.html">Spike Site</a>
+  </header>
+  <main class="osp-main" id="osp-main">
+    <article class="osp-article markdown-rendered">
+      <h1 class="osp-title">Mermaid</h1>
+<pre class="frontmatter language-yaml" style="display: none;"><code class="language-yaml is-loaded"><span class="token key atrule">title</span><span class="token punctuation">:</span> Mermaid
+<span class="token key atrule">publish</span><span class="token punctuation">:</span> <span class="token boolean important">true</span></code><button class="copy-code-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy"><rect x="8" y="8" width="14" height="14" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></pre>
+
+<p dir="auto">A flowchart:</p>
+<div><div class="mermaid-wrapper is-guarded"><div class="mermaid-guard-header"><div class="mermaid-guard-text"><div class="mermaid-guard-title">Display Mermaid diagrams in this vault?</div><div class="mermaid-guard-description">Only allow if you trust this vault's contents.</div></div><div class="mermaid-guard-actions"><button>Allow</button></div></div><div class="mermaid-guard-source"><pre class="language-mermaid"><code class="language-mermaid is-loaded"><span class="token keyword">flowchart</span> LR
+    A<span class="token text string">[Vault]</span> <span class="token arrow operator">--&gt;</span> B<span class="token text string">[Render in Obsidian]</span>
+    B <span class="token arrow operator">--&gt;</span> C<span class="token text string">{Settled?}</span>
+    C <span class="token arrow operator">--&gt;</span><span class="token label property">|yes|</span> D<span class="token text string">[Serialize HTML]</span>
+    C <span class="token arrow operator">--&gt;</span><span class="token label property">|no|</span> B
+    D <span class="token arrow operator">--&gt;</span> E<span class="token text string">[Commit to GitHub]</span>
+    E <span class="token arrow operator">--&gt;</span> F<span class="token text string">[(GitHub Pages)]</span></code></pre></div></div></div>
+<p dir="auto">A sequence diagram:</p>
+<div><div class="mermaid-wrapper is-guarded"><div class="mermaid-guard-header"><div class="mermaid-guard-text"><div class="mermaid-guard-title">Display Mermaid diagrams in this vault?</div><div class="mermaid-guard-description">Only allow if you trust this vault's contents.</div></div><div class="mermaid-guard-actions"><button>Allow</button></div></div><div class="mermaid-guard-source"><pre class="language-mermaid"><code class="language-mermaid is-loaded"><span class="token keyword">sequenceDiagram</span>
+    <span class="token keyword">participant</span> P as Plugin
+    <span class="token keyword">participant</span> O as Obsidian
+    <span class="token keyword">participant</span> G as GitHub
+    P<span class="token arrow operator">-&gt;&gt;</span>O<span class="token operator">:</span> render<span class="token text string">(note)</span>
+    O<span class="token arrow operator">--&gt;&gt;</span>P<span class="token operator">:</span> DOM
+    P<span class="token arrow operator">-&gt;&gt;</span>P<span class="token operator">:</span> wait for settle
+    P<span class="token arrow operator">-&gt;&gt;</span>G<span class="token operator">:</span> create blobs, tree, commit
+    G<span class="token arrow operator">--&gt;&gt;</span>P<span class="token operator">:</span> new ref</code></pre></div></div></div>
+<p dir="auto">A class diagram, to test a layout engine that measures text:</p>
+<div><div class="mermaid-wrapper is-guarded"><div class="mermaid-guard-header"><div class="mermaid-guard-text"><div class="mermaid-guard-title">Display Mermaid diagrams in this vault?</div><div class="mermaid-guard-description">Only allow if you trust this vault's contents.</div></div><div class="mermaid-guard-actions"><button>Allow</button></div></div><div class="mermaid-guard-source"><pre class="language-mermaid"><code class="language-mermaid is-loaded"><span class="token keyword">classDiagram</span>
+    <span class="token keyword">class</span> Publisher <span class="token punctuation">{</span>
+        +render<span class="token text string">(note)</span>
+        +publish<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">class</span> Renderer <span class="token punctuation">{</span>
+        +settle<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+    Publisher <span class="token arrow operator">--&gt;</span> Renderer</code></pre></div></div></div>
+<p dir="auto">A deliberately broken diagram:</p>
+<div><div class="mermaid-wrapper is-guarded"><div class="mermaid-guard-header"><div class="mermaid-guard-text"><div class="mermaid-guard-title">Display Mermaid diagrams in this vault?</div><div class="mermaid-guard-description">Only allow if you trust this vault's contents.</div></div><div class="mermaid-guard-actions"><button>Allow</button></div></div><div class="mermaid-guard-source"><pre class="language-mermaid"><code class="language-mermaid is-loaded"><span class="token keyword">flowchart</span> LR
+    A <span class="token arrow operator">--&gt;</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span> broken</code></pre></div></div></div>
+    </article>
+  </main>
+
+</div>
+</body>
+</html>

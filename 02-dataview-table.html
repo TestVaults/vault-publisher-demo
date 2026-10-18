@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataview table &middot; Spike Site</title>
+
+<meta property="og:title" content="Dataview table">
+<meta property="og:type" content="article">
+
+<link rel="stylesheet" href="./assets/obsidian.css">
+<link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+<a class="osp-skip-link" href="#osp-main">Skip to content</a>
+<div class="osp-shell">
+  <header class="osp-header">
+    <a class="osp-site-name" href="./index.html">Spike Site</a>
+  </header>
+  <main class="osp-main" id="osp-main">
+    <article class="osp-article markdown-rendered">
+      <h1 class="osp-title">Dataview table</h1>
+<pre class="frontmatter language-yaml" style="display: none;"><code class="language-yaml is-loaded"><span class="token key atrule">title</span><span class="token punctuation">:</span> Dataview table
+<span class="token key atrule">publish</span><span class="token punctuation">:</span> <span class="token boolean important">true</span></code><button class="copy-code-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy"><rect x="8" y="8" width="14" height="14" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg></button></pre>
+
+<p dir="auto">A table query over the library folder:</p>
+<div class="block-language-dataview" style="overflow-x: auto;"><pre class="dataview dataview-error">Loading...</pre></div>
+<p dir="auto">A table with a computed column:</p>
+<div class="block-language-dataview" style="overflow-x: auto;"><pre class="dataview dataview-error">Loading...</pre></div>
+<p dir="auto">A query that returns nothing, to see what empty output looks like:</p>
+<div class="block-language-dataview" style="overflow-x: auto;"><pre class="dataview dataview-error">Loading...</pre></div>
+<p dir="auto">A deliberately broken query, to see how errors serialize:</p>
+<div class="block-language-dataview" style="overflow-x: auto;"><pre class="dataview dataview-error">Dataview: Error: 
+-- PARSING FAILED --------------------------------------------------
+
+&gt; 1 | TABLE FROM WHERE SORT nonsense((
+    |            ^
+
+Expected one of the following: 
+
+'!', '(', '-', 'csv(', 'outgoing(', file link, string, tag ('#hello/stuff')
+</pre></div>
+    </article>
+  </main>
+
+</div>
+</body>
+</html>
