@@ -435,6 +435,16 @@ body {
   margin: 0.5rem 0 0;
 }
 
+/* A view showing fewer rows than it found. Quieter than an error, because it
+   is not one, but it has to be visible: a partial table that says nothing is
+   indistinguishable from a complete one. */
+.markdown-rendered .osp-base-truncated {
+  font-family: var(--osp-font-ui);
+  font-size: 0.78rem;
+  color: var(--osp-text-muted);
+  margin: 0.5rem 0 0;
+}
+
 /* --- index ----------------------------------------------------------- */
 
 .markdown-rendered .osp-index-lead {
