@@ -190,6 +190,16 @@ body {
   cursor: help;
 }
 
+/* An embed whose file could not be resolved. The reference was removed
+   rather than published, so present the alt text as a caption would read
+   instead of leaving a browser's broken-image icon. */
+.osp-unresolved-asset {
+  display: inline-block;
+  color: var(--osp-text-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 .markdown-rendered ul,
 .markdown-rendered ol { padding-left: 1.4rem; margin: 0 0 1.25rem; }
 .markdown-rendered li { margin: 0.3rem 0; }
