@@ -193,6 +193,7 @@ body {
 /* An embed whose file could not be resolved. The reference was removed
    rather than published, so present the alt text as a caption would read
    instead of leaving a browser's broken-image icon. */
+.osp-oversized-asset,
 .osp-unresolved-asset {
   display: inline-block;
   color: var(--osp-text-muted);
