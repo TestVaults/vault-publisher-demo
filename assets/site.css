@@ -292,9 +292,6 @@ body {
 
 .markdown-rendered mjx-container {
   max-width: 100%;
-  /* Do not make the MathJax line box a vertical scroll container. */
-  overflow-x: auto;
-  overflow-y: hidden;
 }
 
 .markdown-rendered img { max-width: 100%; height: auto; border-radius: 4px; }
