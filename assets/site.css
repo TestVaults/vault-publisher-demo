@@ -287,6 +287,14 @@ body {
 .markdown-rendered .callout.is-collapsed .callout-content { display: block; }
 .markdown-rendered .callout-fold { display: none; }
 
+.markdown-rendered .osp-datacore-error,
+.markdown-rendered .osp-static-control {
+  color: var(--osp-text-muted);
+  font-family: var(--osp-font-ui);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 .markdown-rendered .task-list-item { list-style: none; }
 .markdown-rendered .task-list-item input { margin-right: 0.5rem; }
 
