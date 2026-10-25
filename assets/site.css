@@ -294,6 +294,13 @@ body {
   max-width: 100%;
 }
 
+/* Obsidian scopes its MathJax font assignment to breakable (inline) math.
+   Display math has no 'breakable' attribute, so give its glyph nodes the same
+   MathJax fonts or fractions and large operators fall back to serif fonts. */
+.markdown-rendered mjx-container[jax="CHTML"] > mjx-math.TEX-N > * {
+  font-family: MJX-TEX-ZERO, MJX-TEX-N;
+}
+
 .markdown-rendered img { max-width: 100%; height: auto; border-radius: 4px; }
 
 /* Mermaid diagrams carry their own scoped styles and resolved colours; this
