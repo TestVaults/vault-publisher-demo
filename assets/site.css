@@ -284,8 +284,18 @@ body {
 .markdown-rendered .callout-content > :last-child { margin-bottom: 0; }
 /* A collapsed callout would publish with its body hidden and no way to open
    it, so published callouts are always expanded. */
-.markdown-rendered .callout.is-collapsed .callout-content { display: block; }
-.markdown-rendered .callout-fold { display: none; }
+.markdown-rendered .callout-content[hidden] { display: none; }
+.markdown-rendered .osp-callout-toggle {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.markdown-rendered .osp-callout-toggle:hover { color: var(--osp-text); }
 
 .markdown-rendered .osp-datacore-error,
 .markdown-rendered .osp-static-control {

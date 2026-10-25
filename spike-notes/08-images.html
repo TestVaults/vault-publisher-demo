@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Images &middot; Spike Site</title>
+
+<meta property="og:title" content="Images">
+<meta property="og:type" content="article">
+
+<link rel="stylesheet" href="../assets/obsidian.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="osp-skip-link" href="#osp-main">Skip to content</a>
+<div class="osp-shell">
+  <header class="osp-header">
+    <a class="osp-site-name" href="../index.html">Spike Site</a>
+  </header>
+  <main class="osp-main" id="osp-main">
+    <article class="osp-article markdown-rendered">
+      <h1 class="osp-title">Images</h1>
+
+
+<p dir="auto">A wikilink embed, which is how most Obsidian users insert a picture:</p>
+<p dir="auto"><span alt="diagram.png" src="diagram.png" class="internal-embed media-embed image-embed is-loaded"><img alt="diagram.png" src="../assets/files/attachments/diagram.png"></span></p>
+<p dir="auto">The same image with a width, because Obsidian encodes size in the link text:</p>
+<p dir="auto"><span width="120" alt="diagram.png" src="diagram.png" class="internal-embed media-embed image-embed is-loaded"><img alt="diagram.png" width="120" src="../assets/files/attachments/diagram.png"></span></p>
+<p dir="auto">Standard Markdown image syntax, which renders without an embed wrapper:</p>
+<p dir="auto"><span alt="A photo" src="attachments/photo.png" class="internal-embed media-embed image-embed is-loaded"><img alt="A photo" src="../assets/files/attachments/photo.png"></span></p>
+<p dir="auto">The same picture again, to prove a file used twice is only uploaded once:</p>
+<p dir="auto"><span alt="photo.png" src="photo.png" class="internal-embed media-embed image-embed is-loaded"><img alt="photo.png" src="../assets/files/attachments/photo.png"></span></p>
+<p dir="auto">An external image, which must be left pointing where the author put it:</p>
+<p dir="auto"><img alt="External" src="https://example.com/not-in-the-vault.png" referrerpolicy="no-referrer"></p>
+<p dir="auto">A link to a file that does not exist, to see how a broken reference behaves:</p>
+<p dir="auto"><span alt="missing-image.png" class="internal-embed is-loaded file-embed mod-empty-attachment osp-unresolved-asset">“missing-image.png” could not be found.</span></p>
+    </article>
+  </main>
+
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  const toggle = event.target.closest(".osp-callout-toggle");
+  if (!toggle) return;
+  const content = document.getElementById(toggle.getAttribute("aria-controls"));
+  if (!content) return;
+  const expanded = toggle.getAttribute("aria-expanded") !== "true";
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.setAttribute("aria-label", expanded ? "Collapse callout" : "Expand callout");
+  content.hidden = !expanded;
+  toggle.closest(".callout")?.classList.toggle("is-collapsed", !expanded);
+});
+</script>
+</body>
+</html>

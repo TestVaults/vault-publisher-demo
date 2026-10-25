@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataview table &middot; Spike Site</title>
+
+<meta property="og:title" content="Dataview table">
+<meta property="og:type" content="article">
+
+<link rel="stylesheet" href="../assets/obsidian.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="osp-skip-link" href="#osp-main">Skip to content</a>
+<div class="osp-shell">
+  <header class="osp-header">
+    <a class="osp-site-name" href="../index.html">Spike Site</a>
+  </header>
+  <main class="osp-main" id="osp-main">
+    <article class="osp-article markdown-rendered">
+      <h1 class="osp-title">Dataview table</h1>
+
+
+<p dir="auto">A table query over the library folder:</p>
+<div class="block-language-dataview node-insert-event" style="overflow-x: auto;"><table class="dataview table-view-table"><thead class="table-view-thead"><tr class="table-view-tr-header"><th class="table-view-th"><span><p dir="auto">File</p></span><span class="dataview small-text">5</span></th><th class="table-view-th"><span><p dir="auto">Author</p></span></th><th class="table-view-th"><span><p dir="auto">Status</p></span></th><th class="table-view-th"><span><p dir="auto">Rating</p></span></th><th class="table-view-th"><span><p dir="auto">Pages</p></span></th></tr></thead><tbody class="table-view-tbody"><tr><td><span><p dir="auto"><a class="internal-link" href="../library/pattern-language.html">pattern-language</a></p></span></td><td><span><p dir="auto">Christopher Alexander</p></span></td><td><span><p dir="auto">reading</p></span></td><td>5</td><td>1171</td></tr><tr><td><span><p dir="auto"><a class="internal-link" href="../library/the-glass-bead-game.html">the-glass-bead-game</a></p></span></td><td><span><p dir="auto">Hermann Hesse</p></span></td><td><span><p dir="auto">done</p></span></td><td>5</td><td>558</td></tr><tr><td><span><p dir="auto"><a class="internal-link" href="../library/understanding-comics.html">understanding-comics</a></p></span></td><td><span><p dir="auto">Scott McCloud</p></span></td><td><span><p dir="auto">done</p></span></td><td>5</td><td>216</td></tr><tr><td><span><p dir="auto"><a class="internal-link" href="../library/the-mythical-man-month.html">the-mythical-man-month</a></p></span></td><td><span><p dir="auto">Fred Brooks</p></span></td><td><span><p dir="auto">done</p></span></td><td>4</td><td>322</td></tr><tr><td><span><p dir="auto"><a class="internal-link" href="../library/notes-on-the-synthesis.html">notes-on-the-synthesis</a></p></span></td><td><span><p dir="auto">Christopher Alexander</p></span></td><td><span><p dir="auto">to-read</p></span></td><td>3</td><td>216</td></tr></tbody></table></div>
+<p dir="auto">A table with a computed column:</p>
+<div class="block-language-dataview node-insert-event" style="overflow-x: auto;"><table class="dataview table-view-table"><thead class="table-view-thead"><tr class="table-view-tr-header"><th class="table-view-th"><span><p dir="auto">File</p></span><span class="dataview small-text">3</span></th><th class="table-view-th"><span><p dir="auto">author</p></span></th><th class="table-view-th"><span><p dir="auto">Hundreds of pages</p></span></th></tr></thead><tbody class="table-view-tbody"><tr><td><span><p dir="auto"><a class="internal-link" href="../library/the-glass-bead-game.html">the-glass-bead-game</a></p></span></td><td><span><p dir="auto">Hermann Hesse</p></span></td><td>5.6</td></tr><tr><td><span><p dir="auto"><a class="internal-link" href="../library/the-mythical-man-month.html">the-mythical-man-month</a></p></span></td><td><span><p dir="auto">Fred Brooks</p></span></td><td>3.2</td></tr><tr><td><span><p dir="auto"><a class="internal-link" href="../library/understanding-comics.html">understanding-comics</a></p></span></td><td><span><p dir="auto">Scott McCloud</p></span></td><td>2.2</td></tr></tbody></table></div>
+<p dir="auto">A query that returns nothing, to see what empty output looks like:</p>
+<div class="block-language-dataview node-insert-event" style="overflow-x: auto;"><table class="dataview table-view-table"><thead class="table-view-thead"><tr class="table-view-tr-header"><th class="table-view-th"><span><p dir="auto">File</p></span><span class="dataview small-text">0</span></th><th class="table-view-th"><span><p dir="auto">author</p></span></th></tr></thead><tbody class="table-view-tbody"></tbody></table><div class="dataview dataview-error-box"><p class="dataview dataview-error-message">Dataview: No results to show for table query.</p></div></div>
+<p dir="auto">A deliberately broken query, to see how errors serialize:</p>
+<div class="block-language-dataview" style="overflow-x: auto;"><pre class="dataview dataview-error">Dataview: Error: 
+-- PARSING FAILED --------------------------------------------------
+
+&gt; 1 | TABLE FROM WHERE SORT nonsense((
+    |            ^
+
+Expected one of the following: 
+
+'!', '(', '-', 'csv(', 'outgoing(', file link, string, tag ('#hello/stuff')
+</pre></div>
+    </article>
+  </main>
+
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  const toggle = event.target.closest(".osp-callout-toggle");
+  if (!toggle) return;
+  const content = document.getElementById(toggle.getAttribute("aria-controls"));
+  if (!content) return;
+  const expanded = toggle.getAttribute("aria-expanded") !== "true";
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.setAttribute("aria-label", expanded ? "Collapse callout" : "Expand callout");
+  content.hidden = !expanded;
+  toggle.closest(".callout")?.classList.toggle("is-collapsed", !expanded);
+});
+</script>
+</body>
+</html>

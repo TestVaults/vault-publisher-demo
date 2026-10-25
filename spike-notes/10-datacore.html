@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datacore &middot; Spike Site</title>
+
+<meta property="og:title" content="Datacore">
+<meta property="og:type" content="article">
+
+<link rel="stylesheet" href="../assets/obsidian.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="osp-skip-link" href="#osp-main">Skip to content</a>
+<div class="osp-shell">
+  <header class="osp-header">
+    <a class="osp-site-name" href="../index.html">Spike Site</a>
+  </header>
+  <main class="osp-main" id="osp-main">
+    <article class="osp-article markdown-rendered">
+      <h1 class="osp-title">Datacore</h1>
+
+
+<p dir="auto">A list built from a query:</p>
+<div class="block-language-datacorejsx"><div class="datacore-list"><ul class="datacore-list datacore-list-unordered"><li class="datacore-list-item"><span><p dir="auto">notes-on-the-synthesis</p></span><ul class="datacore-list datacore-list-unordered"></ul></li><li class="datacore-list-item"><span><p dir="auto">pattern-language</p></span><ul class="datacore-list datacore-list-unordered"></ul></li><li class="datacore-list-item"><span><p dir="auto">the-glass-bead-game</p></span><ul class="datacore-list datacore-list-unordered"></ul></li><li class="datacore-list-item"><span><p dir="auto">the-mythical-man-month</p></span><ul class="datacore-list datacore-list-unordered"></ul></li><li class="datacore-list-item"><span><p dir="auto">understanding-comics</p></span><ul class="datacore-list datacore-list-unordered"></ul></li></ul></div></div>
+<p dir="auto">A table with columns:</p>
+<div class="block-language-datacorejsx"><div><table class="datacore-table"><thead><tr class="datacore-table-header-row"><th class="datacore-table-header-cell"><div class="datacore-table-header-title">Name</div></th><th class="datacore-table-header-cell"><div class="datacore-table-header-title">Author</div></th><th class="datacore-table-header-cell"><div class="datacore-table-header-title">Rating</div></th></tr></thead><tbody><tr class="datacore-table-row"><td class="datacore-table-cell"><span><p dir="auto">notes-on-the-synthesis</p></span></td><td class="datacore-table-cell"><span><p dir="auto">Christopher Alexander</p></span></td><td class="datacore-table-cell">3</td></tr><tr class="datacore-table-row"><td class="datacore-table-cell"><span><p dir="auto">pattern-language</p></span></td><td class="datacore-table-cell"><span><p dir="auto">Christopher Alexander</p></span></td><td class="datacore-table-cell">5</td></tr><tr class="datacore-table-row"><td class="datacore-table-cell"><span><p dir="auto">the-glass-bead-game</p></span></td><td class="datacore-table-cell"><span><p dir="auto">Hermann Hesse</p></span></td><td class="datacore-table-cell">5</td></tr><tr class="datacore-table-row"><td class="datacore-table-cell"><span><p dir="auto">the-mythical-man-month</p></span></td><td class="datacore-table-cell"><span><p dir="auto">Fred Brooks</p></span></td><td class="datacore-table-cell">4</td></tr><tr class="datacore-table-row"><td class="datacore-table-cell"><span><p dir="auto">understanding-comics</p></span></td><td class="datacore-table-cell"><span><p dir="auto">Scott McCloud</p></span></td><td class="datacore-table-cell">5</td></tr></tbody></table></div></div>
+<p dir="auto">A plain value, to see the simplest possible output:</p>
+<div class="block-language-datacorejsx"><p>There are 5 books.</p></div>
+<p dir="auto">A deliberately broken block, to see how errors serialize:</p>
+<div class="block-language-datacorejsx osp-datacore-error">Datacore could not render this block.</div>
+    </article>
+  </main>
+
+</div>
+<script>
+document.addEventListener("click", function (event) {
+  const toggle = event.target.closest(".osp-callout-toggle");
+  if (!toggle) return;
+  const content = document.getElementById(toggle.getAttribute("aria-controls"));
+  if (!content) return;
+  const expanded = toggle.getAttribute("aria-expanded") !== "true";
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.setAttribute("aria-label", expanded ? "Collapse callout" : "Expand callout");
+  content.hidden = !expanded;
+  toggle.closest(".callout")?.classList.toggle("is-collapsed", !expanded);
+});
+</script>
+</body>
+</html>
