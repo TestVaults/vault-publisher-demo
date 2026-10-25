@@ -57,6 +57,11 @@
 
 * { box-sizing: border-box; }
 
+/* Said once, loudly: a class that sets "display" outranks the browser's own
+   rule for [hidden], and the shell hides the jump panel, the graph and the
+   back control that way. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--osp-bg);
@@ -113,6 +118,16 @@ body {
   font-weight: var(--osp-heading-weight);
   letter-spacing: var(--osp-title-tracking);
   text-wrap: balance;
+}
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  /* The bar and the crumb both stay on screen, so an anchor that scrolls a
+     heading to the top of the viewport scrolls it underneath them. */
+  scroll-margin-top: calc(var(--osp-bar-h) + var(--osp-crumb-h) + 1.25rem);
 }
 .markdown-rendered h2 { font-size: 1.45rem; }
 .markdown-rendered h3 { font-size: 1.15rem; }
@@ -434,6 +449,7 @@ body {
 
 :root {
   --osp-bar-h: 3rem;
+  --osp-crumb-h: 2.5rem;
   --osp-panel-w: 17rem;
   --osp-rail-w: 19rem;
   --osp-hover: color-mix(in srgb, var(--osp-text) 6%, transparent);
@@ -537,6 +553,7 @@ body {
   border-radius: max(4px, var(--osp-radius));
   padding: 0.35rem 0.5rem;
   cursor: pointer;
+  text-decoration: none;
   transition: background 120ms ease, color 120ms ease;
 }
 .osp-btn:hover { background: var(--osp-hover); color: var(--osp-text); }
@@ -654,7 +671,6 @@ body {
 .osp-panel-head { flex: none; position: relative; padding: 0.75rem 0.65rem 0.5rem; }
 .osp-panel-body { flex: 1; min-height: 0; overflow-y: auto; padding: 0 0.5rem 2rem; }
 
-.osp-group + .osp-group { margin-top: 0.5rem; }
 .osp-group-title {
   display: flex;
   align-items: baseline;
@@ -670,7 +686,14 @@ body {
 }
 .osp-group-title .osp-num,
 .osp-group-title .osp-count { margin-left: auto; font-weight: 600; }
-.osp-group > .osp-group-title { border-bottom: var(--osp-rule) solid var(--osp-faint); }
+
+/* The one label the panel keeps, held at the top of the list it names. */
+.osp-browse-title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--osp-surface);
+}
 
 .osp-tree, .osp-tree ul, .osp-outline, .osp-outline ul, .osp-graph-key {
   list-style: none;
@@ -746,12 +769,12 @@ body {
 /* --- jump-to ---------------------------------------------------------- */
 
 .osp-jump {
-  position: absolute;
+  position: fixed;
   left: 0.5rem;
-  right: 0.5rem;
-  top: 3.1rem;
-  z-index: 20;
-  max-height: 26rem;
+  top: calc(var(--osp-bar-h) + 3.05rem);
+  z-index: 40;
+  width: calc(var(--osp-panel-w) - 1rem);
+  max-height: min(28rem, calc(100vh - var(--osp-bar-h) - 4.5rem));
   overflow-y: auto;
   padding: 0.5rem;
   background: var(--osp-bg);
@@ -760,8 +783,39 @@ body {
   box-shadow:
     0 1px 2px color-mix(in srgb, var(--osp-text) 10%, transparent),
     0 16px 32px -12px color-mix(in srgb, var(--osp-text) 28%, transparent);
+  font-family: var(--osp-font-ui);
+  animation: osp-drop 180ms var(--osp-ease);
 }
-.osp-jump .osp-group-title { border-bottom: 0; }
+@keyframes osp-drop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+.osp-jump .osp-row.osp-selected { background: var(--osp-selected); color: var(--osp-text); }
+
+/* The keys the panel answers to, said once and kept in sight while the list
+   above it scrolls. */
+.osp-jump-hint {
+  position: sticky;
+  bottom: -0.5rem;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.55rem;
+  margin: 0.4rem 0 -0.5rem;
+  padding: 0.4rem 0.5rem 0.5rem;
+  background: var(--osp-bg);
+  border-top: var(--osp-rule) solid var(--osp-faint);
+  font-size: var(--osp-ui-xs);
+  white-space: nowrap;
+  color: var(--osp-text-muted);
+}
+.osp-jump-hint kbd {
+  margin-right: 0.15rem;
+  padding: 0 0.25rem;
+  border: 1px solid var(--osp-border);
+  border-radius: 3px;
+  font-family: var(--osp-font-mono);
+  font-size: var(--osp-ui-xs);
+}
 .osp-bucket {
   display: flex;
   align-items: baseline;
@@ -784,9 +838,66 @@ body {
 .osp-main {
   grid-area: main;
   min-width: 0;
-  padding: 2.5rem 2rem 6rem;
 }
+.osp-doc { padding: 2rem 2rem 6rem; }
 .osp-article { max-width: var(--osp-measure); margin-inline: auto; }
+
+/* --- breadcrumb ------------------------------------------------------- *
+ * Stays with the reader: the one question a long note stops answering is
+ * which note it is. The rule under it appears only once the title has
+ * scrolled away, so the edge is information rather than decoration.
+ * --------------------------------------------------------------------- */
+
+.osp-crumb {
+  position: sticky;
+  top: var(--osp-bar-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: var(--osp-crumb-h);
+  padding: 0.35rem 2rem;
+  background: color-mix(in srgb, var(--osp-bg) 86%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: var(--osp-rule) solid transparent;
+  font-family: var(--osp-font-ui);
+  font-size: var(--osp-ui-md);
+  color: var(--osp-text-muted);
+  transition: border-color 200ms ease;
+}
+.osp-crumb.osp-scrolled { border-bottom-color: var(--osp-border); }
+
+.osp-crumb-back { flex: none; padding-left: 0.3rem; }
+.osp-crumb-back .osp-label { max-width: 11rem; }
+
+.osp-crumb-trail {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.osp-crumb-trail li { display: flex; align-items: center; gap: 0.15rem; min-width: 0; }
+.osp-crumb-trail a {
+  padding: 0.1rem 0.25rem;
+  border-radius: max(4px, var(--osp-radius));
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.osp-crumb-trail a:hover { color: var(--osp-text); background: var(--osp-hover); }
+.osp-crumb-trail [aria-current="page"] {
+  padding: 0.1rem 0.25rem;
+  color: var(--osp-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.osp-crumb-sep { opacity: 0.4; }
 
 .osp-meta {
   display: flex;
@@ -826,14 +937,21 @@ body {
 
 .osp-mention {
   display: block;
-  padding: 0.55rem 0;
-  border-top: var(--osp-rule) solid var(--osp-faint);
+  padding: 0.5rem;
+  border-radius: max(5px, var(--osp-radius));
   font-family: var(--osp-font-ui);
   text-decoration: none;
+  transition: background 120ms ease;
+}
+.osp-mention:hover { background: var(--osp-hover); }
+.osp-mentions-cols .osp-mention {
+  padding: 0.55rem 0;
+  border-top: var(--osp-rule) solid var(--osp-faint);
+  border-radius: 0;
   transition: padding-left 160ms var(--osp-ease);
 }
-.osp-mention:first-of-type { border-top: 0; }
-.osp-mention:hover { padding-left: 0.5rem; }
+.osp-mentions-cols .osp-mention:first-of-type { border-top: 0; }
+.osp-mentions-cols .osp-mention:hover { padding-left: 0.5rem; background: none; }
 .osp-mention-title {
   display: block;
   font-size: var(--osp-ui-lg);
@@ -868,7 +986,7 @@ body {
   flex-wrap: wrap;
   gap: 0 0.4rem;
   margin: 0;
-  padding: 0 0.5rem 0.25rem;
+  padding: 0 0.5rem 1.25rem;
   font-size: var(--osp-ui-xs);
   font-weight: 400;
   line-height: 1.5;
@@ -877,16 +995,15 @@ body {
 .osp-stats span { font-size: inherit; font-weight: inherit; color: inherit; }
 
 /* Every section in the rail is introduced the same way, "On this page"
-   included -- it is a section, not a special case. */
-.osp-rail-section { margin-top: 0.5rem; }
+   included -- it is a section, not a special case. What separates them is
+   space: a rule between every pair turned a margin into a form. */
+.osp-rail-section + .osp-rail-section { margin-top: 1.75rem; }
 .osp-rail-title {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-  margin: 0 0 0.75rem;
-  padding: 0.6rem 0.5rem;
-  border-top: var(--osp-rule) solid var(--osp-faint);
-  border-bottom: var(--osp-rule) solid var(--osp-faint);
+  margin: 0 0 0.5rem;
+  padding: 0 0.5rem;
   font-family: var(--osp-font-ui);
   font-size: var(--osp-ui-xs);
   font-weight: 650;
@@ -896,24 +1013,11 @@ body {
 }
 .osp-rail-title .osp-num { margin-left: auto; font-weight: 600; }
 
-/* The spine fills as the note is read, with a station per top-level
-   section: one travelling mark rather than six states blinking. */
-.osp-spine { position: relative; padding-left: 1rem; }
-.osp-spine::before,
-.osp-spine-fill {
-  content: "";
-  position: absolute;
-  left: 0.5rem;
-  width: 2px;
-  border-radius: 2px;
-}
-.osp-spine::before { top: 0; bottom: 0; background: var(--osp-faint); }
-.osp-spine-fill { top: 0; height: 0; background: var(--osp-accent); transition: height 120ms linear; }
-
-.osp-outline li { position: relative; }
+/* A table of contents, behaving as one: the section being read is marked,
+   and nothing else in the margin moves while the note is being read. */
 .osp-outline a {
   display: block;
-  padding: 0.32rem 0.5rem;
+  padding: 0.3rem 0.5rem;
   border-radius: max(4px, var(--osp-radius));
   font-size: var(--osp-ui-md);
   color: var(--osp-text-muted);
@@ -921,23 +1025,8 @@ body {
   transition: color 120ms ease, background 120ms ease;
 }
 .osp-outline a:hover { color: var(--osp-text); background: var(--osp-hover); }
-.osp-outline a.osp-active { color: var(--osp-text); font-weight: 650; }
-.osp-outline .osp-lvl3 a { padding-left: 1.3rem; font-size: var(--osp-ui-sm); }
-.osp-outline .osp-lvl2 > a::before {
-  content: "";
-  position: absolute;
-  left: -0.56rem;
-  top: 0.72rem;
-  width: 7px;
-  height: 7px;
-  border-radius: 99px;
-  background: color-mix(in srgb, var(--osp-surface) 40%, var(--osp-bg));
-  box-shadow: 0 0 0 2px var(--osp-faint);
-}
-.osp-outline .osp-lvl2 > a.osp-active::before {
-  background: var(--osp-accent);
-  box-shadow: 0 0 0 2px var(--osp-accent);
-}
+.osp-outline a.osp-active { color: var(--osp-accent); font-weight: 650; }
+.osp-outline .osp-lvl3 a { padding-left: 1.4rem; font-size: var(--osp-ui-sm); }
 
 /* --- graph ------------------------------------------------------------ */
 
@@ -991,12 +1080,29 @@ body {
   .osp-bar-search { display: flex; }
   .osp-bar-search kbd { display: none; }
   .osp-brand-name { display: none; }
-  .osp-main { padding: 1.5rem 1.25rem 4rem; }
-  /* The jump-to panel belongs to whichever field is on screen. */
-  .osp-panel-head .osp-jump { display: none; }
+  .osp-doc { padding: 1.5rem 1.25rem 4rem; }
+  .osp-crumb { padding-left: 1.25rem; padding-right: 1.25rem; }
+  /* The panel is gone, so the overlay answers to the field in the bar. */
+  .osp-jump {
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    top: calc(var(--osp-bar-h) + 0.6rem);
+  }
+  /* The trail is a long way to say where a note is on a narrow screen, and
+     the mark in the bar already leads home: the note's own name is the part
+     that has to fit. */
+  .osp-crumb-trail li:not(:last-child) { display: none; }
+  .osp-crumb-trail li:last-child .osp-crumb-sep { display: none; }
+  .osp-crumb-back .osp-label { max-width: 7.5rem; }
 }
 
+/* An outline link jumps rather than teleports, so the reader keeps their
+   place in the page. */
+html { scroll-behavior: smooth; }
+
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
@@ -1004,9 +1110,9 @@ body {
 }
 
 @media print {
-  .osp-bar, .osp-panel, .osp-rail { display: none; }
+  .osp-bar, .osp-panel, .osp-rail, .osp-crumb, .osp-jump { display: none; }
   .osp-shell { display: block; }
-  .osp-main { padding: 0; }
+  .osp-doc { padding: 0; }
 }
 
 /* --- index ----------------------------------------------------------- */
