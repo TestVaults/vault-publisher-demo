@@ -1027,6 +1027,11 @@ body {
 
 .osp-switch {
   display: inline-flex;
+  /* The track is a fixed height inside this box, so without this it sits at
+     the top of whatever the button grows to -- which is exactly what a 44px
+     touch target does to it. */
+  align-items: center;
+  justify-content: center;
   padding: 0;
   background: none;
   border: 0;
@@ -1129,7 +1134,30 @@ body {
   border-right: var(--osp-rule) solid var(--osp-border);
   font-family: var(--osp-font-ui);
 }
-.osp-panel-head { flex: none; position: relative; padding: 0.75rem 0.65rem 0.5rem; }
+.osp-panel-head {
+  flex: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0.65rem 0.5rem;
+}
+.osp-panel-head .osp-search { flex: 1; min-width: 0; }
+
+/* The drawer's three parts. Off at every width that keeps the panel open,
+   which is why none of them carry a width of their own: the one media query
+   that opens the drawer turns all three on together. */
+.osp-panel-toggle,
+.osp-panel-close { display: none; flex: none; padding: 0.3rem; }
+.osp-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: color-mix(in srgb, var(--osp-text) 45%, transparent);
+  animation: osp-fade 200ms var(--osp-ease);
+}
+@keyframes osp-fade { from { opacity: 0; } }
 .osp-panel-body { flex: 1; min-height: 0; overflow-y: auto; padding: 0 0.5rem 2rem; }
 
 .osp-group-title {
@@ -1670,15 +1698,60 @@ body {
 }
 
 @media (max-width: 56rem) {
+  /* The rail stops being a column and becomes the end of the page. Its
+     contents are what the note is attached to -- its outline, what links
+     here, what it is near -- and on a phone that reads as a section after
+     the note rather than as furniture beside it. */
   .osp-shell {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "bar" "main";
+    grid-template-areas: "bar" "main" "rail";
   }
-  .osp-panel { display: none; }
+  .osp-rail {
+    display: block;
+    position: static;
+    height: auto;
+    overflow: visible;
+    border-left: 0;
+    border-top: var(--osp-rule) solid var(--osp-border);
+    padding: 1.75rem max(1.25rem, env(safe-area-inset-right)) 3.5rem
+      max(1.25rem, env(safe-area-inset-left));
+  }
+  /* The rail carries the mentions itself now, so the copy under the note
+     would be the second one on the page. */
+  .osp-mentions { display: none; }
+
+  /* The panel is off the left edge until it is asked for. Fixed rather than
+     a transformed grid child: it has to sit over the note at full height,
+     and the grid cell it came from is a row in the flow. */
+  .osp-panel {
+    display: flex;
+    position: fixed;
+    z-index: 60;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(20rem, 86vw);
+    height: auto;
+    padding-left: env(safe-area-inset-left);
+    border-right: var(--osp-rule) solid var(--osp-border);
+    box-shadow: 0 0 40px -8px color-mix(in srgb, var(--osp-text) 40%, transparent);
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition: transform 240ms var(--osp-ease), visibility 240ms;
+  }
+  :root[data-osp-panel="open"] .osp-panel {
+    transform: none;
+    visibility: visible;
+  }
+  .osp-panel-close { display: inline-flex; }
+  .osp-panel-toggle { display: inline-flex; }
+  .osp-scrim { display: block; }
+
   .osp-bar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 0.5rem;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    gap: 0.4rem;
   }
+  .osp-bar-actions { grid-column: 4; }
   .osp-bar-search { display: flex; }
   .osp-bar-search kbd { display: none; }
   .osp-brand-name { display: none; }
@@ -1755,10 +1828,9 @@ body {
 
   .osp-switch { min-height: 44px; min-width: 44px; }
 
-  /* The words come back. A tooltip is the one label a finger cannot ask
-     for, and these two buttons are a book and a pair of brackets without
-     them -- which half of the pair is the source is not a guess to make. */
-  .osp-seg-btn span { display: inline; }
+  /* Icons alone, as on every other control in this row. The names live on
+     aria-label rather than in a tooltip no finger can ask for, so the
+     buttons are still named to a screen reader. */
   .osp-seg-icon .osp-seg-btn { min-width: 44px; }
 
   /* Under 16px, Safari zooms the page to the field on focus and leaves it
@@ -1767,8 +1839,20 @@ body {
      The input stretches to fill the box rather than sitting inside it on a
      cushion of padding: the padding is not a tap target, so a 44px-tall
      field that only listens across the middle 29 is still a miss. */
-  .osp-search { padding-top: 0; padding-bottom: 0; }
-  .osp-search input { font-size: 16px; align-self: stretch; min-height: 44px; }
+  /* The bar has to hold a 44px field with room left over, or the field
+     becomes the bar. */
+  :root { --osp-bar-h: 3.5rem; }
+
+  /* 16px on the whole field, not just the input: at 13px Safari zooms the
+     page to meet it and never zooms back, and setting it on the input alone
+     left a 16px value sitting in a box scaled for 13 -- the icon, the
+     placeholder and the text all disagreeing by two points. */
+  .osp-search {
+    font-size: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .osp-search input { align-self: stretch; min-height: 2.75rem; }
 
   /* Keys nobody has. */
   .osp-jump-hint,
