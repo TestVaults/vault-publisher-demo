@@ -521,13 +521,7 @@ body:not(.is-phone) .bases-group-page { max-width: 300px; }
 .is-phone .menu .suggestion-group .suggestion-item, .is-phone .menu .bases-toolbar-menu-action, .is-phone .menu-item { transition: background-color 0.1s ease-in-out; padding: var(--size-4-3) var(--size-4-4); height: unset; line-height: unset; border-radius: 0px; }
 .is-phone .menu .suggestion-group .suggestion-item:not(.is-label), .is-phone .menu .bases-toolbar-menu-action:not(.is-label), .is-phone .menu-item:not(.is-label) { background-color: var(--interactive-normal); }
 .is-phone .menu .suggestion-group .suggestion-item.mobile-tap:not(.is-disabled), .is-phone .menu .bases-toolbar-menu-action.mobile-tap:not(.is-disabled), .is-phone .menu-item.mobile-tap:not(.is-disabled) { background-color: var(--interactive-hover); }
-/* --- harvested from  (21 rules) --- */
-.table-view-table { width: 100%; }
-.table-view-table > thead > tr, .table-view-table > tbody > tr { margin-top: 1em; margin-bottom: 1em; text-align: left; }
-.table-view-table > tbody > tr:hover { background-color: var(--table-row-background-hover); }
-.table-view-table > thead > tr > th { font-weight: 700; font-size: larger; border-width: medium; border-style: none none solid; border-color: currentcolor; max-width: 100%; }
-.table-view-table > tbody > tr > td { text-align: left; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; font-weight: 400; max-width: 100%; }
-.table-view-table ul, .table-view-table ol { margin-block: 0.2em !important; }
+/* --- harvested from  (15 rules) --- */
 .dataview-result-list-root-ul { padding: 0em !important; margin: 0em !important; }
 .dataview-result-list-ul { margin-block: 0.2em !important; }
 .dataview.result-group { padding-left: 8px; }
