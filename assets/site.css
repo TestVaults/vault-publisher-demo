@@ -2156,6 +2156,18 @@ body {
   }
   .osp-search input { align-self: stretch; min-height: 2.75rem; }
 
+  /* And the glyphs at either end come up to meet it.
+     16px text beside a 14px icon reads as text that is too big rather than
+     as an icon that is too small, so the obvious fix is to shrink the
+     words -- but the 16 above is not a design choice, it is the number
+     below which iOS zooms the page to a focused field and leaves it there.
+     The glyphs carry no such rule, so they are the side that moves.
+
+     Scoped to the field rather than set on the icon class: at this size
+     these two sit beside sixteen-point text, and every other osp-icon-sm on
+     a touch screen still sits beside the UI scale. */
+  .osp-search .osp-icon-sm { width: 16px; height: 16px; }
+
   /* Keys nobody has. */
   .osp-jump-hint,
   .osp-search kbd { display: none; }
@@ -2203,19 +2215,6 @@ body {
   .osp-panel .osp-row { padding-left: 0.6rem; padding-right: 0.6rem; }
   .osp-inpage-body .osp-outline a { min-height: 44px; display: flex; align-items: center; }
 
-  /* The field's own text, back down to the size of the icon beside it.
-     The 16px above is set to stop Safari zooming the page to a focused
-     field, and it is the right number for a field that is the only thing
-     on its row -- but this one is not: it has a 14px glyph at its left
-     edge and a 14px glyph at its right, and at 16 the words between them
-     were visibly the largest thing in the drawer. Matched to the glyphs
-     instead.
-
-     The cost is the zoom that the 16px was buying off: iOS scales the page
-     up when this field takes focus and does not scale it back. The drawer
-     is a fixed overlay, so what it costs is the note behind it rather than
-     the search itself. */
-  .osp-search { font-size: 0.875rem; }
 }
 
 /* A phone held sideways has 390px of height, and 110 of it was chrome the
