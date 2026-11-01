@@ -1076,6 +1076,44 @@ body {
   gap: 0.5rem;
 }
 
+/* --- the link out to the repository ----------------------------------- *
+ * The one control in the bar that carries a word, because it is the one
+ * whose glyph does not say where it goes: a mark says which service, and
+ * only the word says that this leads to the site's own source rather than
+ * to the thing that built it.
+ *
+ * Its height is deliberately not a number. It has to match the read/markdown
+ * toggle a row below -- the two are the nearest pair of boxed controls on
+ * screen, and a few pixels out between them reads as a mistake rather than
+ * as a difference -- and that height is nowhere written down: it is the
+ * seg's own padding, plus the padding of the button inside it, plus the rule
+ * around the pair. So it is built here as the same sum. Any of the three can
+ * move and both controls move with it; a measured total would have to be
+ * measured again, by somebody who did not know they had to.
+ * --------------------------------------------------------------------- */
+.osp-bar-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: calc(0.13rem + 0.2rem) calc(0.13rem + 0.45rem);
+  border: var(--osp-rule) solid var(--osp-border);
+  border-radius: max(6px, calc(var(--osp-radius) + 1px));
+  background: var(--osp-surface);
+  color: var(--osp-text-muted);
+  font-family: var(--osp-font-ui);
+  font-size: var(--osp-ui-xs);
+  line-height: 1.4;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.osp-bar-source:hover {
+  background: var(--osp-hover);
+  border-color: var(--osp-accent);
+  color: var(--osp-text);
+}
+.osp-bar-source:active { background: var(--osp-press); }
+
 .osp-btn {
   display: inline-flex;
   align-items: center;
@@ -1098,16 +1136,17 @@ body {
 .osp-btn[aria-pressed="true"] { background: var(--osp-selected); color: var(--osp-text); }
 
 /* A button drawn as a square.
-   The three controls that wear this -- the menu, the drawer's light/dark,
-   the drawer's close -- are the only ones on screen when they appear, and a
+   The controls that wear this carry no word -- the menu, the drawer's
+   light/dark, the drawer's close, the link out to the repository -- and a
    bare glyph alone on a row reads as a mark rather than as something to
    press. The box is the word they do not have room to carry. Square because
    the content is one icon: a pill around a single glyph says the glyph is a
    label, and it is not.
 
-   Only ever visible below 56rem, since all three are; it is written out here
-   rather than inside that query because what it describes is the shape of a
-   button, not a width. */
+   Three of the four are only ever visible below 56rem. The source link is
+   the exception and is the reason this is written out here rather than
+   inside that query: what it describes is the shape of a button, not a
+   width. */
 .osp-btn-sq {
   width: 2.25rem;
   height: 2.25rem;
@@ -1430,6 +1469,9 @@ body {
 .osp-panel-head .osp-search { flex: 1; min-width: 0; }
 /* Off wherever the panel is a column: the bar's switch is right there. */
 .osp-panel-theme { display: none; flex: none; }
+/* The same for the way out to the repository, and for the same reason: the
+   bar above has it while the bar above has room for it. */
+.osp-panel-source { display: none; flex: none; }
 
 /* The drawer's three parts. Off at every width that keeps the panel open,
    which is why none of them carry a width of their own: the one media query
@@ -2245,6 +2287,12 @@ body {
      no key to press to empty it. */
   .osp-search-clear:not([hidden]) { display: inline-flex; }
   .osp-panel-theme { display: block; }
+  /* The drawer's chrome is a trio at this width rather than a pair. The
+     field keeps the room it is given -- it is the thing most readers opened
+     the drawer for -- so the squares are laid out after it and shrink
+     nothing: three 44px targets and whatever is left is the field's, which
+     on the narrowest phone is still wider than the placeholder it holds. */
+  .osp-panel-source { display: block; }
   .osp-panel-close { display: inline-flex; }
   .osp-panel-toggle { display: inline-flex; }
   .osp-scrim { display: block; }
