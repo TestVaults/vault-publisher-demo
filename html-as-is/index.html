@@ -3,106 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A page that styles itself</title>
-
-<!-- 1. A separate stylesheet, referenced by a relative path. The file travels
-     with this page and the path is never rewritten, so this keeps working. -->
-<link rel="stylesheet" href="styles.css">
-
-<!-- 2. A style block. Published exactly as written, including the url(). -->
+<meta name="robots" content="noindex, nofollow">
+<title>Protected</title>
 <style>
-  .panel {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
-    /* 3. url() inside a style block. The file it names travels too, even
-       though no src or href attribute mentions it anywhere. */
-    background-image: url(art/texture.svg);
-    background-repeat: repeat;
-  }
-
-  .swatch {
-    display: inline-block;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    vertical-align: -0.3rem;
-  }
+:root { color-scheme: light dark; --fg: #15181c; --fg-2: #596069; --bg: #fdfdfc; --line: #e1e4e8; --ink: #d4421e; }
+@media (prefers-color-scheme: dark) { :root { --fg: #e6e9ed; --fg-2: #9ba3ac; --bg: #16181c; --line: #2e333a; --ink: #f2603a; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+main { width: 100%; max-width: 22rem; text-align: center; }
+h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0 0 18px; color: var(--fg-2); font-size: 13px; }
+form { display: flex; gap: 8px; }
+input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; }
+input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+button { height: 38px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--ink);
+  color: #fff; font: inherit; font-size: 14px; font-weight: 550; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: default; }
+.err { margin: 14px 0 0; color: var(--ink); font-size: 13px; }
+noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
 </style>
 </head>
-
 <body>
 <main>
-
-<h1 style="letter-spacing: -0.02em; font-weight: 650">A page that styles itself</h1>
-
-<p class="lede">
-  This file is published byte for byte. Nothing on this page was rendered,
-  wrapped in the site's shell, or styled by the site's stylesheet &mdash; what
-  you are reading is the file as it sits in the vault.
-</p>
-
-<div class="panel">
-  <h2>Four ways to style a page, all of them kept</h2>
-  <ol>
-    <li>A separate stylesheet: the type on this page comes from
-      <code>styles.css</code>.</li>
-    <li>A <code>&lt;style&gt;</code> block: this panel's border and radius.</li>
-    <li>A <code>url()</code> in that block: the panel's background texture.</li>
-    <li>A <code>style</code> attribute: the heading's letter-spacing, and the
-      circle below.
-      <!-- 4. url() in a style attribute. Found the same way. -->
-      <span class="swatch" style="background-image: url(art/badge.svg)"></span>
-    </li>
-  </ol>
-</div>
-
-<h2>Images, including the ones only srcset names</h2>
-
-<figure>
-  <img src="art/panel.svg" alt="A placeholder panel" width="320" height="120">
-  <figcaption>Referenced by <code>src</code>.</figcaption>
-</figure>
-
-<figure>
-  <img srcset="art/panel.svg 1x, art/panel-wide.svg 2x"
-       src="art/panel.svg"
-       alt="A placeholder panel" width="320" height="120">
-  <figcaption>
-    Both candidates in the <code>srcset</code> travel, descriptors and all.
-  </figcaption>
-</figure>
-
-<h2>Links, and which ones work</h2>
-
-<ul>
-  <li>
-    <a href="charts/trend.html">A second page in a subfolder</a> &mdash; another
-    file published as-is. The folder structure is mirrored, so this link needs
-    no rewriting and the build report says nothing about it.
-  </li>
-  <li>
-    <a href="page-linked-from-a-note.md">A link written to a note's Markdown</a>
-    &mdash; <strong>deliberately wrong.</strong> A note is published as its
-    <code>.html</code> page, never as source, so this one cannot resolve. Look
-    for it by name in the build report, which says where to point it instead.
-  </li>
-  <li>
-    <a href="https://example.com/">An external link</a> &mdash; left exactly as
-    written, like every absolute URL.
-  </li>
-</ul>
-
-<h2>Scripts run too</h2>
-
-<p>
-  <button type="button" data-count>Clicked 0 times</button>
-  <span class="note">Driven by <code>app.js</code>, which travels as well.</span>
-</p>
-
+<h1>This page is protected</h1>
+<p>Enter the password to read it.</p>
+<form id="osp-unlock-form">
+<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" required>
+<button id="osp-unlock-button" type="submit">Unlock</button>
+</form>
+<p class="err" id="osp-unlock-error" hidden>That password did not work.</p>
+<noscript>This page is encrypted, so reading it needs JavaScript.</noscript>
 </main>
-
-<!-- 5. A script beside the page. Carried like any other referenced file. -->
-<script src="app.js"></script>
+<script id="osp-locked" type="application/json">{"v":1,"salt":"hnAJlL+xs2lXPx5zbd5qRA==","iterations":600000,"iv":"fhehwtCSed6fnUfb","data":"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","root":"../"}</script>
+<script src="../assets/unlock.js"></script>
 </body>
 </html>

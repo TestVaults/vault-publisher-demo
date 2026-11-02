@@ -1,14 +1,43 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>react-app</title>
-    <script type="module" crossorigin src="/assets/index-BoMwmmh2.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BOU6s7Uf.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Protected</title>
+<style>
+:root { color-scheme: light dark; --fg: #15181c; --fg-2: #596069; --bg: #fdfdfc; --line: #e1e4e8; --ink: #d4421e; }
+@media (prefers-color-scheme: dark) { :root { --fg: #e6e9ed; --fg-2: #9ba3ac; --bg: #16181c; --line: #2e333a; --ink: #f2603a; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+main { width: 100%; max-width: 22rem; text-align: center; }
+h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0 0 18px; color: var(--fg-2); font-size: 13px; }
+form { display: flex; gap: 8px; }
+input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; }
+input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+button { height: 38px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--ink);
+  color: #fff; font: inherit; font-size: 14px; font-weight: 550; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: default; }
+.err { margin: 14px 0 0; color: var(--ink); font-size: 13px; }
+noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+<h1>This page is protected</h1>
+<p>Enter the password to read it.</p>
+<form id="osp-unlock-form">
+<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" required>
+<button id="osp-unlock-button" type="submit">Unlock</button>
+</form>
+<p class="err" id="osp-unlock-error" hidden>That password did not work.</p>
+<noscript>This page is encrypted, so reading it needs JavaScript.</noscript>
+</main>
+<script id="osp-locked" type="application/json">{"v":1,"salt":"hnAJlL+xs2lXPx5zbd5qRA==","iterations":600000,"iv":"gs7nVTAb65mLL4w7","data":"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","root":"../"}</script>
+<script src="../assets/unlock.js"></script>
+</body>
 </html>

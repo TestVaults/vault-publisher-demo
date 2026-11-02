@@ -1,13 +1,43 @@
 <!doctype html>
-<html lang="en" data-beasties-container>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>AngularApp</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="stylesheet" href="styles-5INURTSO.css"></head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Protected</title>
+<style>
+:root { color-scheme: light dark; --fg: #15181c; --fg-2: #596069; --bg: #fdfdfc; --line: #e1e4e8; --ink: #d4421e; }
+@media (prefers-color-scheme: dark) { :root { --fg: #e6e9ed; --fg-2: #9ba3ac; --bg: #16181c; --line: #2e333a; --ink: #f2603a; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+main { width: 100%; max-width: 22rem; text-align: center; }
+h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0 0 18px; color: var(--fg-2); font-size: 13px; }
+form { display: flex; gap: 8px; }
+input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; }
+input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+button { height: 38px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--ink);
+  color: #fff; font: inherit; font-size: 14px; font-weight: 550; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: default; }
+.err { margin: 14px 0 0; color: var(--ink); font-size: 13px; }
+noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
+</style>
+</head>
 <body>
-  <app-root></app-root>
-<script src="polyfills-5CFQRCPP.js" type="module"></script><script src="main-UXFFUHNE.js" type="module"></script></body>
+<main>
+<h1>This page is protected</h1>
+<p>Enter the password to read it.</p>
+<form id="osp-unlock-form">
+<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" required>
+<button id="osp-unlock-button" type="submit">Unlock</button>
+</form>
+<p class="err" id="osp-unlock-error" hidden>That password did not work.</p>
+<noscript>This page is encrypted, so reading it needs JavaScript.</noscript>
+</main>
+<script id="osp-locked" type="application/json">{"v":1,"salt":"hnAJlL+xs2lXPx5zbd5qRA==","iterations":600000,"iv":"oby566iEhAtaavij","data":"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","root":"../"}</script>
+<script src="../assets/unlock.js"></script>
+</body>
 </html>

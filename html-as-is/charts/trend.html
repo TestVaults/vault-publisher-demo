@@ -3,45 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A second page, one folder down</title>
-
-<!-- The page above this one, reached with `..`. The folder structure is
-     mirrored into the site, so a reference that climbs out of this folder
-     lands in the same place it does in the vault. -->
-<link rel="stylesheet" href="../styles.css">
-
-<!-- And a stylesheet of its own, beside it. Two pages can share one
-     stylesheet and still have their own. -->
-<link rel="stylesheet" href="trend.css">
+<meta name="robots" content="noindex, nofollow">
+<title>Protected</title>
+<style>
+:root { color-scheme: light dark; --fg: #15181c; --fg-2: #596069; --bg: #fdfdfc; --line: #e1e4e8; --ink: #d4421e; }
+@media (prefers-color-scheme: dark) { :root { --fg: #e6e9ed; --fg-2: #9ba3ac; --bg: #16181c; --line: #2e333a; --ink: #f2603a; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+main { width: 100%; max-width: 22rem; text-align: center; }
+h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+p { margin: 0 0 18px; color: var(--fg-2); font-size: 13px; }
+form { display: flex; gap: 8px; }
+input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; }
+input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+button { height: 38px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--ink);
+  color: #fff; font: inherit; font-size: 14px; font-weight: 550; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: default; }
+.err { margin: 14px 0 0; color: var(--ink); font-size: 13px; }
+noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
+</style>
 </head>
-
 <body>
 <main>
-
-<h1>A second page, one folder down</h1>
-
-<p class="lede">
-  This file lives in a subfolder and reaches back out of it with
-  <code>../styles.css</code>. If the type here matches the first page, the
-  <code>..</code> survived the move into the site.
-</p>
-
-<figure class="chart">
-  <svg viewBox="0 0 320 140" width="320" height="140" role="img"
-       aria-label="A placeholder line, rising then falling">
-    <polyline points="8,124 60,96 112,104 164,52 216,64 268,20 312,34"
-              fill="none" stroke="#7a5c2e" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round"/>
-    <line x1="8" y1="132" x2="312" y2="132" stroke="#d8cdb8"/>
-  </svg>
-  <figcaption>
-    Inline SVG, which is part of the document rather than a file: nothing to
-    carry, nothing to resolve.
-  </figcaption>
-</figure>
-
-<p><a href="../index.html">Back to the first page</a></p>
-
+<h1>This page is protected</h1>
+<p>Enter the password to read it.</p>
+<form id="osp-unlock-form">
+<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" required>
+<button id="osp-unlock-button" type="submit">Unlock</button>
+</form>
+<p class="err" id="osp-unlock-error" hidden>That password did not work.</p>
+<noscript>This page is encrypted, so reading it needs JavaScript.</noscript>
 </main>
+<script id="osp-locked" type="application/json">{"v":1,"salt":"hnAJlL+xs2lXPx5zbd5qRA==","iterations":600000,"iv":"Bye4BR0jJcWIs4oR","data":"nHcnOtsdIgBhDLiLtGIfa7qznn6j1I+geNHfGJJXo1Y3kIvp42NFVCrTuH3o7bo7krTbB2blVxfvWAGDkhAr+anK2lPjYzmmyBNeiL8kNHENpZwZCCM92NcmMSW++ZYsYoOPs1+QtfyOamZuNUXPSnYRaox2NRI5p0LQnGFKnrTzzR3EvucNhgpC/c5BBUi8vrgusV+8XUT3ivvBpqpQk3rmo60R/EuauHqki9+AmLkNRMsN8o/bKxZfJS/SIGHOyLu0XPMx3Yelr0Gg7rLcWrVgYoGXyJV3HdRKzYIdT6AvO0ZViMDgYvadwWFh6a0sMO8thD7qFn/um5EY0bWTrJJxkzevmZ3lzF1ToZ3couiL4bfpurGsDZG1Z4Lt3igPecf7YPgulTqkU84Mq9eK3JvbfFtJLMf9QXRLCE1pgMA5KBfrSpnP1TlB0jxLWeNgsw25TT4rjTVNVC+5/lNl6Dq4H29sMS9zYEXYM0oiwqeqQpnfJhQYw1AYWM+fTv72qSDtStmj9zu8op40JvMQXygB14OnyFBLmCnMUsz/LP2a+o3WHQ2Ekb1afd6viDEnP9hAvP7+AltPBxqjUDUqi83gCosAowX8bnmSSp4t1+vQdZ+fP/QTN1oOTkg6pZb2Getpx7TkBUP70z5bWECwoav2jU367NGC0z6k8GRXRs/cxcIUXKSdNgiAbcCE5AE4pb1VwvzGTowm/CX+eYZYXR/YCuClXCRLixM4K+o5OAip0IAOmVB6gC8gPRWnmdZmlseaDbMhls+NF+F1H1of1aMFvk8ZDSqOMZi2oS2FOGBQKnczcD42q8gYw2MLV3IStAs/QtopIFNgwiZbzOXs+nAsw9oFq3VLrPB9LExRhPV0UKybBzeuSoIZJkbKi9m9Is3FNCq39G0kaPxjsyQrw3v6AthnnqW45Jz5B6dOkCO2GHgucAWty1GoeanJHDCRWfP5PkDQhoKj3oyM4NNTGpDpbEv9bDZfzKRlruMmd1K2jQBt79GPzmk7rkVyyf+Q2KzOXukLHHJHwXDsTtYKR/bD3ooZp3+Puc5eYLVKpVly+/lzKMIQAnJd80MBov+g6I9Y7htJdN1mioc2VpueJIpyB5FM2FrjUevQ8/0pArrqeOuWkB6c1UyMPruDmAkb6VcfAyE+akYAvUNpGjMuMK96NEf6n96HJjCrEnLYlOTKJ1c6raSDVpRswB6RZry4L1tBFLqCk+D1WOtRDqovapxWc4vOwJL2u8ZWW2Un97U+v7vzLn72S9A01swIAPmBgGigwrj53NbN3j1EFudIK5/0d39UPgg58kVf/fT9ZtYCK6u43cg4SZGVpFAbFEoiIYn9S+ReBLnt9jjdtNMa5cIQYmF6wKOIGvAlM2rBON2QVTp/ON8r8IAqa0HlZ2OkzoJg08bX6Nip7Gg3H42fNRk6N2pBZeWVt/DfkBMTn0zr5HYZnrZsP50yHmj+WnAuwMu4I0DRGpu57AuyPZ6tswXAfdlfL7iiUq/fLawwDJfcbxRWZ/xsaHgJclMxoORxk45em/I2qup8O+mNAlOJHePiW/S/GIbxLmZJZW+Ggs05RejgK3k4y86FK3k+mBa8f5BgTxfzqKt9w2IA2xXP2VUC9Yn0XoFNSrDkotflh39VluqbT0qKlnQuLoZRXxKtooFIze5xWOkTPoUizn+riB9VRBM+nzc7SbTLCm4Hil90/bebluDZJDHIMdBWQPRnwMmbrlGZBzInFMJFk6fv2FFrbZBiGrXyFzTR01mJmSiKizGlCPJmhsUTSj2Zjr8o3fJy6biJU8FKiTxV7SCJ3ISUVHjfwT6Lk6AiLrqDPGVsfw5KIaWy2obSl7MSOuGKPpyZ1cKXBEyn6eCjUN5FuKgz6MC/kAPBYPo1nYBUMxEinJv1J1Tm1V3nS7sz3qXHpZVNIiwI/K74JwHdbaF/G2OSYZJN6cDzlI7RzACIbQZUIGikFk+UdBlbzB1p4qmwZMM8TOIrGDumP3d1VGUXwRBwmGjQDZ/jaxllM8CIWVcxV5V5OYOVcy+QxT3DD5inw0M8m0Ge5P95TFOOE53gSD+8mHrRMb/bqVRbmFX5SmuHYNmapvZDZLExHegGlLsWxa76vnjtuDw8WhmnUpCXWhbw7f1q43Q3X6i6hoQdTy6P4Q1n5Ve5JtgrJbz/rWCAJB9E9sMaLcKOwvhssVaIYmgtFVCnzvfXYfV0Px1nJIh25Ceu3imJ+2G3vSvO/afH98smTG1fPdad2UHNa5U/jIiuBh1LOw+L7n35AaW+4uIqakTutF/hgioRmyLDtmrMmFAdphvsNL8SbhybpB7nRZbk95Uss2UgObN6jb3J30OPgwNW5lHELT4pMziei+2DnI5M9dnipsJQR2feHfXRe5+biYfAtG5VNqCVm+1h6XtDbJWUDvzbgJvg2pYJiHH2JNydmvp4fj9Hf1HQemeAZgRrmET220GbSJiP0BjBqUENvICgk6Vw4Sp0uLTSfrM+98dxHN7XIKwCphzolWHIwF+mTE/CnLYEtPZnnKgoDB0yPUhUQa4oEXEk7PcNphrs7lYUll6sGGHcrClnhNtQqWeP50Db9xGOZOk/MMQENpPDV+Rb7QX5anhwQXETFspioiNn2QpFD042Kd/O2VanN3FLGOKW4P6GS5Cl8CFBpvuuYdzCyPiQZHVj7EDRCTDob10DV4k4JFfL6hfIB0sCY3elj2CQtdUpFdlC7PC2JXQvPSWJYiGW5kY73sPmoMCdvBXa9j9wHxKh8/bxAVt9eWVdK2rwC6T3i5+llFwYe8iaseYoS5KpfxXPQ0WiRBzpNd6phULt8sDPJVk7Sl3ThjJETazI9+qVvcbhd6tEuwInZ2IlUwqEpjFkxIzkLuzAss0TnlFibeTbcae8gikz3d58V2U067T+0cvauWlaE65fArBnk3gc3R5u8aX3T8ThqbMgOKyqYJgBrMOafbwX9qLGW3jbJqqAwAYxfUtmCLONuWWIUw55ZT7xAv/Dfi+wWf9zr4sbCsN0cTecpf+w2bxl1EGv0n/HN1JK3+D83fYMmYVMXmaECHFuneqdeNdPPuTLJfNmJlarhe0HAgl97jfkOQ1xaSzeOPrITITOOmGQqJL3yDuuj5l3/SgxdOyllWZoR1GvKdHfcIH6XKE8r2aEkBaCuxuzKF9WVmrSkquylAChp2UHBepYX0fEpsgfJvP1YN7ZHNDGrv10o/ooPomf8x+ifSa2xMij5QMoqkKmBFfomA+FBrRwOkRCyk26ihvIus6Lz/0iMYl8YwKWLsY7qRnhvbuf6maGqoeOvzRWRrQThh4HixCO61NjuJ6QsDD8LhkIsJnukvqq9PBiwhQej0y0NarQ+zD6EHuHe+CxsW/oKA7NF3uxCk0RQUXHlFePwsM6Vwnyms6ZRN0ANGPnHRDZo0z/mWvYGsgcEbGsZ+HoiAOrWt9WPKGliOmdbPDFo2LZbm/pUZew4+xs+FnGUfqGeHpZNoDYnN0afKqXVGP9N+MSRlRq0CRnvqj47ma3h5r4hQah8gdr0a2ihQcSLlLf15dB8jP78KTR8QCw49UZbVt3XjkgVw8EsNe4f3TEn87r3rBjBsXZxDIyUZneaJzw8rMejtKdBhTO1Sy5ybFb183zpEZkZ0so4Lg49wmr4ioEgwjZKUgn2QviqLt0wMSxG33P/9hh0f6JNKoUn7qPmGvN8qcAKkbuMhFNu3k1J8IrTBAbBhjFeQ==","root":"../../"}</script>
+<script src="../../assets/unlock.js"></script>
 </body>
 </html>
