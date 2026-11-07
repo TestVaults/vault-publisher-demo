@@ -864,10 +864,18 @@
   });
 
   /* --- a heading is an address ------------------------------------- *
-     Every heading carries a link to itself, and pressing it copies that
-     address rather than following it: a reader who wants to send someone
+     A heading is a link to itself, which is what makes a right-click
+     anywhere on it offer the browser's own "Copy link address". What this
+     adds is the press: the icon beside the last word copies that address
+     rather than following it, because a reader who wants to send someone
      this section is already standing in it, so the jump is the one thing
      the press cannot usefully do.
+
+     Clicking the words does nothing at all -- they were not clickable
+     before they became a link, and a double-click to pick a word out of a
+     heading should not send anyone anywhere or leave a history entry
+     behind. The keyboard is the exception: it has no icon to aim at, so
+     activating the link copies.
 
      The reply is an attribute, which the stylesheet prints as a
      pseudo-element. Nothing may put a word inside a heading: the review
@@ -875,13 +883,13 @@
      element here would move every anchor on every commented heading.
      ----------------------------------------------------------------- */
 
-  function headingSaid(link, text, hold) {
-    if (link.ospSaid) window.clearTimeout(link.ospSaid);
-    link.setAttribute("data-osp-said", text);
-    link.ospSaid = window.setTimeout(function () {
-      link.removeAttribute("data-osp-said");
-      link.removeAttribute("data-osp-copied");
-      link.ospSaid = null;
+  function headingSaid(control, text, hold) {
+    if (control.ospSaid) window.clearTimeout(control.ospSaid);
+    control.setAttribute("data-osp-said", text);
+    control.ospSaid = window.setTimeout(function () {
+      control.removeAttribute("data-osp-said");
+      control.removeAttribute("data-osp-copied");
+      control.ospSaid = null;
     }, hold);
   }
 
@@ -898,27 +906,43 @@
   }
 
   document.addEventListener("click", function (event) {
-    var headingLink = event.target.closest("[data-osp-heading-link]");
-    if (!headingLink) return;
+    var control = event.target.closest("[data-osp-heading-link]");
+    /* Absent on a heading that holds a link of its own, where the words
+       were left alone and the control carries the address itself. */
+    var heading = event.target.closest("[data-osp-heading-self]");
+    if (!control && !heading) return;
     /* A modifier or a middle button is a reader asking the browser for a
        tab or a window, which is a question about the link and not about
        the clipboard. Left alone, it gets the usual answer. */
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     if (event.button) return;
 
+    /* "detail" counts the clicks behind the event, and a key press counts
+       none: that is the keyboard activating the link around the words. */
+    if (!control && event.detail) {
+      /* A click on the words. Nowhere to go: this is where it is. */
+      event.preventDefault();
+      return;
+    }
+    if (!control) control = heading.querySelector("[data-osp-heading-link]");
+    if (!control) return;
+
+    var link = control.getAttribute("href") ? control : heading;
+    if (!link) return;
+
     event.preventDefault();
-    var address = headingLink.href;
+    var address = link.href;
 
     copyText(address, function (ok) {
       if (ok) {
-        headingLink.setAttribute("data-osp-copied", "");
-        headingSaid(headingLink, "Copied", 1600);
+        control.setAttribute("data-osp-copied", "");
+        headingSaid(control, "Copied", 1600);
       } else {
         /* Nothing on the clipboard, so leave the address somewhere it can
            be taken from by hand. */
-        headingSaid(headingLink, "In the address bar", 2800);
+        headingSaid(control, "In the address bar", 2800);
       }
-      showAddress(headingLink, address);
+      showAddress(link, address);
     });
   });
 })();

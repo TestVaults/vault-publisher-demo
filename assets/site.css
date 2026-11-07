@@ -174,40 +174,53 @@ body {
 .markdown-rendered h4 { font-size: 1rem; }
 
 /* --- a heading is an address ----------------------------------------- *
- * The control sits at the right end of the heading's own line rather than
- * out in the margin, where a narrow window has no room for it, and it is
- * absolutely positioned so that revealing it moves no text: a heading that
- * reflowed under the pointer would be a heading nobody could click.
+ * The heading's own words are the link, which is what makes a right-click
+ * anywhere on the heading offer "Copy link address" with nothing to aim at
+ * first. They are not dressed as a link: a heading is where the reader
+ * already is, so the words keep the heading's colour and the text cursor,
+ * and the thing that looks pressable is the icon.
  *
- * The room it occupies is reserved on the heading whether or not the
- * pointer is there, so a heading long enough to wrap does not run under it.
+ * The icon sits against the last word rather than out at the right edge of
+ * the column, where a short heading leaves it far from anything that
+ * explains it and easy to miss. It holds its space whether or not it is
+ * showing, so revealing it moves no text -- a heading that reflowed under
+ * the pointer would be a heading nobody could click -- and it travels with
+ * the last word in a box that cannot break, so a heading that wraps cannot
+ * strand it alone on a line.
  * --------------------------------------------------------------------- */
 
-.markdown-rendered [data-osp-anchored] {
-  position: relative;
-  padding-right: 1.9rem;
+.markdown-rendered .osp-heading-self {
+  color: inherit;
+  text-decoration: none;
+  cursor: text;
 }
 
+.markdown-rendered .osp-heading-tail { white-space: nowrap; }
+
 .markdown-rendered .osp-heading-link {
-  position: absolute;
-  right: 0;
-  /* The first line, whatever the heading's size or how many lines it
-     takes: 1.25 is the line-height set above, so the box is exactly the
-     line it belongs to and the icon centres on it. */
-  top: 0;
-  height: 1.25em;
-  width: 1.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-left: 0.2em;
+  /* Centred on the text's middle rather than sat on its baseline: the box
+     is taller than the glyph inside it, and a baseline would hang it below
+     the letters it belongs to. */
+  vertical-align: middle;
+  /* So the reply below can be placed against the icon. */
+  position: relative;
   border-radius: max(4px, calc(var(--osp-radius) - 2px));
   color: var(--osp-text-muted);
+  /* It is an anchor of its own on a heading that already holds a link. */
   text-decoration: none;
+  cursor: pointer;
   opacity: 0;
   transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
 }
 
 .markdown-rendered [data-osp-anchored]:hover .osp-heading-link,
+.markdown-rendered .osp-heading-self:focus-visible .osp-heading-link,
 .markdown-rendered .osp-heading-link:focus-visible,
 .markdown-rendered .osp-heading-link[data-osp-said] {
   opacity: 1;
@@ -232,17 +245,25 @@ body {
 /* What the script says back, as a pseudo-element rather than an element:
    the overlay anchors a comment to a hash of its block's text, and a word
    added inside a heading would move every anchor on every commented
-   heading. It is opaque and padded because it stands over the heading's
-   own last words on a heading wide enough to reach it. */
+   heading.
+
+   Above the icon rather than beside it. Beside it is where the heading has
+   just run out of line: on a narrow window a heading that reaches the edge
+   would push the reply off the page and the page into a sideways scroll
+   for as long as it showed. Above, it is centred on a control that is
+   itself well inside the column, and it has nowhere to overflow to. */
 .markdown-rendered .osp-heading-link[data-osp-said]::after {
   content: attr(data-osp-said);
   position: absolute;
-  right: calc(100% + 0.3rem);
-  top: 50%;
-  transform: translateY(-50%);
+  left: 50%;
+  bottom: calc(100% + 0.15rem);
+  transform: translateX(-50%);
   padding: 0.12rem 0.4rem;
   border-radius: max(4px, calc(var(--osp-radius) - 2px));
   background: var(--osp-surface);
+  /* It stands over whatever the heading has above it, so it is given an
+     edge rather than left to blend into the line it covers. */
+  box-shadow: 0 0 0 1px var(--osp-border);
   color: var(--osp-text-muted);
   font-family: var(--osp-font-ui);
   font-size: var(--osp-ui-xs);
