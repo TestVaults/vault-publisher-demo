@@ -862,4 +862,63 @@
       say(copyBtn, apple ? "Press ⌘C" : "Press Ctrl+C", 2800);
     });
   });
+
+  /* --- a heading is an address ------------------------------------- *
+     Every heading carries a link to itself, and pressing it copies that
+     address rather than following it: a reader who wants to send someone
+     this section is already standing in it, so the jump is the one thing
+     the press cannot usefully do.
+
+     The reply is an attribute, which the stylesheet prints as a
+     pseudo-element. Nothing may put a word inside a heading: the review
+     overlay anchors a comment to a hash of its block's text, so a label
+     element here would move every anchor on every commented heading.
+     ----------------------------------------------------------------- */
+
+  function headingSaid(link, text, hold) {
+    if (link.ospSaid) window.clearTimeout(link.ospSaid);
+    link.setAttribute("data-osp-said", text);
+    link.ospSaid = window.setTimeout(function () {
+      link.removeAttribute("data-osp-said");
+      link.removeAttribute("data-osp-copied");
+      link.ospSaid = null;
+    }, hold);
+  }
+
+  /* The address bar is made to agree with what was copied -- and is the
+     fallback when nothing was. Replace rather than push, carrying the
+     state forward: the bar's arrows count their position in it, and a
+     state wiped here would leave them unable to say which way is which. */
+  function showAddress(link, address) {
+    try {
+      history.replaceState(history.state, "", address);
+      return;
+    } catch (e) {}
+    try { location.hash = link.getAttribute("href").slice(1); } catch (e) {}
+  }
+
+  document.addEventListener("click", function (event) {
+    var headingLink = event.target.closest("[data-osp-heading-link]");
+    if (!headingLink) return;
+    /* A modifier or a middle button is a reader asking the browser for a
+       tab or a window, which is a question about the link and not about
+       the clipboard. Left alone, it gets the usual answer. */
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.button) return;
+
+    event.preventDefault();
+    var address = headingLink.href;
+
+    copyText(address, function (ok) {
+      if (ok) {
+        headingLink.setAttribute("data-osp-copied", "");
+        headingSaid(headingLink, "Copied", 1600);
+      } else {
+        /* Nothing on the clipboard, so leave the address somewhere it can
+           be taken from by hand. */
+        headingSaid(headingLink, "In the address bar", 2800);
+      }
+      showAddress(headingLink, address);
+    });
+  });
 })();
