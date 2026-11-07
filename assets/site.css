@@ -195,21 +195,33 @@ body {
   cursor: text;
 }
 
-.markdown-rendered .osp-heading-tail { white-space: nowrap; }
+.markdown-rendered .osp-heading-tail {
+  white-space: nowrap;
+  /* The room the icon hangs in, reserved on the word rather than taken
+     from the line: an inline box the height of this one would push every
+     heading's line taller to make space for it, and a box the line does
+     not know about costs nothing and moves nothing. */
+  position: relative;
+  padding-right: max(1.6rem, 1.4em);
+}
 
 .markdown-rendered .osp-heading-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.4rem;
-  height: 1.4rem;
-  margin-left: 0.2em;
-  /* Centred on the text's middle rather than sat on its baseline: the box
-     is taller than the glyph inside it, and a baseline would hang it below
-     the letters it belongs to. */
-  vertical-align: middle;
-  /* So the reply below can be placed against the icon. */
-  position: relative;
+  /* In the room the last word reserved, centred on that word's own text
+     box rather than on the line, which on a heading of two lines is not
+     where the word is. */
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  /* Sized against the heading rather than in absolute pixels: an icon
+     that reads as a control beside 16 point text is a speck beside a
+     section title, and the same glyph now has to work beside both. The
+     floor keeps it from shrinking past being worth aiming at. */
+  width: max(1.4rem, 1.2em);
+  height: max(1.4rem, 1.2em);
   border-radius: max(4px, calc(var(--osp-radius) - 2px));
   color: var(--osp-text-muted);
   /* It is an anchor of its own on a heading that already holds a link. */
@@ -235,6 +247,14 @@ body {
    do is a control that is not there. Quiet rather than hidden. */
 @media (hover: none) {
   .markdown-rendered .osp-heading-link { opacity: 0.5; }
+}
+
+/* Bigger than the 14 pixels every other small icon on the site is: this
+   one stands in a line of large type with nothing beside it to lend it a
+   scale, and the site's small icon next to a heading looks like dust. */
+.markdown-rendered .osp-heading-link .osp-icon-sm {
+  width: max(15px, 0.8em);
+  height: max(15px, 0.8em);
 }
 
 .markdown-rendered .osp-heading-icon-done { display: none; }
