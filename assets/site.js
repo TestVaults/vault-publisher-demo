@@ -603,9 +603,81 @@
 
   var queued = false;
 
+  /* --- the outline's collapse-all -------------------------------- *
+     The tree's tool, on "On this page". It folds every section down to its
+     own heading and is a switch, because the outline has no disclosure per
+     section to unfold them one by one. Kept for the visit, like the tree's
+     open folders. */
+  var outlineList = document.querySelector("[data-osp-outline]");
+  var outlineTools = document.querySelector("[data-osp-outline-tools]");
+  var OUTLINE_FOLD_KEY = "osp-outline-collapsed";
+
+  if (outlineList && outlineTools) {
+    var foldBtn = outlineTools.querySelector("[data-osp-outline-collapse]");
+    var setFolded = function (folded) {
+      outlineList.classList.toggle("osp-outline-collapsed", folded);
+      var label = folded ? "Expand all" : "Collapse all";
+      foldBtn.setAttribute("aria-pressed", String(folded));
+      foldBtn.setAttribute("aria-label", label);
+      foldBtn.setAttribute("title", label);
+    };
+    var wasFolded = false;
+    try { wasFolded = sessionStorage.getItem(OUTLINE_FOLD_KEY) === "1"; } catch (e) {}
+    setFolded(wasFolded);
+    outlineTools.hidden = false;
+
+    foldBtn.addEventListener("click", function () {
+      var folded = !outlineList.classList.contains("osp-outline-collapsed");
+      setFolded(folded);
+      try { sessionStorage.setItem(OUTLINE_FOLD_KEY, folded ? "1" : "0"); } catch (e) {}
+      update();
+    });
+  }
+
+  /* The rail's row for the section being read. Folded, a subheading's row
+     is hidden, so its section's heading stands in for it and the mark is
+     never on something out of sight. */
+  function outlineRow(id) {
+    if (!outlineList) return null;
+    var folded = outlineList.classList.contains("osp-outline-collapsed");
+    var items = outlineList.children;
+    var head = null;
+    for (var k = 0; k < items.length; k++) {
+      if (items[k].classList.contains("osp-lvl2")) head = items[k];
+      var a = items[k].querySelector("[data-osp-spy]");
+      if (a && a.getAttribute("data-osp-spy") === id) {
+        var item = folded && head && !items[k].classList.contains("osp-lvl2") ? head : items[k];
+        return item.querySelector("[data-osp-spy]");
+      }
+    }
+    return null;
+  }
+
+  /* --- back to top -------------------------------------------------- */
+
+  var toTop = document.querySelector("[data-osp-to-top]");
+  if (toTop) {
+    toTop.hidden = false;
+    toTop.addEventListener("click", function () {
+      /* The stylesheet's scroll-behavior decides smooth or not, so reduced
+         motion is honoured without asking here. */
+      window.scrollTo(0, 0);
+      /* The button hides once the top is reached, so focus goes to the start
+         of the page rather than nowhere, without scrolling a second time. */
+      var main = document.getElementById("osp-main");
+      if (main) {
+        if (!main.hasAttribute("tabindex")) main.setAttribute("tabindex", "-1");
+        try { main.focus({ preventScroll: true }); } catch (e) { main.focus(); }
+      }
+    });
+  }
+
   function update() {
     queued = false;
     if (crumb) crumb.classList.toggle("osp-scrolled", window.scrollY > 8);
+    /* Back to top once the top is a screen or more away: before that, the
+       reader can see where it would take them. */
+    if (toTop) toTop.classList.toggle("osp-to-top-on", window.scrollY > window.innerHeight * 0.75);
     if (!targets.length) return;
 
     /* A heading counts as reached once it has passed a line near the top of
@@ -636,6 +708,9 @@
       else targets[j].link.removeAttribute("aria-current");
     }
 
+    var railLink = active ? outlineRow(active.link.getAttribute("data-osp-spy")) : null;
+    if (railLink && railLink !== active.link) railLink.classList.add("osp-active");
+
     /* Shut, the in-page row says where in the note the reader is, which is
        the question a long page on a small screen stops answering first. */
     if (inpageNow && active) {
@@ -650,11 +725,12 @@
        not: it sits under the note as part of the page, and scrolling a row
        of it into view would scroll the document, dragging the reader out of
        the article they were reading and down to its own table of contents. */
-    if (rail && active && rail.scrollHeight > rail.clientHeight) {
-      var box = active.link.getBoundingClientRect();
+    var keep = railLink || (active && active.link);
+    if (rail && keep && rail.scrollHeight > rail.clientHeight) {
+      var box = keep.getBoundingClientRect();
       var frame = rail.getBoundingClientRect();
       if (box.top < frame.top + 8 || box.bottom > frame.bottom - 8) {
-        active.link.scrollIntoView({ block: "nearest" });
+        keep.scrollIntoView({ block: "nearest" });
       }
     }
   }
@@ -666,6 +742,83 @@
   }, { passive: true });
   window.addEventListener("resize", update, { passive: true });
   update();
+
+  /* --- the tree's tools: collapse all, and reveal ------------------- *
+     The same two Obsidian's file explorer has. Which folders are open is
+     kept for the visit, so a tree collapsed on one page is still collapsed
+     on the next; reveal is a setting, kept like the theme. On, each page
+     opens the folders down to itself and brings its row into sight; off,
+     the tree is left exactly as the reader had it. */
+  var treeTools = document.querySelector("[data-osp-tree-tools]");
+  var treeBody = document.querySelector(".osp-panel-body");
+  if (treeTools && treeBody) {
+    var OPEN_KEY = "osp-tree-open";
+    var REVEAL_KEY = "osp-tree-reveal";
+    var folders = treeBody.querySelectorAll(".osp-tree details[data-osp-folder]");
+    var revealBtn = treeTools.querySelector("[data-osp-reveal]");
+    var collapseBtn = treeTools.querySelector("[data-osp-collapse-all]");
+    var restoring = false;
+
+    var saveOpen = function () {
+      if (restoring) return;
+      var open = [];
+      for (var f = 0; f < folders.length; f++) {
+        if (folders[f].open) open.push(folders[f].getAttribute("data-osp-folder"));
+      }
+      try { sessionStorage.setItem(OPEN_KEY, JSON.stringify(open)); } catch (e) {}
+    };
+    var revealOn = function () {
+      try { return localStorage.getItem(REVEAL_KEY) !== "off"; } catch (e) { return true; }
+    };
+    var reveal = function () {
+      var here = treeBody.querySelector(".osp-tree .osp-current");
+      if (!here) return;
+      for (var d = here.closest("details"); d; d = d.parentElement.closest("details")) {
+        d.open = true;
+      }
+      /* Scrolled by hand inside the panel: scrollIntoView would also move
+         the page, and the reader came here to read the page. */
+      var box = here.getBoundingClientRect();
+      var frame = treeBody.getBoundingClientRect();
+      if (box.top < frame.top + 32 || box.bottom > frame.bottom) {
+        treeBody.scrollTop += box.top - frame.top - frame.height / 2 + box.height / 2;
+      }
+    };
+
+    restoring = true;
+    var saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem(OPEN_KEY)); } catch (e) {}
+    if (saved && saved.length !== undefined) {
+      for (var o = 0; o < folders.length; o++) {
+        folders[o].open = saved.indexOf(folders[o].getAttribute("data-osp-folder")) >= 0;
+      }
+    }
+    if (revealOn()) reveal();
+    restoring = false;
+    saveOpen();
+
+    revealBtn.setAttribute("aria-pressed", String(revealOn()));
+    treeTools.hidden = false;
+
+    /* toggle does not bubble, so it is caught on the way down. */
+    treeBody.addEventListener("toggle", function (event) {
+      if (event.target.hasAttribute && event.target.hasAttribute("data-osp-folder")) saveOpen();
+    }, true);
+
+    collapseBtn.addEventListener("click", function () {
+      restoring = true;
+      for (var c = 0; c < folders.length; c++) folders[c].open = false;
+      restoring = false;
+      saveOpen();
+    });
+    revealBtn.addEventListener("click", function () {
+      var on = !revealOn();
+      try { localStorage.setItem(REVEAL_KEY, on ? "on" : "off"); } catch (e) {}
+      revealBtn.setAttribute("aria-pressed", String(on));
+      /* Switching it on is also asking for it now. */
+      if (on) { reveal(); saveOpen(); }
+    });
+  }
 
   /* --- callouts ---------------------------------------------------- */
 
@@ -945,4 +1098,339 @@
       showAddress(link, address);
     });
   });
+  /* --- diagrams: zoom, pan and a full-screen view ------------------- *
+     A Mermaid diagram publishes as a static SVG, and a large one shrinks
+     to fit the column until its labels cannot be read. Each diagram gets
+     its own zoom controls, and a full-screen view for the big ones.
+
+     On the page, zooming takes Ctrl or Cmd with the wheel -- which is also
+     what a trackpad pinch sends -- so an ordinary scroll still scrolls the
+     page past the diagram rather than getting caught in it. A zoomed
+     diagram pans by dragging, and only a zoomed one: at its normal size a
+     press on it means what it means anywhere else on the page. Full screen,
+     the page is out of the way, so the wheel zooms by itself.
+
+     The diagram is moved into the full-screen view and back, not copied.
+     A copy would duplicate the ids its arrowheads point at, and two of
+     those in one document is a quiet way to draw arrows from the wrong
+     marker. */
+
+  var ZOOM_MIN = 0.5;
+  var ZOOM_MAX = 8;
+  var ZOOM_STEP = 1.25;
+
+  var DIAGRAM_ICONS = {
+    zoomIn: '<path d="M12 5v14M5 12h14"/>',
+    zoomOut: '<path d="M5 12h14"/>',
+    reset: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>',
+    expand: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18"/>'
+  };
+
+  function diagramButton(name, label) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "osp-diagram-btn";
+    button.setAttribute("data-osp-diagram-act", name);
+    button.setAttribute("aria-label", label);
+    button.title = label;
+    button.innerHTML =
+      '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      DIAGRAM_ICONS[name] + "</svg>";
+    return button;
+  }
+
+  function diagramTools(names) {
+    var labels = {
+      zoomIn: "Zoom in",
+      zoomOut: "Zoom out",
+      reset: "Reset zoom",
+      expand: "Open full screen",
+      close: "Close full screen"
+    };
+    var tools = document.createElement("div");
+    tools.className = "osp-diagram-tools";
+    tools.setAttribute("role", "toolbar");
+    tools.setAttribute("aria-label", "Diagram");
+    for (var i = 0; i < names.length; i++) tools.appendChild(diagramButton(names[i], labels[names[i]]));
+    return tools;
+  }
+
+  /* Scale and offset for one canvas, about its top-left corner. A point
+     keeps its place under the cursor as the scale changes, which is what
+     makes zooming feel like looking closer rather than being moved. */
+  function zoomer(stage, canvas, onChange) {
+    var z = { s: 1, x: 0, y: 0 };
+    function paint() {
+      canvas.style.transform = z.s === 1 && z.x === 0 && z.y === 0
+        ? ""
+        : "translate(" + z.x + "px, " + z.y + "px) scale(" + z.s + ")";
+      if (onChange) onChange(z);
+    }
+    z.at = function (factor, clientX, clientY) {
+      var rect = canvas.getBoundingClientRect();
+      var left = rect.left - z.x;
+      var top = rect.top - z.y;
+      if (clientX === undefined) {
+        var box = stage.getBoundingClientRect();
+        clientX = box.left + box.width / 2;
+        clientY = box.top + box.height / 2;
+      }
+      var next = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z.s * factor));
+      var k = next / z.s;
+      var px = clientX - left;
+      var py = clientY - top;
+      z.x = px - (px - z.x) * k;
+      z.y = py - (py - z.y) * k;
+      z.s = next;
+      paint();
+    };
+    z.by = function (dx, dy) {
+      z.x += dx;
+      z.y += dy;
+      paint();
+    };
+    z.reset = function () {
+      z.s = 1;
+      z.x = 0;
+      z.y = 0;
+      paint();
+    };
+    return z;
+  }
+
+  /* Wheel, drag and pinch on a stage. On the page the wheel needs Ctrl or
+     Cmd and a drag needs the diagram to be zoomed; full screen, neither. */
+  function gestures(stage, z, fullScreen) {
+    stage.addEventListener("wheel", function (event) {
+      if (!fullScreen && !event.ctrlKey && !event.metaKey) return;
+      event.preventDefault();
+      var delta = event.deltaY * (event.deltaMode === 1 ? 16 : 1);
+      /* A mouse wheel sends a hundred a notch and a trackpad pinch a few at
+         a time; capped and scaled, a notch is about a quarter closer and a
+         pinch stays smooth. */
+      delta = Math.max(-50, Math.min(50, delta));
+      z.at(Math.exp(-delta * 0.005), event.clientX, event.clientY);
+    }, { passive: false });
+
+    var pointers = {};
+    var pinch = null;
+
+    function count() {
+      var n = 0;
+      for (var k in pointers) if (pointers.hasOwnProperty(k)) n++;
+      return n;
+    }
+    function pair() {
+      var list = [];
+      for (var k in pointers) if (pointers.hasOwnProperty(k)) list.push(pointers[k]);
+      var a = list[0];
+      var b = list[1];
+      return {
+        d: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2
+      };
+    }
+
+    stage.addEventListener("pointerdown", function (event) {
+      if (event.button !== 0 || event.target.closest(".osp-diagram-tools")) return;
+      pointers[event.pointerId] = { x: event.clientX, y: event.clientY };
+      var n = count();
+      if (n === 2) {
+        pinch = pair();
+      } else if (n === 1 && !fullScreen && z.s === 1 && z.x === 0 && z.y === 0) {
+        delete pointers[event.pointerId];
+        return;
+      }
+      if (stage.setPointerCapture) {
+        try { stage.setPointerCapture(event.pointerId); } catch (e) {}
+      }
+      stage.setAttribute("data-osp-panning", "");
+      event.preventDefault();
+    });
+
+    stage.addEventListener("pointermove", function (event) {
+      var was = pointers[event.pointerId];
+      if (!was) return;
+      var now = { x: event.clientX, y: event.clientY };
+      pointers[event.pointerId] = now;
+      if (count() >= 2 && pinch) {
+        var next = pair();
+        z.by(next.x - pinch.x, next.y - pinch.y);
+        z.at(next.d / pinch.d, next.x, next.y);
+        pinch = next;
+        return;
+      }
+      z.by(now.x - was.x, now.y - was.y);
+    });
+
+    function release(event) {
+      if (!pointers[event.pointerId]) return;
+      delete pointers[event.pointerId];
+      pinch = count() >= 2 ? pair() : null;
+      if (!count()) stage.removeAttribute("data-osp-panning");
+    }
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", release);
+  }
+
+  var diagramList = document.querySelectorAll(".markdown-rendered .mermaid");
+  for (var dg = 0; dg < diagramList.length; dg++) {
+    (function (diagram) {
+      var svg = diagram.querySelector("svg");
+      if (!svg) return;
+      var canvas = document.createElement("div");
+      canvas.className = "osp-diagram-canvas";
+      svg.parentNode.insertBefore(canvas, svg);
+      canvas.appendChild(svg);
+      diagram.setAttribute("data-osp-diagram", "");
+      diagram.appendChild(diagramTools(["zoomIn", "zoomOut", "reset", "expand"]));
+      diagram.ospZoom = zoomer(diagram, canvas, function (z) {
+        if (z.s !== 1 || z.x !== 0 || z.y !== 0) diagram.setAttribute("data-osp-zoomed", "");
+        else diagram.removeAttribute("data-osp-zoomed");
+      });
+      gestures(diagram, diagram.ospZoom, false);
+    })(diagramList[dg]);
+  }
+
+  var viewer = null;
+
+  /* Sizes the diagram to fill the full-screen view, keeping its shape. */
+  function fitViewer() {
+    if (!viewer) return;
+    var svg = viewer.svg;
+    var box = svg.viewBox && svg.viewBox.baseVal;
+    var w = box && box.width ? box.width : svg.getBoundingClientRect().width || 1;
+    var h = box && box.height ? box.height : svg.getBoundingClientRect().height || 1;
+    var stage = viewer.stage.getBoundingClientRect();
+    var room = Math.min((stage.width - 64) / w, (stage.height - 64) / h);
+    if (!(room > 0)) room = 1;
+    svg.style.maxWidth = "none";
+    svg.style.width = Math.round(w * room) + "px";
+    svg.style.height = Math.round(h * room) + "px";
+  }
+
+  function openViewer(diagram) {
+    if (viewer) return;
+    var canvas = diagram.querySelector(".osp-diagram-canvas");
+    var svg = canvas && canvas.querySelector("svg");
+    if (!svg) return;
+
+    var shell = document.createElement("div");
+    shell.className = "osp-diagram-viewer";
+    shell.setAttribute("role", "dialog");
+    shell.setAttribute("aria-modal", "true");
+    shell.setAttribute("aria-label", "Diagram, full screen");
+    /* The page's diagram rules are written against an article, so the view
+       carries the same classes and the diagram keeps its colours. */
+    var stage = document.createElement("div");
+    stage.className = "osp-diagram-stage markdown-rendered";
+    var holder = document.createElement("div");
+    holder.className = "mermaid";
+    var inner = document.createElement("div");
+    inner.className = "osp-diagram-canvas";
+    holder.appendChild(inner);
+    stage.appendChild(holder);
+    var tools = diagramTools(["zoomIn", "zoomOut", "reset", "close"]);
+    shell.appendChild(stage);
+    shell.appendChild(tools);
+
+    /* The page keeps the diagram's place while it is away, so nothing below
+       it moves up and back down. */
+    canvas.style.height = canvas.offsetHeight + "px";
+    viewer = {
+      shell: shell,
+      stage: stage,
+      svg: svg,
+      home: canvas,
+      style: svg.getAttribute("style"),
+      back: document.activeElement,
+      z: null
+    };
+    inner.appendChild(svg);
+    document.body.appendChild(shell);
+    root.setAttribute("data-osp-viewing", "");
+    viewer.z = zoomer(stage, inner);
+    gestures(stage, viewer.z, true);
+    fitViewer();
+    var close = tools.querySelector('[data-osp-diagram-act="close"]');
+    if (close) close.focus();
+  }
+
+  function closeViewer() {
+    if (!viewer) return;
+    var v = viewer;
+    viewer = null;
+    if (v.style === null) v.svg.removeAttribute("style");
+    else v.svg.setAttribute("style", v.style);
+    v.home.appendChild(v.svg);
+    v.home.style.height = "";
+    if (v.shell.parentNode) v.shell.parentNode.removeChild(v.shell);
+    root.removeAttribute("data-osp-viewing");
+    if (v.back && v.back.focus) v.back.focus();
+  }
+
+  function zoomOf(button) {
+    if (viewer && viewer.shell.contains(button)) return viewer.z;
+    var diagram = button.closest("[data-osp-diagram]");
+    return diagram ? diagram.ospZoom : null;
+  }
+
+  document.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-osp-diagram-act]");
+    if (!button) return;
+    var act = button.getAttribute("data-osp-diagram-act");
+    if (act === "expand") {
+      openViewer(button.closest("[data-osp-diagram]"));
+      return;
+    }
+    if (act === "close") {
+      closeViewer();
+      return;
+    }
+    var z = zoomOf(button);
+    if (!z) return;
+    if (act === "zoomIn") z.at(ZOOM_STEP);
+    else if (act === "zoomOut") z.at(1 / ZOOM_STEP);
+    else if (act === "reset") z.reset();
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (!viewer) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeViewer();
+    } else if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      viewer.z.at(ZOOM_STEP);
+    } else if (event.key === "-" || event.key === "_") {
+      event.preventDefault();
+      viewer.z.at(1 / ZOOM_STEP);
+    } else if (event.key === "0") {
+      event.preventDefault();
+      viewer.z.reset();
+    } else if (event.key === "Tab") {
+      /* Focus stays in the view while it is open: the page under it cannot
+         be seen, so it should not be reachable either. */
+      var buttons = viewer.shell.querySelectorAll("button");
+      if (!buttons.length) return;
+      var first = buttons[0];
+      var last = buttons[buttons.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (!viewer.shell.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  }, true);
+
+  window.addEventListener("resize", fitViewer, { passive: true });
+
 })();

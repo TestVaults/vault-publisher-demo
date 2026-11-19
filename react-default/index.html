@@ -2,42 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Protected</title>
 <style>
-:root { color-scheme: light dark; --fg: #15181c; --fg-2: #596069; --bg: #fdfdfc; --line: #e1e4e8; --ink: #d4421e; }
-@media (prefers-color-scheme: dark) { :root { --fg: #e6e9ed; --fg-2: #9ba3ac; --bg: #16181c; --line: #2e333a; --ink: #f2603a; } }
-* { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
-  background: var(--bg); color: var(--fg);
-  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-main { width: 100%; max-width: 22rem; text-align: center; }
-h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-p { margin: 0 0 18px; color: var(--fg-2); font-size: 13px; }
-form { display: flex; gap: 8px; }
-input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--line);
-  border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; }
-input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-button { height: 38px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--ink);
-  color: #fff; font: inherit; font-size: 14px; font-weight: 550; cursor: pointer; }
-button[disabled] { opacity: 0.6; cursor: default; }
-.err { margin: 14px 0 0; color: var(--ink); font-size: 13px; }
+:root { color-scheme: light dark;
+  --bg: #fbfbfa; --fg: #14171a; --fg-2: #646b74; --line: #dcdfe3;
+  --field: #fff; --ink: #15181c; --bad: #b3261e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; } }
+:root[data-theme="dark"] { color-scheme: dark; --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; }
+:root[data-theme="light"] { color-scheme: light; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid;
+  place-items: center; padding: 28px; background: var(--bg); color: var(--fg);
+  caret-color: var(--ink);
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+::selection { background: color-mix(in srgb, var(--ink) 18%, transparent); }
+main { width: 100%; max-width: 22rem; }
+.mark { color: var(--fg-2); margin-bottom: 18px; }
+h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
+.lead { margin: 0 0 20px; color: var(--fg-2); font-size: 14px; }
+form { position: relative; }
+input { width: 100%; height: 46px; padding: 0 46px 0 14px; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--field); color: var(--fg); font: inherit;
+  font-size: 15px; letter-spacing: 0.06em; transition: border-color 140ms ease, box-shadow 140ms ease; }
+input::placeholder { color: var(--fg-2); letter-spacing: 0; }
+input:focus { outline: none; border-color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 15%, transparent); }
+button { position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  display: grid; place-items: center; width: 34px; height: 34px; border: 0;
+  border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer;
+  transition: background 130ms ease, color 130ms ease; }
+button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--fg); }
+button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+button:disabled { cursor: default; color: var(--fg-2); background: transparent; }
+/* Busy, from the one hook the unlock script sets. */
+.track { position: absolute; left: 1px; right: 1px; bottom: 1px; height: 2px;
+  border-radius: 0 0 9px 9px; overflow: hidden; opacity: 0; transition: opacity 120ms ease; }
+.track i { display: block; height: 100%; width: 0; background: var(--ink); }
+form:has(button:disabled) .track { opacity: 1; }
+form:has(button:disabled) .track i { animation: osp-fill 2.4s cubic-bezier(.16,1,.3,1) forwards; }
+form:has(button:disabled) input { border-color: var(--ink); }
+@keyframes osp-fill { from { width: 0 } to { width: 100% } }
+@media (prefers-reduced-motion: reduce) {
+  form:has(button:disabled) .track i { animation: none; width: 100%; opacity: .5 } }
+/* [hidden] is a UA rule at attribute specificity; a class that sets
+   display beats it, which would put the failure on screen before one. */
+.err[hidden] { display: none; }
+.err { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0;
+  color: var(--bad); font-size: 13px; }
+.err::before { content: ""; flex: none; width: 3px; align-self: stretch;
+  border-radius: 2px; background: var(--bad); }
 noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
 </style>
 </head>
 <body>
 <main>
-<h1>This page is protected</h1>
-<p>Enter the password to read it.</p>
+<div class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
+<h1>Password needed</h1>
+<p class="lead">This page is locked. Ask whoever sent you the link if you don't have the password.</p>
 <form id="osp-unlock-form">
-<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" required>
-<button id="osp-unlock-button" type="submit">Unlock</button>
+<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required autofocus>
+<button id="osp-unlock-button" type="submit" aria-label="Unlock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 6 6 6-6 6"/></svg></button>
+<span class="track" aria-hidden="true"><i></i></span>
 </form>
-<p class="err" id="osp-unlock-error" hidden>That password did not work.</p>
-<noscript>This page is encrypted, so reading it needs JavaScript.</noscript>
+<p class="err" id="osp-unlock-error" role="alert" hidden><span>That's not the right password. Try again.</span></p>
+<noscript>This page needs JavaScript to unlock.</noscript>
 </main>
-<script id="osp-locked" type="application/json">{"v":1,"salt":"zXn7IPU/gylQnGk87wv0+w==","iterations":600000,"iv":"T5p0ddQSYTfEVUTr","data":"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","root":"../"}</script>
+<script id="osp-locked" type="application/json">{"v":1,"salt":"Qd7NgK3y5vvM2Q0NLGXYdw==","iterations":600000,"iv":"AMCk+883PzqLfgi/","data":"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","root":"../"}</script>
 <script src="../assets/unlock.js"></script>
 </body>
 </html>

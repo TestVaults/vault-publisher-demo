@@ -17,6 +17,92 @@
   var error = document.getElementById("osp-unlock-error");
   var button = document.getElementById("osp-unlock-button");
 
+  /*
+   * The service worker, when this browser has one. See `serviceWorker.ts`.
+   *
+   * Missing in a private window in some browsers, on plain http, and in a
+   * file opened from disk; every use below falls back to the blob URLs this
+   * reader made before the worker existed.
+   */
+  var WORKER = null;
+  try {
+    WORKER = navigator.serviceWorker || null;
+  } catch (e) {
+    WORKER = null;
+  }
+  var WORKER_FILE = "osp-sw.js";
+
+  /* The decrypted page's list of locked files, once there is one. */
+  var revealedAssets = null;
+
+  /*
+   * The worker's question, answered from this tab.
+   *
+   * The key is never handed to the worker to keep: it asks when it needs
+   * it, and the answer comes from `sessionStorage`, which is where the
+   * lock screen promises the key lives and for no longer than the tab.
+   * A page still locked answers with nothing.
+   *
+   * Set as `onmessage` rather than with addEventListener, because that is
+   * what starts delivery of the worker's messages to this page. Set again
+   * after the document is replaced, in case replacing it took this with it.
+   */
+  function answerWorker() {
+    if (!WORKER) return;
+    WORKER.onmessage = function (event) {
+      var data = event.data;
+      var port = event.ports && event.ports[0];
+      if (!data || data.type !== "osp-sw-state" || !port) return;
+      var bits = null;
+      try {
+        bits = sessionStorage.getItem(KEY_PREFIX + payload.salt);
+      } catch (e) {}
+      port.postMessage(
+        bits && revealedAssets ? { bits: bits, assets: revealedAssets } : null,
+      );
+    };
+  }
+  answerWorker();
+
+  /*
+   * Whether this page is served by our worker, registering it if need be.
+   *
+   * Ours by name, because a worker from another site on the same origin may
+   * control this page, and believing it would skip the repairs below with
+   * nothing to replace them. Waited for briefly and no longer: a page that
+   * is not controlled in time is written the old way, which works for
+   * everything but a file asked for later.
+   */
+  function servedByWorker(assets) {
+    if (!WORKER || !assets || !assets.length) return Promise.resolve(false);
+    var ours = function () {
+      var current = WORKER.controller;
+      var tail = "/" + WORKER_FILE;
+      return !!(current && String(current.scriptURL).slice(-tail.length) === tail);
+    };
+    return WORKER.register(ROOT + WORKER_FILE)
+      .then(function () {
+        if (ours()) return true;
+        return new Promise(function (resolve) {
+          var done = false;
+          var finish = function (value) {
+            if (done) return;
+            done = true;
+            resolve(value);
+          };
+          setTimeout(function () {
+            finish(ours());
+          }, 3000);
+          WORKER.addEventListener("controllerchange", function () {
+            finish(ours());
+          });
+        });
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
   function b2u(value) {
     var binary = atob(value);
     var out = new Uint8Array(binary.length);
@@ -24,6 +110,19 @@
     return out;
   }
 
+  function importKey(bits) {
+    return crypto.subtle.importKey("raw", bits, { name: "AES-GCM" }, false, [
+      "decrypt",
+    ]);
+  }
+
+  function decrypt(key, blob) {
+    return crypto.subtle
+      .decrypt({ name: "AES-GCM", iv: b2u(blob.iv) }, key, b2u(blob.data))
+      .then(function (plain) {
+        return new Uint8Array(plain);
+      });
+  }
   function u2b(bytes) {
     var binary = "";
     for (var i = 0; i < bytes.length; i += 0x8000) {
@@ -54,20 +153,6 @@
       })
       .then(function (bits) {
         return new Uint8Array(bits);
-      });
-  }
-
-  function importKey(bits) {
-    return crypto.subtle.importKey("raw", bits, { name: "AES-GCM" }, false, [
-      "decrypt",
-    ]);
-  }
-
-  function decrypt(key, blob) {
-    return crypto.subtle
-      .decrypt({ name: "AES-GCM", iv: b2u(blob.iv) }, key, b2u(blob.data))
-      .then(function (plain) {
-        return new Uint8Array(plain);
       });
   }
 
@@ -121,7 +206,6 @@
     var ext = at === -1 ? "" : String(path).slice(at + 1).toLowerCase();
     return TYPES[ext] || "application/octet-stream";
   }
-
   /*
    * The site's own root, as an absolute URL.
    *
@@ -513,7 +597,25 @@
         sessionStorage.setItem(KEY_PREFIX + payload.salt, u2b(bits));
       } catch (e) {}
 
-      return reviveCritical(document_.html, key, document_.assets).then(function (html) {
+      revealedAssets = document_.assets || [];
+
+      /*
+       * With the worker in charge the page is written exactly as published.
+       * Every file it asks for, now or later, is decrypted on the way in --
+       * and a module keeps a real URL, so its own imports resolve, which a
+       * blob URL could never do. Without the worker, the two passes below.
+       */
+      return servedByWorker(revealedAssets)
+        .then(function (byWorker) {
+          return (byWorker
+            ? Promise.resolve(document_.html)
+            : reviveCritical(document_.html, key, document_.assets)
+          ).then(function (html) {
+            return { html: html, byWorker: byWorker };
+          });
+        })
+        .then(function (ready) {
+        var html = ready.html;
         /*
          * Written whole: the payload is a document, not a fragment, so this
          * is the same thing the browser would have done with the real page.
@@ -529,7 +631,8 @@
           document.open();
           document.write(html);
           document.close();
-          swapAssets(document, key, document_.assets);
+          answerWorker();
+          if (!ready.byWorker) swapAssets(document, key, document_.assets);
         };
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", write);

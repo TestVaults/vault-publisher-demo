@@ -8,7 +8,7 @@
   --osp-font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --osp-font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --osp-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --osp-measure: 68ch;
+  --osp-measure: 42.75rem;
   --osp-base-size: 1rem;
   --osp-line-height: 1.7;
   --osp-title-size: clamp(1.9rem, 1.4rem + 2vw, 2.5rem);
@@ -787,19 +787,156 @@ body {
 .markdown-rendered .footnote-ref a { text-decoration: none; }
 
 /* --- diagrams -------------------------------------------------------- *
- * Mermaid ships its geometry and its palette together, scoped to the
- * diagram's own id. The palette is taken out at build time, so what arrives
- * here is shape, stroke width and dash pattern with no colour at all, and
- * every rule below is the page deciding what a diagram looks like.
+ * Two renderers, which colour themselves in two different ways.
+ *
+ * Classic Mermaid ships its geometry and its palette together, scoped to
+ * the diagram's own id. The palette is taken out at build time, so what
+ * arrives here is shape, stroke width and dash pattern with no colour at
+ * all, and the rules below are the page deciding what it looks like.
+ *
+ * Obsidian's own renderer (svg.pele) does the opposite: it paints from
+ * custom properties and holds no literal colours at all, which is why
+ * neutralizeMermaidColours passes over it -- there is nothing literal in
+ * it to take out. It emits fill="var(--pele-surface,#f3f3f3)", and the
+ * harvested app stylesheet maps --pele-* onto --mermaid-*, which it
+ * maps in turn onto --text-normal, --background-primary and the rest
+ * of the app's own namespace -- none of which exists on a published page.
+ * So every one of those chains collapsed to the light fallback baked into
+ * the attribute, and a dark site got light boxes. Text was the half that
+ * *did* get themed, by the blanket rule at the end of this section, which
+ * is what made it unreadable rather than merely wrong: on a dark page the
+ * labels came out near-white on near-white.
  *
  * Shape selectors are qualified by element -- rect.actor, not .actor --
  * because Mermaid puts the same class on a box and on the text inside it,
  * and a label painted with the box fill is a label nobody can read.
  * --------------------------------------------------------------------- */
 
+/* The palette Obsidian's renderer paints from, answered in the site's own
+   terms so that a diagram tracks the theme and the light/dark switch for
+   free -- every value here resolves through --osp-*, which is already
+   redeclared for dark.
+
+   On body rather than on :root because the harvested stylesheet
+   declares the same names on body, and a declaration on the element
+   beats one inherited from its parent: at :root this would be shadowed
+   and change nothing. assets/site.css is linked after
+   assets/obsidian.css, so at equal specificity these win.
+
+   Both namespaces are set deliberately. --mermaid-* is what the
+   harvested mapping reads; --pele-* is what the SVG itself reads, and
+   setting it directly is what keeps a diagram themed on a build whose CSS
+   harvest came back empty.
+
+   The categorical series colours are left out on purpose. They are a
+   diagram's data rather than its furniture, the renderer's own defaults
+   are saturated enough to read on either background, and inventing eight
+   of them per theme is a palette decision this file should not be making
+   on its own. Unset, they fall back to those defaults. */
+body {
+  --mermaid-background: var(--osp-bg);
+  --mermaid-text-color: var(--osp-text);
+  --mermaid-muted-color: var(--osp-text-muted);
+  --mermaid-line-color: var(--osp-dgm-line);
+  --mermaid-surface: var(--osp-dgm-fill);
+  --mermaid-surface-alt: var(--osp-dgm-note);
+  --mermaid-border-color: var(--osp-dgm-stroke);
+  --mermaid-accent: var(--osp-accent);
+  --mermaid-radius: var(--osp-radius);
+
+  --pele-bg: var(--osp-bg);
+  --pele-fg: var(--osp-text);
+  --pele-muted: var(--osp-text-muted);
+  --pele-line: var(--osp-dgm-line);
+  --pele-surface: var(--osp-dgm-fill);
+  --pele-surface-alt: var(--osp-dgm-note);
+  --pele-border: var(--osp-dgm-stroke);
+  --pele-accent: var(--osp-accent);
+  --pele-radius: var(--osp-radius);
+}
+
 .markdown-rendered .mermaid-wrapper,
 .markdown-rendered .mermaid { margin: 0 0 1.5rem; text-align: center; }
 .markdown-rendered .mermaid svg { max-width: 100%; height: auto; }
+
+/* --- diagrams: zoom and full screen ---------------------------------- *
+ * The controls appear when a diagram is pointed at or focused, and stay
+ * on a screen that cannot hover. A diagram at its normal size lets a touch
+ * scroll the page; a zoomed one takes the touch for itself, to pan. */
+.markdown-rendered .mermaid[data-osp-diagram] {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-x pan-y;
+}
+.markdown-rendered .mermaid[data-osp-zoomed] { touch-action: none; cursor: grab; }
+.markdown-rendered .mermaid[data-osp-panning],
+.osp-diagram-stage[data-osp-panning] { cursor: grabbing; }
+.osp-diagram-canvas { transform-origin: 0 0; }
+
+.osp-diagram-tools {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--osp-bg);
+  border: 1px solid var(--osp-border);
+  border-radius: var(--osp-radius);
+  opacity: 0;
+  transition: opacity 120ms ease;
+  z-index: 1;
+}
+.markdown-rendered .mermaid[data-osp-diagram]:hover .osp-diagram-tools,
+.markdown-rendered .mermaid[data-osp-diagram]:focus-within .osp-diagram-tools,
+.markdown-rendered .mermaid[data-osp-zoomed] .osp-diagram-tools { opacity: 1; }
+@media (hover: none) {
+  .osp-diagram-tools { opacity: 1; }
+}
+
+.osp-diagram-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--osp-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: max(4px, calc(var(--osp-radius) - 2px));
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.osp-diagram-btn:hover { background: var(--osp-hover); color: var(--osp-text); }
+.osp-diagram-btn:active { background: var(--osp-press); }
+
+/* Full screen: the page is out of the way, so the wheel zooms and a drag
+   pans without asking. Above the site's own layers. */
+.osp-diagram-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  background: var(--osp-bg);
+}
+.osp-diagram-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+}
+.osp-diagram-stage .mermaid { margin: 0; }
+.osp-diagram-viewer .osp-diagram-tools {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  opacity: 1;
+}
+:root[data-osp-viewing] body { overflow: hidden; }
 
 .markdown-rendered .mermaid rect.actor,
 .markdown-rendered .mermaid rect.labelBox,
@@ -865,14 +1002,22 @@ body {
 }
 
 /* Last, and wider than the shapes: whatever a diagram writes, it writes in
-   the page's text colour. */
-.markdown-rendered .mermaid svg text,
-.markdown-rendered .mermaid svg tspan,
-.markdown-rendered .mermaid svg .label,
-.markdown-rendered .mermaid svg .nodeLabel,
-.markdown-rendered .mermaid svg .edgeLabel,
-.markdown-rendered .mermaid svg foreignObject div,
-.markdown-rendered .mermaid svg span {
+   the page's text colour.
+
+   Classic Mermaid only. svg.pele is excluded because it has already been
+   told what the page's text colour is, above, and because it uses the fill
+   of a label to mean something: a pie chart paints its slice labels in the
+   *background* colour so they read against a saturated wedge. Painting
+   those with the text colour instead is how a blanket rule turns one
+   renderer's readable diagram into another's unreadable one -- which is
+   the bug this exclusion exists to not reintroduce. */
+.markdown-rendered .mermaid svg:not(.pele) text,
+.markdown-rendered .mermaid svg:not(.pele) tspan,
+.markdown-rendered .mermaid svg:not(.pele) .label,
+.markdown-rendered .mermaid svg:not(.pele) .nodeLabel,
+.markdown-rendered .mermaid svg:not(.pele) .edgeLabel,
+.markdown-rendered .mermaid svg:not(.pele) foreignObject div,
+.markdown-rendered .mermaid svg:not(.pele) span {
   fill: var(--osp-text);
   color: var(--osp-text);
 }
@@ -974,7 +1119,9 @@ body {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  /* A view read from data says how wide its cards are; one read from the
+     grid does not, and gets the width this always had. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--osp-card-size, 15rem)), 1fr));
   gap: 1rem;
 }
 
@@ -1014,6 +1161,51 @@ body {
 
 .markdown-rendered .osp-base-card-fields dd:last-child { margin-bottom: 0; }
 
+/* The cover runs to the card's edges, above its title. Its shape and fit are
+   the view's own, set on the image itself. */
+.markdown-rendered .osp-base-card:has(> .osp-base-card-cover) { padding-top: 0; overflow: hidden; }
+.markdown-rendered .osp-base-card-cover {
+  display: block;
+  width: calc(100% + 2rem);
+  max-width: none;
+  margin: 0 -1rem 0.8rem;
+  background: var(--osp-surface);
+  border-bottom: var(--osp-rule) solid var(--osp-border);
+}
+
+/* A grouped view's group, above its cards or lines. */
+.markdown-rendered .osp-base-group-name {
+  font-family: var(--osp-font-ui);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--osp-text-muted);
+  margin: 1rem 0 0.5rem;
+}
+.markdown-rendered .osp-base > .osp-base-group-name:first-of-type { margin-top: 0; }
+
+/* A list view: one line per row, under the markers the view asked for. */
+.markdown-rendered .osp-base-list { margin: 0; }
+.markdown-rendered .osp-base-list[data-markers="none"] { list-style: none; padding-inline-start: 0; }
+.markdown-rendered .osp-base-list-sep { color: var(--osp-text-muted); }
+.markdown-rendered .osp-base-list-more {
+  color: var(--osp-text-muted);
+  font-size: 0.9em;
+  padding-inline-start: 1rem;
+}
+
+/* A table's summary row. The label is quieter than the value it names. */
+.markdown-rendered .osp-base-table tfoot td {
+  border-top: var(--osp-rule) solid var(--osp-border);
+  font-weight: 600;
+}
+.markdown-rendered .osp-base-summary-label {
+  color: var(--osp-text-muted);
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
 /* A base that failed to evaluate. Shown rather than swallowed: a reader
    seeing nothing cannot tell an empty result from a broken query. */
 .markdown-rendered .osp-base-error {
@@ -1027,8 +1219,11 @@ body {
 
 /* A view showing fewer rows than it found. Quieter than an error, because it
    is not one, but it has to be visible: a partial table that says nothing is
-   indistinguishable from a complete one. */
-.markdown-rendered .osp-base-truncated {
+   indistinguishable from a complete one. The same goes for an empty result
+   and for a view type the site cannot show. */
+.markdown-rendered .osp-base-truncated,
+.markdown-rendered .osp-base-empty,
+.markdown-rendered .osp-base-unsupported-note {
   font-family: var(--osp-font-ui);
   font-size: 0.78rem;
   color: var(--osp-text-muted);
@@ -1637,8 +1832,87 @@ body {
   z-index: 1;
   background: var(--osp-surface);
 }
+.osp-browse-title { align-items: center; gap: 0.35rem; }
+.osp-browse-name {
+  flex: none;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
 
-.osp-tree, .osp-tree ul, .osp-outline, .osp-outline ul, .osp-graph-key {
+/* Collapse all and reveal, after the count, as quiet as the label they sit
+   beside until pointed at. */
+.osp-tree-tools { display: flex; flex: none; gap: 0.1rem; }
+.osp-tree-tools[hidden] { display: none; }
+.osp-tree-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: max(5px, var(--osp-radius));
+  background: transparent;
+  color: var(--osp-text-muted);
+  cursor: pointer;
+  transition: color 120ms ease, background 120ms ease;
+}
+.osp-tree-tool:hover { color: var(--osp-text); background: var(--osp-hover); }
+.osp-tree-tool[aria-pressed="true"] { color: var(--osp-accent); }
+.osp-tree-tool:focus-visible { outline: 2px solid var(--osp-accent); outline-offset: 1px; }
+
+/* --- Start here -------------------------------------------------------
+ * The author's starting points, pinned above the tree.
+ *
+ * Held still by position in the flex column rather than by position:
+ * sticky: the section is a sibling of .osp-panel-body, and the body is
+ * the only thing in the panel that scrolls. A sticky block inside the body
+ * would have to win a fight with .osp-browse-title, which is already
+ * pinned at top: 0 a few rows below it and would slide underneath.
+ *
+ * max-height is the load-bearing line. Nothing limits how many notes an
+ * author pins, the overflow expands to all of them, and flex: none with
+ * thirty rows in it would push the tree out of the panel entirely. Capped
+ * at a little over a third, the list scrolls inside itself and the tree
+ * always keeps the rest -- which is the whole reason this sits beside the
+ * tree rather than on top of it.
+ * -------------------------------------------------------------------- */
+.osp-pins {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 38%;
+  padding: 0 0.5rem 0.35rem;
+  border-bottom: var(--osp-rule) solid var(--osp-border);
+}
+.osp-pins-title { flex: none; }
+.osp-pins-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+
+/* The toggle under the rows it reveals rather than over them. A <details>
+   carries its summary first by rule, so the order a reader sees is a layout
+   decision: the list, then the control that extends it. */
+.osp-pins-rest { display: flex; flex-direction: column; }
+.osp-pins-rest > summary { order: 2; list-style: none; }
+.osp-pins-rest > summary::-webkit-details-marker { display: none; }
+.osp-pins-rest > .osp-pin-list { order: 1; }
+
+.osp-pins-toggle { color: var(--osp-link); }
+.osp-pins-toggle:hover { color: var(--osp-link); }
+.osp-pins-chev { transition: transform 180ms var(--osp-ease); opacity: 0.7; }
+.osp-pins-rest[open] .osp-pins-chev { transform: rotate(180deg); }
+
+/* One summary, two labels, and the stylesheet says which is true. The count
+   is how many more there are, so it goes with "Show more" and not with the
+   list it was counting. */
+.osp-pins-less { display: none; }
+.osp-pins-rest[open] .osp-pins-more { display: none; }
+.osp-pins-rest[open] .osp-pins-less { display: inline; }
+.osp-pins-rest[open] .osp-pins-count { display: none; }
+
+.osp-tree, .osp-tree ul, .osp-pin-list, .osp-outline, .osp-outline ul, .osp-graph-key {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -2004,15 +2278,36 @@ body {
  * that would switch it is hidden -- see sourcePane in page.ts.
  * --------------------------------------------------------------------- */
 
-.osp-source { display: none; max-width: var(--osp-measure); }
+/* Wider than the article, on purpose and only here. The measure is a prose
+   measure, counted in a proportional font; this pane is monospace, and a
+   vault whose notes are hard wrapped at 76 to 80 columns does not fit in
+   it. At the reading width the pane held 77.2 columns against source lines
+   of 78, so the file's own lines were soft wrapped a word short of their
+   end and the reader could not tell which breaks were the file's and which
+   were the viewport's -- the one thing a source view has to get right.
+
+   45.5rem is 80 columns of the mono stack at 0.875rem plus the block's
+   padding and border. A floor rather than a width: a theme with a measure
+   wider than that keeps it. It is counted in characters of a font, which
+   is what ch is for and what the measure itself deliberately is not, but
+   the sum is written out as a rem because only this one element uses it --
+   see the note in themes.ts for why a shared token cannot be a ch. */
+.osp-source { display: none; max-width: max(var(--osp-measure), 45.5rem); }
+/* The floor is a floor under the measure, not under the window: wide and
+   full mean no limit here as everywhere else. Stated rather than left to
+   max() going invalid when --osp-measure is none, which lands on the right
+   answer for the wrong reason and only until someone reads it. */
+:root[data-osp-width="wide"] .osp-source,
+:root[data-osp-width="full"] .osp-source { max-width: none; }
 .osp-source .osp-code { margin: 0; }
 /* The bar's label is a file name here, not a language token: it keeps the
    note's own capitals and reads as the file a reader could go and open. */
 .osp-source .osp-code-lang { text-transform: none; letter-spacing: 0.01em; }
-/* A note's source is one long line per paragraph, so the block wraps rather
-   than scrolls sideways. The reader came for the text, not its line breaks,
-   and a paragraph they have to drag a scrollbar through to read is not the
-   note back. */
+/* The block wraps rather than scrolls sideways. A note's source is one long
+   line per paragraph when nobody hard wraps it, and a table or a long link
+   even when they do -- this vault's own notes run to 227 characters. The
+   reader came for the text, not its line breaks, and a paragraph they have
+   to drag a scrollbar through to read is not the note back. */
 .osp-source pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 :root[data-osp-view="markdown"] .osp-source { display: block; }
@@ -2021,12 +2316,18 @@ body {
 /* The outline's anchors point at headings that are not on screen. */
 :root[data-osp-view="markdown"] .osp-rail-outline { display: none; }
 
+/* No measure of its own: this row is inside the article, which is already
+   holding the column. Setting it here a second time was how the rule under
+   a note's title came to end short of the callout below it -- the measure
+   used to be in ch, and this row is set in the UI font two steps down from
+   the body, so the same token resolved narrower here than it did one
+   element up. The token is in rem now and the double constraint would be
+   harmless, but it is still a width maintained in two places. */
 .osp-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 1.25rem;
-  max-width: var(--osp-measure);
   margin: 0 0 1.5rem;
   padding: 0 0 1.25rem;
   border-bottom: var(--osp-rule) solid var(--osp-border);
@@ -2169,6 +2470,12 @@ body {
   color: var(--osp-text-muted);
 }
 .osp-rail-title .osp-num { margin-left: auto; font-weight: 600; }
+
+/* "On this page" with its collapse-all, set like the tree's tools: right
+   after the label, centred on it rather than on its baseline. Folded, only
+   each section's own heading is listed. */
+.osp-outline-title { align-items: center; gap: 0.35rem; }
+.osp-outline-collapsed .osp-lvl3 { display: none; }
 
 /* A table of contents, behaving as one: a rail down the margin with the
    section being read marked on it, and nothing else moving while the note is
@@ -2422,6 +2729,7 @@ body {
   .osp-panel-toggle { display: inline-flex; }
   .osp-scrim { display: block; }
   .osp-panel-body { padding-left: 0.4rem; padding-right: 0.4rem; }
+  .osp-pins { padding-left: 0.4rem; padding-right: 0.4rem; }
 
   /* Name, then menu. Two things, one at each end.
      The field that used to hold the middle of this row is in the drawer, so
@@ -2704,6 +3012,55 @@ body {
   :root { --osp-crumb-h: 0rem; --osp-inpage-h: 0rem; }
 }
 
+/* --- back to top ------------------------------------------------------
+ * A circle in the corner of the content column, there only once the top
+ * of the page is a screen away. The dock is a zero-height strip at the end
+ * of <main> that sticks to the bottom of the window, so the button keeps
+ * to the column's right edge, clear of the right-hand panel, and takes no
+ * room in the page. Below the drawer's scrim, so an open drawer covers it.
+ * -------------------------------------------------------------------- */
+.osp-to-top-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  height: 0;
+}
+.osp-to-top {
+  position: absolute;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--osp-border);
+  border-radius: 50%;
+  /* The page's own colour with a hairline round it, so it reads as part of
+     the column rather than something floating over it. */
+  background: var(--osp-bg);
+  color: var(--osp-text-muted);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms,
+    color 120ms ease, border-color 120ms ease;
+}
+.osp-to-top.osp-to-top-on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s,
+    color 120ms ease, border-color 120ms ease;
+}
+.osp-to-top:hover { color: var(--osp-text); border-color: var(--osp-accent); }
+.osp-to-top:focus-visible { outline: 2px solid var(--osp-accent); outline-offset: 2px; }
+.osp-to-top[hidden] { display: none; }
+.osp-main:focus { outline: none; }
+@media print { .osp-to-top-dock, .osp-tree-tools { display: none !important; } }
+
 /* An outline link jumps rather than teleports, so the reader keeps their
    place in the page. */
 html { scroll-behavior: smooth; }
@@ -2738,6 +3095,7 @@ html { scroll-behavior: smooth; }
   /* Paper does not scroll: nothing may be left outside the edge of a block,
      and no control may be printed that could not be pressed. */
   .osp-code-tools { display: none; }
+  .osp-diagram-tools { display: none; }
   .osp-heading-link { display: none; }
   .osp-code pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
   .osp-scroller {

@@ -2,42 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Protected</title>
 <style>
-:root { color-scheme: light dark; --fg: #15181c; --fg-2: #596069; --bg: #fdfdfc; --line: #e1e4e8; --ink: #d4421e; }
-@media (prefers-color-scheme: dark) { :root { --fg: #e6e9ed; --fg-2: #9ba3ac; --bg: #16181c; --line: #2e333a; --ink: #f2603a; } }
-* { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
-  background: var(--bg); color: var(--fg);
-  font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-main { width: 100%; max-width: 22rem; text-align: center; }
-h1 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
-p { margin: 0 0 18px; color: var(--fg-2); font-size: 13px; }
-form { display: flex; gap: 8px; }
-input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--line);
-  border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; }
-input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-button { height: 38px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--ink);
-  color: #fff; font: inherit; font-size: 14px; font-weight: 550; cursor: pointer; }
-button[disabled] { opacity: 0.6; cursor: default; }
-.err { margin: 14px 0 0; color: var(--ink); font-size: 13px; }
+:root { color-scheme: light dark;
+  --bg: #fbfbfa; --fg: #14171a; --fg-2: #646b74; --line: #dcdfe3;
+  --field: #fff; --ink: #15181c; --bad: #b3261e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; } }
+:root[data-theme="dark"] { color-scheme: dark; --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; }
+:root[data-theme="light"] { color-scheme: light; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid;
+  place-items: center; padding: 28px; background: var(--bg); color: var(--fg);
+  caret-color: var(--ink);
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+::selection { background: color-mix(in srgb, var(--ink) 18%, transparent); }
+main { width: 100%; max-width: 22rem; }
+.mark { color: var(--fg-2); margin-bottom: 18px; }
+h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
+.lead { margin: 0 0 20px; color: var(--fg-2); font-size: 14px; }
+form { position: relative; }
+input { width: 100%; height: 46px; padding: 0 46px 0 14px; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--field); color: var(--fg); font: inherit;
+  font-size: 15px; letter-spacing: 0.06em; transition: border-color 140ms ease, box-shadow 140ms ease; }
+input::placeholder { color: var(--fg-2); letter-spacing: 0; }
+input:focus { outline: none; border-color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 15%, transparent); }
+button { position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  display: grid; place-items: center; width: 34px; height: 34px; border: 0;
+  border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer;
+  transition: background 130ms ease, color 130ms ease; }
+button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--fg); }
+button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+button:disabled { cursor: default; color: var(--fg-2); background: transparent; }
+/* Busy, from the one hook the unlock script sets. */
+.track { position: absolute; left: 1px; right: 1px; bottom: 1px; height: 2px;
+  border-radius: 0 0 9px 9px; overflow: hidden; opacity: 0; transition: opacity 120ms ease; }
+.track i { display: block; height: 100%; width: 0; background: var(--ink); }
+form:has(button:disabled) .track { opacity: 1; }
+form:has(button:disabled) .track i { animation: osp-fill 2.4s cubic-bezier(.16,1,.3,1) forwards; }
+form:has(button:disabled) input { border-color: var(--ink); }
+@keyframes osp-fill { from { width: 0 } to { width: 100% } }
+@media (prefers-reduced-motion: reduce) {
+  form:has(button:disabled) .track i { animation: none; width: 100%; opacity: .5 } }
+/* [hidden] is a UA rule at attribute specificity; a class that sets
+   display beats it, which would put the failure on screen before one. */
+.err[hidden] { display: none; }
+.err { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0;
+  color: var(--bad); font-size: 13px; }
+.err::before { content: ""; flex: none; width: 3px; align-self: stretch;
+  border-radius: 2px; background: var(--bad); }
 noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
 </style>
 </head>
 <body>
 <main>
-<h1>This page is protected</h1>
-<p>Enter the password to read it.</p>
+<div class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
+<h1>Password needed</h1>
+<p class="lead">This page is locked. Ask whoever sent you the link if you don't have the password.</p>
 <form id="osp-unlock-form">
-<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" required>
-<button id="osp-unlock-button" type="submit">Unlock</button>
+<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required autofocus>
+<button id="osp-unlock-button" type="submit" aria-label="Unlock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 6 6 6-6 6"/></svg></button>
+<span class="track" aria-hidden="true"><i></i></span>
 </form>
-<p class="err" id="osp-unlock-error" hidden>That password did not work.</p>
-<noscript>This page is encrypted, so reading it needs JavaScript.</noscript>
+<p class="err" id="osp-unlock-error" role="alert" hidden><span>That's not the right password. Try again.</span></p>
+<noscript>This page needs JavaScript to unlock.</noscript>
 </main>
-<script id="osp-locked" type="application/json">{"v":1,"salt":"zXn7IPU/gylQnGk87wv0+w==","iterations":600000,"iv":"sOjVpJ/+hu8AOy64","data":"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","root":"../../"}</script>
+<script id="osp-locked" type="application/json">{"v":1,"salt":"Qd7NgK3y5vvM2Q0NLGXYdw==","iterations":600000,"iv":"RPpos4m/UUDiQ9Ah","data":"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","root":"../../"}</script>
 <script src="../../assets/unlock.js"></script>
 </body>
 </html>
