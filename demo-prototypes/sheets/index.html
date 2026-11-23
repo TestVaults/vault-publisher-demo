@@ -1,75 +1,27 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Protected</title>
+<!doctype html><html><head><meta charset="utf-8"><title>Sheets and popovers</title>
 <style>
-:root { color-scheme: light dark;
-  --bg: #fbfbfa; --fg: #14171a; --fg-2: #646b74; --line: #dcdfe3;
-  --field: #fff; --ink: #15181c; --bad: #b3261e; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; } }
-:root[data-theme="dark"] { color-scheme: dark; --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; }
-:root[data-theme="light"] { color-scheme: light; }
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid;
-  place-items: center; padding: 28px; background: var(--bg); color: var(--fg);
-  caret-color: var(--ink);
-  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-::selection { background: color-mix(in srgb, var(--ink) 18%, transparent); }
-main { width: 100%; max-width: 22rem; }
-.mark { color: var(--fg-2); margin-bottom: 18px; }
-h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
-.lead { margin: 0 0 20px; color: var(--fg-2); font-size: 14px; }
-form { position: relative; }
-input { width: 100%; height: 46px; padding: 0 46px 0 14px; border: 1px solid var(--line);
-  border-radius: 10px; background: var(--field); color: var(--fg); font: inherit;
-  font-size: 15px; letter-spacing: 0.06em; transition: border-color 140ms ease, box-shadow 140ms ease; }
-input::placeholder { color: var(--fg-2); letter-spacing: 0; }
-input:focus { outline: none; border-color: var(--ink);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 15%, transparent); }
-button { position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
-  display: grid; place-items: center; width: 34px; height: 34px; border: 0;
-  border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer;
-  transition: background 130ms ease, color 130ms ease; }
-button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--fg); }
-button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-button:disabled { cursor: default; color: var(--fg-2); background: transparent; }
-/* Busy, from the one hook the unlock script sets. */
-.track { position: absolute; left: 1px; right: 1px; bottom: 1px; height: 2px;
-  border-radius: 0 0 9px 9px; overflow: hidden; opacity: 0; transition: opacity 120ms ease; }
-.track i { display: block; height: 100%; width: 0; background: var(--ink); }
-form:has(button:disabled) .track { opacity: 1; }
-form:has(button:disabled) .track i { animation: osp-fill 2.4s cubic-bezier(.16,1,.3,1) forwards; }
-form:has(button:disabled) input { border-color: var(--ink); }
-@keyframes osp-fill { from { width: 0 } to { width: 100% } }
-@media (prefers-reduced-motion: reduce) {
-  form:has(button:disabled) .track i { animation: none; width: 100%; opacity: .5 } }
-/* [hidden] is a UA rule at attribute specificity; a class that sets
-   display beats it, which would put the failure on screen before one. */
-.err[hidden] { display: none; }
-.err { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0;
-  color: var(--bad); font-size: 13px; }
-.err::before { content: ""; flex: none; width: 3px; align-self: stretch;
-  border-radius: 2px; background: var(--bad); }
-noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
-</style>
-</head>
-<body>
-<main>
-<div class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
-<h1>Password needed</h1>
-<p class="lead">This page is locked. Ask whoever sent you the link if you don't have the password.</p>
-<form id="osp-unlock-form">
-<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required autofocus>
-<button id="osp-unlock-button" type="submit" aria-label="Unlock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 6 6 6-6 6"/></svg></button>
-<span class="track" aria-hidden="true"><i></i></span>
-</form>
-<p class="err" id="osp-unlock-error" role="alert" hidden><span>That's not the right password. Try again.</span></p>
-<noscript>This page needs JavaScript to unlock.</noscript>
+body{margin:0;font-family:system-ui,sans-serif;background:#fafafa}
+main{max-width:720px;margin:40px auto;padding:0 20px}
+button{padding:10px 16px;border-radius:10px;border:1px solid #ccc;background:#fff;font-size:15px;margin-right:8px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:320px;background:#fff;box-shadow:-10px 0 30px #0002;padding:24px;transform:translateX(105%);transition:transform .3s}
+.drawer.open{transform:none}
+.popover{position:absolute;margin-top:8px;background:#222;color:#fff;border-radius:10px;padding:12px 16px;width:220px}
+</style></head><body><main>
+<h1>Account settings</h1>
+<p>Plain page, no frame. A drawer slides in from the right; a popover appears under a button.</p>
+<p><button id="open">Open notifications drawer</button><button id="tip">What is this?</button></p>
+<div id="tip-holder"></div>
+<p>Changes are saved automatically.</p>
 </main>
-<script id="osp-locked" type="application/json">{"v":1,"salt":"2VXugbQjm0fJvdDrddTPEg==","iterations":600000,"iv":"Im6IiWBxvctjnMFD","data":"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","root":"../../"}</script>
-<script src="../../assets/unlock.js"></script>
-</body>
-</html>
+<aside class="drawer"><h2>Notifications</h2><p>Email me about orders</p><p>Weekly digest</p><button id="close">Done</button></aside>
+<script>
+var d=document.querySelector(".drawer");
+document.getElementById("open").onclick=function(){d.classList.add("open")};
+document.getElementById("close").onclick=function(){d.classList.remove("open")};
+document.getElementById("tip").onclick=function(){var h=document.getElementById("tip-holder");if(h.firstChild){h.innerHTML="";return;}h.innerHTML='<div class="popover">Settings apply to every device you sign in on.</div>';};
+</script></body></html>
+
+<!-- osp-review:start -- added by the publisher; not in the source file -->
+<meta name="osp-review" content="{&quot;sourcePath&quot;:&quot;demo-prototypes/sheets/index.html&quot;,&quot;page&quot;:&quot;demo-prototypes/sheets/index.html&quot;,&quot;site&quot;:&quot;Spike Site&quot;,&quot;reviewer&quot;:&quot;&quot;,&quot;tracker&quot;:&quot;&quot;,&quot;stamp&quot;:true,&quot;published&quot;:true}">
+<script src="../../assets/overlay.js"></script>
+<!-- osp-review:end -->

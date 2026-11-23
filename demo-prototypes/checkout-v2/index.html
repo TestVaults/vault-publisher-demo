@@ -1,75 +1,19 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Protected</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout v2</title>
 <style>
-:root { color-scheme: light dark;
-  --bg: #fbfbfa; --fg: #14171a; --fg-2: #646b74; --line: #dcdfe3;
-  --field: #fff; --ink: #15181c; --bad: #b3261e; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; } }
-:root[data-theme="dark"] { color-scheme: dark; --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; }
-:root[data-theme="light"] { color-scheme: light; }
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid;
-  place-items: center; padding: 28px; background: var(--bg); color: var(--fg);
-  caret-color: var(--ink);
-  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-::selection { background: color-mix(in srgb, var(--ink) 18%, transparent); }
-main { width: 100%; max-width: 22rem; }
-.mark { color: var(--fg-2); margin-bottom: 18px; }
-h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
-.lead { margin: 0 0 20px; color: var(--fg-2); font-size: 14px; }
-form { position: relative; }
-input { width: 100%; height: 46px; padding: 0 46px 0 14px; border: 1px solid var(--line);
-  border-radius: 10px; background: var(--field); color: var(--fg); font: inherit;
-  font-size: 15px; letter-spacing: 0.06em; transition: border-color 140ms ease, box-shadow 140ms ease; }
-input::placeholder { color: var(--fg-2); letter-spacing: 0; }
-input:focus { outline: none; border-color: var(--ink);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 15%, transparent); }
-button { position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
-  display: grid; place-items: center; width: 34px; height: 34px; border: 0;
-  border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer;
-  transition: background 130ms ease, color 130ms ease; }
-button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--fg); }
-button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-button:disabled { cursor: default; color: var(--fg-2); background: transparent; }
-/* Busy, from the one hook the unlock script sets. */
-.track { position: absolute; left: 1px; right: 1px; bottom: 1px; height: 2px;
-  border-radius: 0 0 9px 9px; overflow: hidden; opacity: 0; transition: opacity 120ms ease; }
-.track i { display: block; height: 100%; width: 0; background: var(--ink); }
-form:has(button:disabled) .track { opacity: 1; }
-form:has(button:disabled) .track i { animation: osp-fill 2.4s cubic-bezier(.16,1,.3,1) forwards; }
-form:has(button:disabled) input { border-color: var(--ink); }
-@keyframes osp-fill { from { width: 0 } to { width: 100% } }
-@media (prefers-reduced-motion: reduce) {
-  form:has(button:disabled) .track i { animation: none; width: 100%; opacity: .5 } }
-/* [hidden] is a UA rule at attribute specificity; a class that sets
-   display beats it, which would put the failure on screen before one. */
-.err[hidden] { display: none; }
-.err { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0;
-  color: var(--bad); font-size: 13px; }
-.err::before { content: ""; flex: none; width: 3px; align-self: stretch;
-  border-radius: 2px; background: var(--bad); }
-noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
-</style>
-</head>
-<body>
-<main>
-<div class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
-<h1>Password needed</h1>
-<p class="lead">This page is locked. Ask whoever sent you the link if you don't have the password.</p>
-<form id="osp-unlock-form">
-<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required autofocus>
-<button id="osp-unlock-button" type="submit" aria-label="Unlock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 6 6 6-6 6"/></svg></button>
-<span class="track" aria-hidden="true"><i></i></span>
-</form>
-<p class="err" id="osp-unlock-error" role="alert" hidden><span>That's not the right password. Try again.</span></p>
-<noscript>This page needs JavaScript to unlock.</noscript>
-</main>
-<script id="osp-locked" type="application/json">{"v":1,"salt":"2VXugbQjm0fJvdDrddTPEg==","iterations":600000,"iv":"BbCuxVyEwVf8KHDF","data":"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","root":"../../"}</script>
-<script src="../../assets/unlock.js"></script>
-</body>
-</html>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#fff8f0;color:#1d1d1f}
+header{padding:18px 24px;background:#e0662d;color:#fff;font-weight:700;font-size:20px}
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding:24px;max-width:1100px;margin:auto}
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px #0001}
+h2{margin:0 0 12px;font-size:17px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
+button{width:100%;padding:14px;border:0;border-radius:10px;background:#e0662d;color:#fff;font-size:16px;font-weight:600;margin-top:16px}
+input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;margin:6px 0}
+</style></head><body><header>Checkout (v2): free shipping</header><main>
+<section class="card"><h2>Your order</h2><div class="row"><span>Trail shoes</span><b>$120</b></div><div class="row"><span>Socks ×2</span><b>$18</b></div><div class="row"><span>Shipping</span><b>Free</b></div><div class="row"><span>Total</span><b>$138</b></div></section>
+<section class="card"><h2>Payment</h2><input placeholder="Card number"><input placeholder="MM / YY"><input placeholder="Name on card"><button>Pay $138 now (Apple Pay available)</button></section>
+</main></body></html>
+
+<!-- osp-review:start -- added by the publisher; not in the source file -->
+<meta name="osp-review" content="{&quot;sourcePath&quot;:&quot;demo-prototypes/checkout-v2/index.html&quot;,&quot;page&quot;:&quot;demo-prototypes/checkout-v2/index.html&quot;,&quot;site&quot;:&quot;Spike Site&quot;,&quot;reviewer&quot;:&quot;&quot;,&quot;tracker&quot;:&quot;&quot;,&quot;stamp&quot;:true,&quot;published&quot;:true}">
+<script src="../../assets/overlay.js"></script>
+<!-- osp-review:end -->

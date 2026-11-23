@@ -2,74 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Protected</title>
-<style>
-:root { color-scheme: light dark;
-  --bg: #fbfbfa; --fg: #14171a; --fg-2: #646b74; --line: #dcdfe3;
-  --field: #fff; --ink: #15181c; --bad: #b3261e; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; } }
-:root[data-theme="dark"] { color-scheme: dark; --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; }
-:root[data-theme="light"] { color-scheme: light; }
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid;
-  place-items: center; padding: 28px; background: var(--bg); color: var(--fg);
-  caret-color: var(--ink);
-  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-::selection { background: color-mix(in srgb, var(--ink) 18%, transparent); }
-main { width: 100%; max-width: 22rem; }
-.mark { color: var(--fg-2); margin-bottom: 18px; }
-h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
-.lead { margin: 0 0 20px; color: var(--fg-2); font-size: 14px; }
-form { position: relative; }
-input { width: 100%; height: 46px; padding: 0 46px 0 14px; border: 1px solid var(--line);
-  border-radius: 10px; background: var(--field); color: var(--fg); font: inherit;
-  font-size: 15px; letter-spacing: 0.06em; transition: border-color 140ms ease, box-shadow 140ms ease; }
-input::placeholder { color: var(--fg-2); letter-spacing: 0; }
-input:focus { outline: none; border-color: var(--ink);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 15%, transparent); }
-button { position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
-  display: grid; place-items: center; width: 34px; height: 34px; border: 0;
-  border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer;
-  transition: background 130ms ease, color 130ms ease; }
-button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--fg); }
-button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-button:disabled { cursor: default; color: var(--fg-2); background: transparent; }
-/* Busy, from the one hook the unlock script sets. */
-.track { position: absolute; left: 1px; right: 1px; bottom: 1px; height: 2px;
-  border-radius: 0 0 9px 9px; overflow: hidden; opacity: 0; transition: opacity 120ms ease; }
-.track i { display: block; height: 100%; width: 0; background: var(--ink); }
-form:has(button:disabled) .track { opacity: 1; }
-form:has(button:disabled) .track i { animation: osp-fill 2.4s cubic-bezier(.16,1,.3,1) forwards; }
-form:has(button:disabled) input { border-color: var(--ink); }
-@keyframes osp-fill { from { width: 0 } to { width: 100% } }
-@media (prefers-reduced-motion: reduce) {
-  form:has(button:disabled) .track i { animation: none; width: 100%; opacity: .5 } }
-/* [hidden] is a UA rule at attribute specificity; a class that sets
-   display beats it, which would put the failure on screen before one. */
-.err[hidden] { display: none; }
-.err { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0;
-  color: var(--bad); font-size: 13px; }
-.err::before { content: ""; flex: none; width: 3px; align-self: stretch;
-  border-radius: 2px; background: var(--bad); }
-noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A second page, one folder down</title>
+
+<!-- The page above this one, reached with `..`. The folder structure is
+     mirrored into the site, so a reference that climbs out of this folder
+     lands in the same place it does in the vault. -->
+<link rel="stylesheet" href="../styles.css">
+
+<!-- And a stylesheet of its own, beside it. Two pages can share one
+     stylesheet and still have their own. -->
+<link rel="stylesheet" href="trend.css">
 </head>
+
 <body>
 <main>
-<div class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
-<h1>Password needed</h1>
-<p class="lead">This page is locked. Ask whoever sent you the link if you don't have the password.</p>
-<form id="osp-unlock-form">
-<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required autofocus>
-<button id="osp-unlock-button" type="submit" aria-label="Unlock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 6 6 6-6 6"/></svg></button>
-<span class="track" aria-hidden="true"><i></i></span>
-</form>
-<p class="err" id="osp-unlock-error" role="alert" hidden><span>That's not the right password. Try again.</span></p>
-<noscript>This page needs JavaScript to unlock.</noscript>
+
+<h1>A second page, one folder down</h1>
+
+<p class="lede">
+  This file lives in a subfolder and reaches back out of it with
+  <code>../styles.css</code>. If the type here matches the first page, the
+  <code>..</code> survived the move into the site.
+</p>
+
+<figure class="chart">
+  <svg viewBox="0 0 320 140" width="320" height="140" role="img"
+       aria-label="A placeholder line, rising then falling">
+    <polyline points="8,124 60,96 112,104 164,52 216,64 268,20 312,34"
+              fill="none" stroke="#7a5c2e" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="8" y1="132" x2="312" y2="132" stroke="#d8cdb8"/>
+  </svg>
+  <figcaption>
+    Inline SVG, which is part of the document rather than a file: nothing to
+    carry, nothing to resolve.
+  </figcaption>
+</figure>
+
+<p><a href="../index.html">Back to the first page</a></p>
+
 </main>
-<script id="osp-locked" type="application/json">{"v":1,"salt":"2VXugbQjm0fJvdDrddTPEg==","iterations":600000,"iv":"um8knBwFcStDXrfC","data":"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","root":"../../"}</script>
-<script src="../../assets/unlock.js"></script>
 </body>
 </html>
+
+<!-- osp-review:start -- added by the publisher; not in the source file -->
+<meta name="osp-review" content="{&quot;sourcePath&quot;:&quot;html-as-is/charts/trend.html&quot;,&quot;page&quot;:&quot;html-as-is/charts/trend.html&quot;,&quot;site&quot;:&quot;Spike Site&quot;,&quot;reviewer&quot;:&quot;&quot;,&quot;tracker&quot;:&quot;&quot;,&quot;stamp&quot;:true,&quot;published&quot;:true}">
+<script src="../../assets/overlay.js"></script>
+<!-- osp-review:end -->

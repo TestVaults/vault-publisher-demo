@@ -1,75 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-beasties-container>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>Protected</title>
-<style>
-:root { color-scheme: light dark;
-  --bg: #fbfbfa; --fg: #14171a; --fg-2: #646b74; --line: #dcdfe3;
-  --field: #fff; --ink: #15181c; --bad: #b3261e; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; } }
-:root[data-theme="dark"] { color-scheme: dark; --bg: #0f1113; --fg: #e9ecef; --fg-2: #8b949e; --line: #2a2f35; --field: #16191d; --ink: #e9ecef; --bad: #ff6b5e; }
-:root[data-theme="light"] { color-scheme: light; }
-*, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid;
-  place-items: center; padding: 28px; background: var(--bg); color: var(--fg);
-  caret-color: var(--ink);
-  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-::selection { background: color-mix(in srgb, var(--ink) 18%, transparent); }
-main { width: 100%; max-width: 22rem; }
-.mark { color: var(--fg-2); margin-bottom: 18px; }
-h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -0.016em; }
-.lead { margin: 0 0 20px; color: var(--fg-2); font-size: 14px; }
-form { position: relative; }
-input { width: 100%; height: 46px; padding: 0 46px 0 14px; border: 1px solid var(--line);
-  border-radius: 10px; background: var(--field); color: var(--fg); font: inherit;
-  font-size: 15px; letter-spacing: 0.06em; transition: border-color 140ms ease, box-shadow 140ms ease; }
-input::placeholder { color: var(--fg-2); letter-spacing: 0; }
-input:focus { outline: none; border-color: var(--ink);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 15%, transparent); }
-button { position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
-  display: grid; place-items: center; width: 34px; height: 34px; border: 0;
-  border-radius: 8px; background: transparent; color: var(--fg-2); cursor: pointer;
-  transition: background 130ms ease, color 130ms ease; }
-button:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--fg); }
-button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-button:disabled { cursor: default; color: var(--fg-2); background: transparent; }
-/* Busy, from the one hook the unlock script sets. */
-.track { position: absolute; left: 1px; right: 1px; bottom: 1px; height: 2px;
-  border-radius: 0 0 9px 9px; overflow: hidden; opacity: 0; transition: opacity 120ms ease; }
-.track i { display: block; height: 100%; width: 0; background: var(--ink); }
-form:has(button:disabled) .track { opacity: 1; }
-form:has(button:disabled) .track i { animation: osp-fill 2.4s cubic-bezier(.16,1,.3,1) forwards; }
-form:has(button:disabled) input { border-color: var(--ink); }
-@keyframes osp-fill { from { width: 0 } to { width: 100% } }
-@media (prefers-reduced-motion: reduce) {
-  form:has(button:disabled) .track i { animation: none; width: 100%; opacity: .5 } }
-/* [hidden] is a UA rule at attribute specificity; a class that sets
-   display beats it, which would put the failure on screen before one. */
-.err[hidden] { display: none; }
-.err { display: flex; gap: 7px; align-items: flex-start; margin: 12px 0 0;
-  color: var(--bad); font-size: 13px; }
-.err::before { content: ""; flex: none; width: 3px; align-self: stretch;
-  border-radius: 2px; background: var(--bad); }
-noscript { display: block; margin-top: 14px; color: var(--fg-2); font-size: 13px; }
-</style>
-</head>
+  <meta charset="utf-8">
+  <title>AngularApp</title>
+  <base href="./">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="stylesheet" href="styles-5INURTSO.css"></head>
 <body>
-<main>
-<div class="mark"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
-<h1>Password needed</h1>
-<p class="lead">This page is locked. Ask whoever sent you the link if you don't have the password.</p>
-<form id="osp-unlock-form">
-<input id="osp-unlock-password" type="password" autocomplete="current-password" aria-label="Password" placeholder="Password" required autofocus>
-<button id="osp-unlock-button" type="submit" aria-label="Unlock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13"/><path d="m12 6 6 6-6 6"/></svg></button>
-<span class="track" aria-hidden="true"><i></i></span>
-</form>
-<p class="err" id="osp-unlock-error" role="alert" hidden><span>That's not the right password. Try again.</span></p>
-<noscript>This page needs JavaScript to unlock.</noscript>
-</main>
-<script id="osp-locked" type="application/json">{"v":1,"salt":"2VXugbQjm0fJvdDrddTPEg==","iterations":600000,"iv":"gMI/R5bUo50kMn1m","data":"dlpOUfaZljCLM1wqbQOZcROKYxnMiD+FPmLtCO7xa/bOXwpqzompWesS0c10hfY1wNzQm93dq6jxIwMTQR2Pb1e6nsyPrDVq7m4aI6ht/CSNZkaTaG9xALsHkCq+AdIZVZzHL0lYBXiuydavZQ/pqivSMZPqoWyjOtIlNM5P2TvOwcobw0LDlHnyul2kVQ/TcraOEtO9WN2cY6tvh6rvaYItYdBuKx0Em7XRLjIx83+hhE/Wx1LT8ZACkrMciBLA2iH7tFoZTiPOXXRNhoaEVDYUQ2rivMihu/z++/4sWGH5ZZr/YmL4YNSMfxr6YhYBhVJGlVSTQ00m7f1w1GwkkPgipArKWELCW1SRrXPuV9STPXs+BL3SOcO6DIj1KT45TCF9F24plneBAQ24RUyDwiaGs6G45AKNfAK1bSbnDsIpCiGNZkUEqFX3NbkKE6PCaHCCwiCBYrAyXekpYpW3HyvxXC/tEhELcjeJWk7WnlECD7JkVIgyHAXegfQCM2TnQvsOAYw0fen96l0Kkcuh8dNhB96fKusSdAkqfl663VGjJXJaYAQ2klqO6xfH73j5zMMBkWOiQ3OWnNXrPty2RoKwBAsFzH4aJ+z0dbox0bTtEi16MYD3QpiLii+UCw0WUkKcZlTwmDGOBuUl9xhKJHKaFPQ+YrRrLex+KXIG2mnUHegKsbKN/s9alzM6gtQ1vp3Xt+BFri5X34RCk+LZvtXL3vSt7a14r6H6OvcjltgllYlwxkq8Cvt4NcxOcoRfyJj4ZPGqW2z4J/+tm/q2XbzLlX3JR2e5IcEi0wQ3PX/rLgCfIQuAJ+CvVrdcZ0d4RuJZVWhi6T8tlAmbDaA77uH/f3nYfRAOg1KHO2nNPHsYhjWfmgCZrpDA6y+vMNvNCOFVsh/jw5o6bJbkrPQXdeRgBOKOPc9RPAZmjB1kDi+HS40r8hSgYx6VIcXCLX7Vw0SSclcrIiCENoCvpFlEeaz0/8eMCTQ6y2rpuQKznLHYYHCLhZyNZzftPFK9VbvP5NCewWWoYx3oYgpMWEHTMJdJYll1rOfCCBzwvzbixPrL+xcpxd3zt0gQWdpbjvACmfDHqLi6eGQIXLIZpnpKIZa8SYHTc+tuInELDay/c1wyotANvfrAgZXt5UR560Z429J7T6MEjLBwXgJ0SV8odhUvUnV86F4ZKuIjrOZ6u5RfvxFtEluxHdN/dBb56AifUI2Agbd1x87Plqm4Mz3it4EVxeDSX9iBHAz/euEYlU6ZEsWBFB8GuHe1nqgGHprcCyDRdfmCAMkX/BOSwTrcC3gjUi+hTr0mxwnJoePRzSUQcgZl4UHOEDn9+3ab1kVm7qOX60kosfppsazFSHZHdYUxM/9jkz91T6bb6z8hOmvH8XalAwhtX6+SPRE803+nuZJ1op9WFnLQ4rsg9Z41F1v8FgnQmiELoS0MQTvGx/umXeMLrcSscUcJn5myGJxdm7ivLQt6NhyBygI7Efm5JJKRcz6sAHEZWIze8YI+fjYYZvi8pe6ei908f3Cygv4a/bNcqF2ZUVziL5fOgDcDRiiR/h2Ph0mrLe2HYbPDIUrzyp2OigHRmRw8xaQ3Wik8DBxYmwwOE5//iig4Xu1egnviecWdHavVymI+FKJS4e6zZrxRwSOX/u5djXBBffIsZgI2D2buGhIiX0ov4JXK2yuD/bGET8AEDEaG9+DSgkOObZ11pgAWCyubbsJystqovRo8GYkOgRlm859PuogUXS7f3brWvi5wgyH534nTlV683azhtz8m3fbLY9TKytF/5rmahOUx4Ma4reHqR6VH0rLQYG0YxOkYBPBq59mR3j/dqKZoPq7ZKN/sqWd9IqRgAg4jj8FeGceXJh4D3ProS3H6PqOEIenl0l1MkU6LAex+sHWENukTCiJUF/Z9E+iwZQvzixDUNnJiTt6jE+b1AgokxV7OlJBtyllbxlfpndfTYF8F5vMeKAqWizdS0ZuEGVF7rG9cLxXJKaMBnu7RwkGA8VunMRc4u+vpZ7P068oWyZppxodK8Ly1Cs+UGaVYs39Zku2n2hIC4x8uNdA6gffPFV618lOCdUGFC3N1BlSl8NbReN65PW024Q3l67KwZUSzXfnK4l8rkg3ASakuBG2l3RUQseXboNnY2Xg4Xgrvmj/kqlqytkd9AUnGksScKiEJBMXDEhwrK1fO/MuR3IKUv38HtbYH/i47AX1FeftabZKHtc/slgti8wagBehJ6Fui7cY63yUNVH28lgdSuH9KJ4Dl1D3kUyKYe4qjneMI3nKbOceAtXPaOMUbvGOX0zBRnNpbWqB7s53GeqOZl3MNOOhT8KVCZWVo76GCq6bfYWEi4x1sDx50n+zGFBnjJ2R4Vx3RDiKIOm8saLpOBaHGXU3YFwPtkpscy/xaENw01oHuV1SPSrhqdjgpd5l5pTjFm3mKQa/78vbpx/HMUqQiWLs8h4f1ctxX9h14xjDV/nc6+e+sOtJJ3W6IIaGN4A==","root":"../"}</script>
-<script src="../assets/unlock.js"></script>
-</body>
+  <app-root></app-root>
+<script src="polyfills-5CFQRCPP.js" type="module"></script><script src="main-UXFFUHNE.js" type="module"></script></body>
 </html>
+
+<!-- osp-review:start -- added by the publisher; not in the source file -->
+<meta name="osp-review" content="{&quot;sourcePath&quot;:&quot;angular-relative/index.html&quot;,&quot;page&quot;:&quot;angular-relative/index.html&quot;,&quot;site&quot;:&quot;Spike Site&quot;,&quot;reviewer&quot;:&quot;&quot;,&quot;tracker&quot;:&quot;&quot;,&quot;stamp&quot;:true,&quot;published&quot;:true}">
+<script src="../assets/overlay.js"></script>
+<!-- osp-review:end -->
