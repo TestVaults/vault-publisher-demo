@@ -1,7 +1,26 @@
-var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correction ink. White on it is 4.57:1, so the numerals inside a pin\n     clear AA on the one surface that is never the reviewer's to restyle. */\n  --co-pin: #d4421e;\n  --co-pin-soft: rgba(212, 66, 30, 0.1);\n  --co-ink: #b3351a;\n  --co-done: #6b7076;\n  --co-bg: #ffffff;\n  --co-bg-2: #f2f3f5;\n  --co-fg: #15181c;\n  --co-fg-2: #596069;\n  --co-fg-3: #6e757d;\n  --co-line: #e1e4e8;\n  --co-danger: #8e1d10;\n\n  /* The three priorities, each its own hue.\n     Deliberately none of them the pin's vermilion: that one already means\n     \"open, not yet dealt with\", and a priority wearing it would make a\n     high-priority comment and an unresolved one the same colour. So high is\n     a crimson rather than an orange-red, which is far enough from the number\n     badge beside it in a panel row to be told apart at a glance. Each pill\n     still carries its arrow as well, because a reader who cannot separate\n     the hues has to be able to read the level anyway. */\n  --co-pri-high-fg: #a3123f;\n  --co-pri-high-bg: #fdeaf0;\n  --co-pri-high-line: #f3bdd0;\n  --co-pri-medium-fg: #7a4e00;\n  --co-pri-medium-bg: #fdf2dc;\n  --co-pri-medium-line: #efd9a4;\n  --co-pri-low-fg: #1f5b7a;\n  --co-pri-low-bg: #e6f2f8;\n  --co-pri-low-line: #bbd9e9;\n\n  /* The outline over the block the cursor is on. Quieter than the mark: it\n     follows the pointer, and anything at full strength that moves with the\n     pointer is a flicker rather than a hint. */\n  --co-aim-line: rgba(212, 66, 30, 0.5);\n\n  --co-r-1: 6px;\n  --co-r-2: 8px;\n  --co-r-3: 12px;\n\n  --co-shadow:\n    0 1px 2px rgba(16, 18, 22, 0.06),\n    0 8px 24px -6px rgba(16, 18, 22, 0.18);\n  --co-shadow-pin:\n    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18))\n    drop-shadow(0 3px 6px rgba(0, 0, 0, 0.16));\n\n  /* Exponential ease-out: everything starts at speed and settles, which is\n     what makes a 180ms transition read as instant rather than as animation. */\n  --co-ease: cubic-bezier(0.22, 1, 0.36, 1);\n\n  font: 13px/20px Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n  color: var(--co-fg);\n}\n\n.osp-overlay[data-theme=\"dark\"] {\n  --co-pin-soft: rgba(212, 66, 30, 0.18);\n  --co-ink: #f2603a;\n  --co-done: #7d858e;\n  --co-bg: #16181c;\n  --co-bg-2: #1e2126;\n  --co-fg: #e6e9ed;\n  --co-fg-2: #9ba3ac;\n  --co-fg-3: #7d858e;\n  --co-line: #2e333a;\n  --co-aim-line: rgba(242, 96, 58, 0.55);\n  /* The same three hues lightened for ink on a dark ground, over a wash of\n     themselves rather than a solid: a saturated chip at this size glows on\n     a dark panel, where the light theme's does not. */\n  --co-pri-high-fg: #ff9ab8;\n  --co-pri-high-bg: rgba(224, 37, 94, 0.16);\n  --co-pri-high-line: rgba(224, 37, 94, 0.42);\n  --co-pri-medium-fg: #f2c468;\n  --co-pri-medium-bg: rgba(201, 146, 24, 0.16);\n  --co-pri-medium-line: rgba(201, 146, 24, 0.42);\n  --co-pri-low-fg: #8cc8e8;\n  --co-pri-low-bg: rgba(56, 150, 200, 0.18);\n  --co-pri-low-line: rgba(56, 150, 200, 0.45);\n  --co-shadow:\n    0 1px 2px rgba(0, 0, 0, 0.5),\n    0 12px 32px -8px rgba(0, 0, 0, 0.6);\n}\n\n.osp-overlay * { box-sizing: border-box; margin: 0; padding: 0; }\n.osp-overlay [hidden] { display: none !important; }\n.osp-overlay button { font: inherit; cursor: pointer; }\n.osp-overlay svg { flex: none; display: block; }\n\n/* Numbers that sit in a fixed box have to be one width, or a pin reading 1\n   and a pin reading 11 are optically off-centre from each other. */\n.osp-overlay .co-num,\n.osp-overlay .co-time,\n.osp-overlay .co-pin span,\n.osp-overlay .co-pop-pos,\n.osp-overlay .co-filter b { font-variant-numeric: tabular-nums; }\n\n/* --- the surfaces the browser draws ---------------------------------- */\n\n/*\n * Selection, caret, focus ring and scrollbar all ship with defaults that\n * belong to no design system, and inside a shadow root they are ours to\n * set. Leaving them is the difference between a thing that was built and a\n * thing that was assembled.\n */\n.osp-overlay ::selection { background: var(--co-pin-soft); color: var(--co-fg); }\n.osp-overlay textarea,\n.osp-overlay input { caret-color: var(--co-pin); }\n\n.osp-overlay :focus-visible {\n  outline: 2px solid var(--co-pin);\n  outline-offset: 2px;\n}\n.osp-overlay textarea:focus-visible,\n.osp-overlay .co-field:focus-visible { outline: none; }\n\n.osp-overlay .co-list,\n.osp-overlay .co-pop {\n  scrollbar-width: thin;\n  scrollbar-color: var(--co-line) transparent;\n}\n.osp-overlay .co-list::-webkit-scrollbar,\n.osp-overlay .co-pop::-webkit-scrollbar { width: 10px; }\n.osp-overlay .co-list::-webkit-scrollbar-track,\n.osp-overlay .co-pop::-webkit-scrollbar-track { background: transparent; }\n.osp-overlay .co-list::-webkit-scrollbar-thumb,\n.osp-overlay .co-pop::-webkit-scrollbar-thumb {\n  background: var(--co-line);\n  border: 3px solid transparent;\n  background-clip: content-box;\n  border-radius: 999px;\n}\n.osp-overlay .co-list::-webkit-scrollbar-thumb:hover,\n.osp-overlay .co-pop::-webkit-scrollbar-thumb:hover { background: var(--co-fg-3); background-clip: content-box; }\n\n/* --- the notch -------------------------------------------------------- */\n\n.osp-overlay .co-notch {\n  position: fixed;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 4px;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: 24px;\n  box-shadow: var(--co-shadow);\n  z-index: 1;\n  /* Picked up by the bar itself; its buttons keep their own cursor. */\n  cursor: grab;\n  touch-action: none;\n  user-select: none;\n}\n\n/* The six docks, each a fixed inset from the window's edges. A centred dock\n   stays in the middle of the window whether the panel is open or not; a\n   reader who wants it elsewhere drags it. */\n.osp-overlay .co-notch[data-dock^=\"bottom\"] { bottom: 24px; }\n.osp-overlay .co-notch[data-dock^=\"top\"] { top: 24px; }\n.osp-overlay .co-notch[data-dock$=\"-left\"] { left: 24px; }\n.osp-overlay .co-notch[data-dock$=\"-right\"] { right: 24px; }\n.osp-overlay .co-notch[data-dock=\"top\"],\n.osp-overlay .co-notch[data-dock=\"bottom\"] {\n  left: 50%;\n  transform: translateX(-50%);\n}\n.osp-overlay .co-notch[data-dragging] { cursor: grabbing; }\n.osp-overlay .co-notch[data-snapping] {\n  transition: left 0.2s var(--co-ease), top 0.2s var(--co-ease);\n}\n.osp-overlay .co-notch button { cursor: pointer; }\n\n.osp-overlay .co-notch-btn {\n  width: 32px;\n  height: 32px;\n  border: 0;\n  border-radius: 50%;\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.15s, color 0.15s;\n}\n.osp-overlay .co-notch-btn:hover { background: var(--co-bg-2); color: var(--co-fg); }\n.osp-overlay .co-notch-btn[data-open] { background: var(--co-bg-2); color: var(--co-fg); }\n\n.osp-overlay .co-notch-div { width: 1px; height: 20px; background: var(--co-line); }\n\n/* The three modes, as one control with a chip that slides between them --\n   which is what makes them read as a choice of one rather than three\n   independent toggles. */\n.osp-overlay .co-modes {\n  position: relative;\n  display: flex;\n  padding: 2px;\n  border: 1px solid var(--co-line);\n  border-radius: 16px;\n  background: var(--co-bg-2);\n}\n.osp-overlay .co-mode-slider {\n  position: absolute;\n  top: 2px;\n  left: 2px;\n  width: calc(33.333% - 2px);\n  height: calc(100% - 4px);\n  background: var(--co-pin);\n  border-radius: 14px;\n  transition: transform 0.22s var(--co-ease);\n  pointer-events: none;\n}\n.osp-overlay .co-mode-slider[data-at=\"1\"] { transform: translateX(100%); }\n.osp-overlay .co-mode-slider[data-at=\"2\"] { transform: translateX(200%); }\n/* Two stops, on a published build where commenting is off. The chip is\n   sized from the number of modes rather than assuming three, or it would\n   cover a third of a control with two buttons in it. */\n.osp-overlay .co-modes[data-modes=\"2\"] .co-mode-slider { width: calc(50% - 2px); }\n\n.osp-overlay .co-mode {\n  position: relative;\n  z-index: 1;\n  padding: 5px 10px;\n  border: 0;\n  border-radius: 14px;\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: color 0.2s;\n}\n.osp-overlay .co-mode[data-active] { color: #fff; }\n.osp-overlay .co-mode:not([data-active]):hover { background: var(--co-bg); color: var(--co-fg); }\n\n/* --- the notch menu --------------------------------------------------- */\n\n.osp-overlay .co-menu {\n  position: absolute;\n  bottom: calc(100% + 8px);\n  left: 0;\n  min-width: 190px;\n  padding: 4px;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  animation: co-rise 0.16s var(--co-ease);\n  z-index: 1;\n}\n/* A notch docked at the top opens its menu downwards, and one docked at the\n   right lines the menu up with its right edge, so it stays on screen. */\n.osp-overlay .co-notch[data-dock^=\"top\"] .co-menu { bottom: auto; top: calc(100% + 8px); }\n.osp-overlay .co-notch[data-dock$=\"-right\"] .co-menu { left: auto; right: 0; }\n.osp-overlay .co-menu-item {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 100%;\n  padding: 7px 10px;\n  border: 0;\n  border-radius: var(--co-r-2);\n  background: transparent;\n  color: var(--co-fg);\n  white-space: nowrap;\n  text-align: left;\n  transition: background 0.15s;\n}\n.osp-overlay .co-menu-item svg { color: var(--co-fg-2); }\n.osp-overlay .co-menu-item:hover { background: var(--co-bg-2); }\n.osp-overlay .co-menu-item:hover svg { color: var(--co-fg); }\n/* Offered but not available, rather than missing: a row that disappears\n   when there is nothing to export leaves the reviewer wondering whether\n   exporting is a thing this does at all. */\n.osp-overlay .co-menu-item[disabled] { color: var(--co-fg-3); cursor: default; }\n.osp-overlay .co-menu-item[disabled] svg { opacity: 0.5; }\n.osp-overlay .co-menu-item[disabled]:hover { background: transparent; }\n.osp-overlay .co-menu-item[disabled]:hover svg { color: var(--co-fg-2); }\n.osp-overlay .co-menu-rule { height: 1px; margin: 4px 0; background: var(--co-line); }\n.osp-overlay .co-menu-key {\n  margin-left: auto;\n  padding-left: 16px;\n  color: var(--co-fg-3);\n  font-size: 11px;\n}\n\n/* --- pins ------------------------------------------------------------- */\n\n/* The container sits at the document origin, so a pin's coordinates are\n   document coordinates and scrolling moves nothing. */\n.osp-overlay .co-pins { position: absolute; top: 0; left: 0; }\n\n/*\n * The mark. A disc on a stem whose tip is the point that was clicked, drawn\n * with a ring in the overlay's own ground so it separates from whatever the\n * reviewer's page put underneath it -- body text, a photograph, a dark\n * callout. A pin that needs the page to be a particular colour to be\n * readable is a pin that fails on the page it was most needed.\n */\n.osp-overlay .co-pin {\n  position: absolute;\n  width: 32px;\n  height: 32px;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  pointer-events: auto;\n  /* The sharp corner is at (5, 27) inside the box, so this puts that corner\n     -- not the box, and not the tag's middle -- on the point that was\n     clicked, and growing from the same origin drops it onto the point. */\n  transform: translate(-5px, -27px);\n  transform-origin: 5px 27px;\n  filter: var(--co-shadow-pin);\n  transition: filter 0.18s var(--co-ease);\n  -webkit-user-select: none;\n  user-select: none;\n}\n.osp-overlay .co-pin svg { position: absolute; inset: 0; width: 100%; height: 100%; }\n/* The ring that holds the mark off the reviewer's own content. It lives\n   here rather than on the element so it follows the theme. */\n.osp-overlay .co-pin svg path { stroke: var(--co-bg); }\n.osp-overlay .co-pin span {\n  position: absolute;\n  left: 5px;\n  top: 3px;\n  width: 24px;\n  height: 24px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #fff;\n  font-size: 12px;\n  font-weight: 650;\n  line-height: 1;\n  letter-spacing: -0.01em;\n  pointer-events: none;\n}\n.osp-overlay .co-pin:hover {\n  filter:\n    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2))\n    drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));\n}\n.osp-overlay .co-pin[data-selected] { z-index: 2; }\n.osp-overlay .co-pin:focus-visible { outline-offset: 1px; border-radius: 999px; }\n\n/* The mark being written, before it is a comment. */\n.osp-overlay .co-ghost { pointer-events: none; animation: co-pin-drop 0.24s var(--co-ease); }\n\n@keyframes co-pin-drop {\n  from { transform: translate(-5px, -33px) scale(0.4); opacity: 0; }\n  to { transform: translate(-5px, -27px) scale(1); opacity: 1; }\n}\n\n@keyframes co-rise {\n  from { opacity: 0; transform: translateY(4px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n/* --- the block under the cursor --------------------------------------- */\n\n/*\n * Which block a click would mark. It sits at the document origin like the\n * pins, so it travels with the text and needs no scroll handler, and it is\n * drawn in here rather than on the page's own element so that nothing about\n * the article being reviewed is changed by looking at it.\n *\n * The transition is on the box itself, so moving between two paragraphs\n * glides rather than cuts -- which is what makes it read as one pointer\n * rather than as two separate highlights appearing.\n */\n.osp-overlay .co-aim {\n  position: absolute;\n  pointer-events: none;\n  border-radius: 5px;\n  background: var(--co-pin-soft);\n  box-shadow: inset 0 0 0 1.5px var(--co-aim-line);\n  transition:\n    left 0.12s var(--co-ease),\n    top 0.12s var(--co-ease),\n    width 0.12s var(--co-ease),\n    height 0.12s var(--co-ease),\n    box-shadow 0.12s var(--co-ease);\n}\n/* Chosen, not hovered. Firmer, because the decision has been made and the\n   outline now says what the comment being written is about. */\n.osp-overlay .co-aim[data-locked] {\n  box-shadow: inset 0 0 0 2px var(--co-pin);\n}\n\n/* --- the capture layer ------------------------------------------------ */\n\n/* Comment mode takes every click so that dropping a pin on a link does not\n   also follow the link. The cursor carries the mode, so there is never a\n   question of which one you are in. */\n.osp-overlay .co-capture {\n  position: fixed;\n  inset: 0;\n  pointer-events: auto;\n  cursor: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 32 32'%3E%3Cpath d='M13 3 L21 3 A8 8 0 0 1 29 11 L29 19 A8 8 0 0 1 21 27 L5 27 L5 11 A8 8 0 0 1 13 3 Z' fill='%23d4421e' stroke='%23ffffff' stroke-width='5' stroke-linejoin='round' paint-order='stroke'/%3E%3Cpath d='M17 10v10M12 15h10' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E\") 4 25, crosshair;\n}\n\n/* --- the side panel --------------------------------------------------- */\n\n.osp-overlay .co-panel {\n  position: fixed;\n  top: 8px;\n  height: calc(100vh - 16px);\n  width: 320px;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  font-size: 11px;\n  z-index: 1;\n}\n.osp-overlay .co-panel[data-side=\"right\"] {\n  right: 8px;\n  animation: co-slide-right 0.2s var(--co-ease);\n}\n.osp-overlay .co-panel[data-side=\"left\"] {\n  left: 8px;\n  animation: co-slide-left 0.2s var(--co-ease);\n}\n\n@keyframes co-slide-right {\n  from { opacity: 0; transform: translateX(12px); }\n  to { opacity: 1; transform: translateX(0); }\n}\n@keyframes co-slide-left {\n  from { opacity: 0; transform: translateX(-12px); }\n  to { opacity: 1; transform: translateX(0); }\n}\n\n.osp-overlay .co-resizer {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  width: 6px;\n  cursor: ew-resize;\n  background: transparent;\n  transition: background 0.1s;\n  z-index: 2;\n}\n.osp-overlay .co-panel[data-side=\"right\"] .co-resizer { left: 0; }\n.osp-overlay .co-panel[data-side=\"left\"] .co-resizer { right: 0; }\n.osp-overlay .co-resizer:hover,\n.osp-overlay .co-resizer[data-dragging] { background: var(--co-pin); opacity: 0.3; }\n\n/*\n * The head says how much work is left, not what the panel is called.\n *\n * It was a centred title reading \"Review comments\", which is a label for a\n * thing already on screen: by the time it can be read the reviewer has\n * opened the panel and knows what it is. The one question a review panel is\n * asked first is how much is still open, and the second is how old the\n * newest mark is, so those are the two lines, left-aligned and read as a\n * sentence rather than centred as a caption.\n *\n * The two buttons are taken out of the flow. Left in the row they shortened\n * every line beneath them, which clipped the end off the meta line; pinned\n * to the corner they shorten the first line only.\n */\n.osp-overlay .co-panel-head {\n  position: relative;\n  flex: none;\n  padding: 11px 8px 10px 16px;\n  border-bottom: 1px solid var(--co-line);\n}\n.osp-overlay .co-panel-tally {\n  padding-right: 56px;\n  color: var(--co-fg);\n  font-size: 14px;\n  font-weight: 600;\n  line-height: 18px;\n  letter-spacing: -0.01em;\n}\n.osp-overlay .co-panel-meta {\n  margin-top: 2px;\n  color: var(--co-fg-3);\n  font-size: 11px;\n  line-height: 15px;\n}\n.osp-overlay .co-panel-acts {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  display: flex;\n  gap: 2px;\n}\n\n.osp-overlay .co-icon-btn {\n  width: 24px;\n  height: 24px;\n  flex: none;\n  border: 0;\n  border-radius: var(--co-r-1);\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.12s, color 0.12s;\n}\n.osp-overlay .co-icon-btn:hover { background: var(--co-bg-2); color: var(--co-fg); }\n\n/* The filter and the order on one line. With a two-line head above it,\n   a filter row and an order row of their own made three bands of chrome\n   before the first comment.\n\n   The margin underneath is the list's breathing space, held here rather\n   than as padding on the list itself: see co-list for why a scroll\n   container's top padding is a strip a sticky heading cannot cover. */\n.osp-overlay .co-controls {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex: none;\n  margin: 8px 8px 7px;\n}\n\n.osp-overlay .co-filters {\n  position: relative;\n  display: flex;\n  flex: 1;\n  min-width: 0;\n  padding: 2px;\n  border: 1px solid var(--co-line);\n  border-radius: 14px;\n  background: var(--co-bg-2);\n}\n.osp-overlay .co-filter-slider {\n  position: absolute;\n  top: 2px;\n  left: 2px;\n  width: calc(33.333% - 2px);\n  height: calc(100% - 4px);\n  background: var(--co-pin);\n  border-radius: 12px;\n  transition: transform 0.22s var(--co-ease);\n  pointer-events: none;\n}\n.osp-overlay .co-filter-slider[data-at=\"1\"] { transform: translateX(100%); }\n.osp-overlay .co-filter-slider[data-at=\"2\"] { transform: translateX(200%); }\n.osp-overlay .co-filter {\n  position: relative;\n  z-index: 1;\n  flex: 1;\n  padding: 4px 0;\n  border: 0;\n  border-radius: 12px;\n  background: transparent;\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  text-align: center;\n  transition: color 0.15s;\n}\n/* The count rides inside the label, so the scope of a filter is readable\n   before it is chosen rather than after. */\n.osp-overlay .co-filter b { font-weight: 550; opacity: 0.75; }\n.osp-overlay .co-filter[data-active] { color: #fff; }\n.osp-overlay .co-filter[data-active] b { opacity: 0.85; }\n.osp-overlay .co-filter:not([data-active]):hover { color: var(--co-fg); }\n\n/*\n * The order the list is in: one chip on the end of the filter row.\n *\n * It has been three things. A small grey word right-aligned in a row of its\n * own, naming the order it would switch *to* -- unseen as a control, and\n * backwards once seen. Then a labelled pair built like the filter row, which\n * fixed both but cost a whole band of chrome, and once the head above it\n * grew to two lines that was three layers before the first comment.\n *\n * So: a chip, on the line the filters already own. It names the order in\n * force rather than the one it would switch to, and the arrows carry the\n * toggle. A bordered chip at the pill's own height reads as a control where\n * a bare word in an empty row did not, which was the original complaint.\n */\n.osp-overlay .co-sort {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  flex: none;\n  padding: 4px 9px;\n  border: 1px solid var(--co-line);\n  border-radius: 14px;\n  background: var(--co-bg-2);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  white-space: nowrap;\n  transition: color 0.14s, border-color 0.14s;\n}\n.osp-overlay .co-sort:hover { color: var(--co-fg); border-color: var(--co-fg-3); }\n.osp-overlay .co-sort svg { opacity: 0.7; }\n\n/*\n * No padding at the top, deliberately.\n *\n * A sticky child is held inside the scroll container's *content* box, not\n * its padding box -- so with `padding-top: 4px` here, a heading asking for\n * `top: 0` came to rest 4px down, and rows scrolled past in the strip of\n * bare panel above it. The breathing space the padding gave the first\n * element belongs above the scroll container instead, as a margin under the\n * controls -- space nothing can scroll through, rather than space the list\n * owns and a stuck heading cannot cover.\n */\n.osp-overlay .co-list { flex: 1; overflow-y: auto; padding: 0 0 8px; }\n\n/*\n * The page a run of rows belongs to.\n *\n * Sticky, because the list is now long enough to scroll past the heading\n * that says which page the rows under the cursor are about -- which is the\n * one fact a grouped list must never make the reader scroll back for. The\n * page being read is named \"This page\" rather than by its filename: it is\n * the group that needs no identifying, and saying so is shorter than\n * saying which.\n */\n.osp-overlay .co-group {\n  position: sticky;\n  top: 0;\n  z-index: 1;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 10px 16px 4px;\n  background: var(--co-bg);\n  color: var(--co-fg-3);\n  font-size: 10px;\n  font-weight: 550;\n  letter-spacing: 0.06em;\n  text-transform: uppercase;\n}\n.osp-overlay .co-group[data-here] { color: var(--co-fg-2); }\n.osp-overlay .co-group-name {\n  flex: 1;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.osp-overlay .co-group-count {\n  flex: none;\n  font-variant-numeric: tabular-nums;\n  letter-spacing: 0;\n}\n/* The kind, as a glyph in front of the name: a file for a note, a window for\n   a page that was published as it was found. Dimmer than the name, which is\n   the part being read. */\n.osp-overlay .co-group svg { opacity: 0.7; }\n\n.osp-overlay .co-row { display: block; padding: 2px 8px; cursor: pointer; }\n/* A row for another page is an anchor, so it arrives wearing the browser's\n   link colour and underline. */\n.osp-overlay a.co-row { color: inherit; text-decoration: none; }\n.osp-overlay .co-row-card {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  padding: 8px;\n  border-radius: var(--co-r-2);\n  transition: background 0.12s;\n}\n.osp-overlay .co-row:hover .co-row-card { background: var(--co-bg-2); }\n.osp-overlay .co-row[data-selected] .co-row-card { background: var(--co-pin-soft); }\n.osp-overlay .co-row[data-resolved] .co-row-name strong {\n  color: var(--co-fg-2);\n  font-weight: 450;\n}\n.osp-overlay .co-row[data-resolved] .co-row-text { color: var(--co-fg-3); }\n\n.osp-overlay .co-num {\n  flex: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 999px;\n  background: var(--co-pin);\n  color: #fff;\n  font-size: 11px;\n  font-weight: 650;\n  line-height: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.osp-overlay .co-row[data-resolved] .co-num,\n.osp-overlay .co-row[data-orphan] .co-num { background: var(--co-done); }\n\n.osp-overlay .co-row-body { flex: 1; min-width: 0; }\n.osp-overlay .co-row-name {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n  min-width: 0;\n}\n.osp-overlay .co-row-name strong {\n  font-weight: 550;\n  font-size: 13px;\n  line-height: 22px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n/*\n * The pill on a comment no person typed. Deliberately not coloured: it is a\n * fact about where a comment came from, not a judgement about it, and the\n * one hue in here is spoken for.\n */\n.osp-overlay .co-tag {\n  flex: none;\n  padding: 1px 6px;\n  border: 1px solid var(--co-line);\n  border-radius: 999px;\n  background: var(--co-bg-2);\n  color: var(--co-fg-2);\n  font-size: 10px;\n  font-weight: 550;\n  line-height: 14px;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n\n/*\n * The same pill carrying an issue number instead of a word, so it keeps the\n * number's own casing and is drawn in the ink: it is the one thing in a row\n * that leads somewhere off the page.\n */\n.osp-overlay a.co-tag[data-ext] {\n  color: var(--co-ink);\n  text-transform: none;\n  letter-spacing: 0;\n  text-decoration: none;\n}\n.osp-overlay a.co-tag[data-ext]:hover { border-color: var(--co-ink); }\n\n.osp-overlay .co-time { flex: none; white-space: nowrap; color: var(--co-fg-2); font-size: 11px; }\n/* In a panel row the time goes to the far edge, so the dates line up in a\n   column of their own instead of sitting wherever the name and the pills\n   happen to end. It is the one thing in a row nobody reads on purpose. */\n.osp-overlay .co-row-name .co-time { margin-left: auto; }\n\n.osp-overlay .co-row-text {\n  margin: 1px 0 0;\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  line-clamp: 3;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}\n/*\n * The foot of a row: where the comment went, and what it is about.\n *\n * The priority spent a while down here, against the quote, and the issue\n * pill sat on the top line beside the name. They have swapped. The popup\n * puts the level in its title bar, at the top of the card, and a reviewer\n * moving between the list and the card should find the same fact in the\n * same place in both -- so the level goes up and the issue comes down,\n * where it is also out of the way of the name and the date.\n */\n.osp-overlay .co-row-foot {\n  display: flex;\n  align-items: center;\n  gap: 7px;\n  min-width: 0;\n  margin-top: 5px;\n}\n/* One line here, whatever it is elsewhere: a row is a summary, and three\n   lines of quoted prose in it would bury the comment above them. */\n.osp-overlay .co-row-foot .co-quote {\n  flex: 1;\n  min-width: 0;\n  margin-top: 0;\n  font-style: italic;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.osp-overlay .co-row-meta { margin-top: 4px; color: var(--co-fg-3); font-size: 11px; }\n\n.osp-overlay .co-quote {\n  padding-left: 7px;\n  border-left: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  overflow-wrap: break-word;\n}\n.osp-overlay .co-row .co-quote { margin-top: 5px; }\n.osp-overlay .co-warn { color: var(--co-ink); font-size: 11px; line-height: 16px; }\n.osp-overlay .co-row .co-warn { margin-top: 4px; }\n\n.osp-overlay .co-empty {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 10px;\n  padding: 48px 28px;\n  text-align: center;\n  color: var(--co-fg-2);\n}\n.osp-overlay .co-empty svg { color: var(--co-fg-3); opacity: 0.55; }\n.osp-overlay .co-empty-title { color: var(--co-fg); font-size: 13px; font-weight: 550; }\n.osp-overlay .co-empty-text { font-size: 11px; line-height: 17px; max-width: 24ch; }\n\n/*\n * Which page a row is on, when the list is one flat queue and the headings\n * are not there to say it.\n *\n * Above the author rather than beside them: it is where the comment is, not\n * who wrote it, and a row whose first line answers \"where\" reads in the\n * order the question is asked.\n */\n.osp-overlay .co-row-page {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  margin-bottom: 2px;\n  color: var(--co-fg-3);\n  font-size: 10px;\n  line-height: 14px;\n  min-width: 0;\n}\n.osp-overlay .co-row-page span {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.osp-overlay .co-row-page svg { opacity: 0.8; }\n/*\n * Which screen of an application a comment was left on.\n *\n * Set in the monospace face and boxed, because it is an address rather than\n * a name: \"#/settings\" read in the panel has to be recognisable as the thing\n * in the address bar when the reviewer gets there. It is the one label in a\n * row that is not prose, so it is the one that should not be set like prose.\n */\n.osp-overlay .co-row-screen {\n  flex: none;\n  max-width: 55%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  padding: 0 4px;\n  border: 1px solid var(--co-line);\n  border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;\n  font-size: 9px;\n  line-height: 13px;\n  color: var(--co-fg-2);\n}\n\n/* A row that leads to another page rather than opening a pin on this one.\n   Said with the number badge, which is the part that means \"there is a mark\n   over there wearing this\": hollow here, because the mark is not on screen\n   to be pointed at. */\n.osp-overlay .co-row[data-away] .co-num {\n  background: transparent;\n  border: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n}\n.osp-overlay a.co-row[data-away]:hover .co-num { border-color: var(--co-fg-3); color: var(--co-fg); }\n/* A comment with no page recorded against it -- one written into the review\n   file by hand. It is listed, but there is nowhere for it to lead. */\n.osp-overlay div.co-row[data-away] { cursor: default; }\n\n/* --- the comment popup ------------------------------------------------ */\n\n.osp-overlay .co-pop {\n  position: absolute;\n  width: 360px;\n  max-height: 400px;\n  overflow-y: auto;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  color: var(--co-fg);\n  animation: co-rise 0.15s var(--co-ease);\n  z-index: 2;\n}\n\n/*\n * Stepping from one mark to the next, as a move rather than a cut.\n *\n * The arrows swapped the card's contents where it stood, which left a\n * reviewer to work out for themselves that the card was now about\n * something else -- and about words that were often not on screen at all.\n * So the card travels to the next pin while the page scrolls it into view,\n * and its new contents fade up rather than appearing mid-flight. The two\n * movements are the same length, so they read as one.\n *\n * Only while a step is in progress: the attribute is set by the script for\n * the duration and dropped afterwards, so the card still follows a reflow\n * instantly, and still rises into place rather than sliding in when it is\n * opened for the first time.\n */\n.osp-overlay .co-pop[data-gliding] {\n  transition: left 0.34s var(--co-ease), top 0.34s var(--co-ease);\n}\n.osp-overlay .co-pop[data-gliding] > * { animation: co-fade 0.3s var(--co-ease); }\n@keyframes co-fade {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n/*\n * The title bar: what this is, how much it is asking for, and what can be\n * done to it. Three things, left to right, and the actions pushed to the far\n * edge so the eye has one place to look for a button rather than a row that\n * reflows as a quotation gets longer.\n */\n.osp-overlay .co-pop-head {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-height: 40px;\n  padding: 6px 8px 6px 14px;\n  border-bottom: 1px solid var(--co-line);\n  background: var(--co-bg-2);\n}\n/*\n * Which mark this is, and how many the page has.\n *\n * It said \"Comment\", which the thing it titles is self-evidently already.\n * The number is the pin's own -- comments are numbered by age within a page\n * and so is this -- so the head ties the card to the mark under it and says\n * how far through the page the reviewer is, which is what the arrows beside\n * it are for.\n */\n.osp-overlay .co-pop-pos {\n  flex: none;\n  font-size: 13px;\n  font-weight: 600;\n  letter-spacing: 0.01em;\n}\n.osp-overlay .co-pop-pos span { color: var(--co-fg-3); font-weight: 450; }\n.osp-overlay .co-pop-acts {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n  flex: none;\n  margin-left: auto;\n}\n\n/*\n * Priority as three hues, each carrying its arrow.\n *\n * Three levels read as a scale, and a scale is read fastest by colour, so\n * each level is drawn in its own: crimson, amber, blue. None of them is the\n * pin's vermilion, which already means \"open, not dealt with\" -- see the\n * tokens above for why that boundary is worth keeping. The arrow stays in\n * every pill, because colour alone is not a label: a reader who cannot\n * separate crimson from amber still has to be able to tell high from medium.\n *\n * One rule set serves the pill in the popup, the three buttons in the draft,\n * the rows of the priority menu and the chip in a panel row, so a level is\n * the same colour wherever it appears.\n */\n.osp-overlay .co-pri,\n.osp-overlay .co-pri-opt,\n.osp-overlay .co-row-pri {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  flex: none;\n  padding: 2px 9px;\n  border: 1px solid var(--co-line);\n  border-radius: 999px;\n  background: var(--co-bg-2);\n  color: var(--co-fg-2);\n  font: inherit;\n  font-size: 11px;\n  font-weight: 550;\n  line-height: 15px;\n  transition: background 0.14s, color 0.14s, border-color 0.14s;\n}\n.osp-overlay .co-pri-mark {\n  width: 8px;\n  text-align: center;\n  font-weight: 700;\n}\n\n/* The one place the hue is named, so every pill of a level matches. */\n.osp-overlay [data-level=\"high\"] {\n  --co-pri-fg: var(--co-pri-high-fg);\n  --co-pri-bg: var(--co-pri-high-bg);\n  --co-pri-line: var(--co-pri-high-line);\n}\n.osp-overlay [data-level=\"medium\"] {\n  --co-pri-fg: var(--co-pri-medium-fg);\n  --co-pri-bg: var(--co-pri-medium-bg);\n  --co-pri-line: var(--co-pri-medium-line);\n}\n.osp-overlay [data-level=\"low\"] {\n  --co-pri-fg: var(--co-pri-low-fg);\n  --co-pri-bg: var(--co-pri-low-bg);\n  --co-pri-line: var(--co-pri-low-line);\n}\n\n.osp-overlay .co-pri[data-level],\n.osp-overlay .co-row-pri[data-level] {\n  background: var(--co-pri-bg);\n  border-color: var(--co-pri-line);\n  color: var(--co-pri-fg);\n}\n.osp-overlay .co-pri[data-level]:hover { border-color: var(--co-pri-fg); }\n\n/* A comment on another page is read in the panel rather than against its\n   pin, so the chip is the only thing saying how much it is asking for. It\n   is quieter than the popup's pill -- the row already carries a number, a\n   name and sometimes an issue -- and says the level with its arrow and hue\n   rather than repeating the word. */\n.osp-overlay .co-row-pri {\n  padding: 1px 6px;\n  font-size: 10px;\n  line-height: 14px;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n.osp-overlay .co-row[data-resolved] .co-row-pri {\n  background: var(--co-bg-2);\n  border-color: var(--co-line);\n  color: var(--co-fg-3);\n}\n\n/*\n * What the comment is attached to, quoted above it.\n *\n * A band rather than a line of text, so \"this is the page talking\" and \"this\n * is a person talking\" are told apart before either is read.\n */\n.osp-overlay .co-pop-sel {\n  display: flex;\n  align-items: flex-start;\n  margin: 12px 16px 0;\n  padding: 8px 10px;\n  border-left: 2px solid var(--co-pin);\n  border-radius: 0 var(--co-r-1) var(--co-r-1) 0;\n  background: var(--co-pin-soft);\n}\n/* Drained, like the pin, once there is nothing left to do about it. */\n.osp-overlay .co-pop-sel[data-resolved],\n.osp-overlay .co-pop-sel[data-orphan] {\n  border-left-color: var(--co-done);\n  background: var(--co-bg-2);\n}\n.osp-overlay .co-pop-quote {\n  flex: 1;\n  min-width: 0;\n  color: var(--co-fg-2);\n  font-size: 12px;\n  line-height: 17px;\n  font-style: italic;\n  overflow-wrap: break-word;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  line-clamp: 3;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}\n.osp-overlay .co-pop-btn {\n  width: 26px;\n  height: 26px;\n  border: 0;\n  border-radius: var(--co-r-1);\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.12s, color 0.12s;\n}\n.osp-overlay .co-pop-btn:hover { background: var(--co-bg-2); color: var(--co-fg); }\n.osp-overlay .co-pop-btn[data-on] { color: var(--co-pin); }\n\n/*\n * An arrow with nowhere to go, and an arrow that leaves the page.\n *\n * The arrows walk the whole review, so the next mark is often on another\n * page -- a navigation rather than a scroll, which is a bigger thing than\n * the control looks like it does. The title says which page, but a title is\n * read only by somebody who already wondered; the dot is what makes them\n * wonder, and it costs four pixels.\n */\n.osp-overlay .co-pop-btn:disabled { opacity: 0.3; }\n.osp-overlay .co-pop-btn:disabled:hover { background: transparent; color: var(--co-fg-2); }\n.osp-overlay .co-pop-btn[data-away] { position: relative; }\n.osp-overlay .co-pop-btn[data-away]::after {\n  content: \"\";\n  position: absolute;\n  top: 4px;\n  right: 4px;\n  width: 4px;\n  height: 4px;\n  border-radius: 50%;\n  background: var(--co-pin);\n}\n.osp-overlay .co-pop-btn:disabled::after { display: none; }\n\n.osp-overlay .co-pop-threads {\n  display: flex;\n  flex-direction: column;\n  gap: 10px;\n  padding: 12px 0;\n}\n.osp-overlay .co-pop-sel + .co-pop-threads { padding-top: 10px; }\n.osp-overlay .co-pop-row {\n  position: relative;\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  padding: 0 16px;\n  min-width: 0;\n}\n.osp-overlay .co-avatar {\n  flex: none;\n  width: 24px;\n  height: 24px;\n  border-radius: 999px;\n  background: var(--co-bg-2);\n  border: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  font-weight: 650;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n}\n.osp-overlay .co-pop-wrap { display: flex; flex-direction: column; flex: 1; min-width: 0; }\n.osp-overlay .co-pop-name {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n  min-width: 0;\n}\n.osp-overlay .co-pop-name strong {\n  font-weight: 550;\n  font-size: 13px;\n  line-height: 24px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n.osp-overlay .co-pop-body { line-height: 21px; white-space: pre-wrap; word-break: break-word; }\n\n.osp-overlay .co-pop-note {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  margin: 0 16px 12px;\n  padding: 9px 10px;\n  border-radius: var(--co-r-2);\n  background: var(--co-bg-2);\n}\n\n.osp-overlay .co-resolved-row {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 9px 16px;\n  border-top: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 12px;\n}\n.osp-overlay .co-resolved-row > span:first-child {\n  flex: none;\n  width: 24px;\n  height: 24px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: var(--co-done);\n}\n\n/*\n * Why a filing did not happen, under the comment it was attempted on.\n *\n * Built like the resolved row it sits beside, because the two say the same\n * kind of thing: not what the comment is, but what has become of it. Where\n * a comment *did* go is the foot's own button now -- see co-act[data-filed]\n * below -- so this row is only ever a refusal.\n */\n.osp-overlay .co-filed {\n  display: flex;\n  align-items: baseline;\n  flex-wrap: wrap;\n  gap: 6px;\n  padding: 9px 16px;\n  border-top: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 12px;\n}\n.osp-overlay .co-filed .co-warn { flex-basis: 100%; }\n/*\n * A link that leaves the page, drawn in the ink wherever it appears.\n *\n * The colour was dropped from here when the filed-issue button took it over\n * through `co-act[data-filed]`, which left the one other user of this class\n * -- the address an export tells a reviewer to send the file to -- wearing\n * the browser's default blue and underline inside an overlay that has\n * neither anywhere else.\n */\n.osp-overlay .co-ext {\n  color: var(--co-ink);\n  font-weight: 550;\n  text-decoration: none;\n}\n/* The underline is for a link sitting in a sentence. The filed-issue button\n   wears this class too and has a stroke of its own on all four sides, which\n   a bottom border of its own would fight. */\n.osp-overlay .co-ext:not(.co-act) { border-bottom: 1px solid transparent; }\n.osp-overlay .co-ext:not(.co-act):hover { border-bottom-color: currentColor; }\n\n/*\n * The foot: what can be done about this comment, as words.\n *\n * Resolve and the overflow used to be icons in the title bar, beside the\n * close, where the one button that ends a comment's life looked exactly\n * like the one that dismisses the card. Down here they are a labelled\n * primary and a quiet overflow, which is the ordinary shape of a dialog and\n * takes no learning.\n */\n.osp-overlay .co-pop-foot {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 10px 14px;\n  border-top: 1px solid var(--co-line);\n}\n/*\n * The overflow is pinned to the far end and never shrinks.\n *\n * It holds Edit and Delete, which are the only way to either, so it going\n * missing is worse than any label in here going short. The foot does not\n * wrap -- two rows of buttons under a card this size reads as two separate\n * questions -- so a label that cannot fit is ellipsized instead, and this\n * button keeps its 26px whatever the rest comes to.\n */\n.osp-overlay .co-pop-foot .co-pop-btn { flex: none; margin-left: auto; }\n.osp-overlay .co-act {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex: 0 1 auto;\n  min-width: 0;\n  padding: 7px 14px;\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  background: var(--co-bg);\n  color: var(--co-fg);\n  font-size: 12px;\n  font-weight: 550;\n  text-decoration: none;\n  transition: border-color 0.14s, background 0.14s, filter 0.14s;\n}\n.osp-overlay .co-act:hover { border-color: var(--co-fg-3); }\n/* The icon stays; the word gives way. A button whose label is cut short\n   still says which button it is, where one pushed off the card says\n   nothing at all. */\n.osp-overlay .co-act svg { flex: none; }\n.osp-overlay .co-act span {\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n/* The primary keeps its label whole. Its three wordings are known and\n   short; what has to give way is the issue key beside it, which is as long\n   as somebody's repository happens to be. */\n.osp-overlay .co-act[data-primary] {\n  flex: none;\n  background: var(--co-pin);\n  border-color: var(--co-pin);\n  color: #fff;\n}\n.osp-overlay .co-act[data-primary]:hover { filter: brightness(1.06); }\n/*\n * Filed, and saying so in the ink.\n *\n * The action and its result were the same button in two states that looked\n * alike, so whether an issue already existed had to be read off the label.\n * The stroke answers it first, and the ink is the same one the issue key\n * wears everywhere else: this is the one control in the overlay that leaves\n * the page.\n */\n.osp-overlay .co-act[data-filed] {\n  border-color: var(--co-ink);\n  color: var(--co-ink);\n}\n.osp-overlay .co-act[data-filed]:hover {\n  background: var(--co-pin-soft);\n  border-color: var(--co-ink);\n}\n.osp-overlay .co-act[disabled] { opacity: 0.5; cursor: default; }\n.osp-overlay .co-act[disabled]:hover { border-color: var(--co-line); }\n\n.osp-overlay .co-pop-reply {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  padding: 10px 16px;\n  border-top: 1px solid var(--co-line);\n}\n.osp-overlay .co-pop-reply .co-avatar { margin-top: 2px; }\n.osp-overlay .co-pop-reply .co-input { flex: 1; }\n.osp-overlay .co-pop-reply .co-input textarea { max-height: 120px; }\n\n.osp-overlay .co-pop-menu {\n  position: absolute;\n  padding: 4px;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  box-shadow: var(--co-shadow);\n  white-space: nowrap;\n  animation: co-rise 0.14s var(--co-ease);\n  z-index: 10;\n}\n.osp-overlay .co-pop-menu-item {\n  display: block;\n  width: 100%;\n  padding: 6px 12px;\n  border: 0;\n  border-radius: var(--co-r-1);\n  background: transparent;\n  color: var(--co-fg);\n  font-size: 12px;\n  text-align: left;\n  transition: background 0.12s;\n}\n.osp-overlay .co-pop-menu[data-pri] .co-pop-menu-item {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 14px 6px 10px;\n}\n.osp-overlay .co-pop-menu[data-pri] .co-pop-menu-item .co-pri-mark {\n  color: var(--co-pri-fg);\n}\n.osp-overlay .co-pop-menu[data-pri] .co-pop-menu-item[data-on] {\n  background: var(--co-pri-bg);\n  color: var(--co-pri-fg);\n  font-weight: 550;\n}\n.osp-overlay .co-pop-menu-item:hover { background: var(--co-bg-2); }\n.osp-overlay .co-pop-menu-item[data-danger]:hover { background: var(--co-danger); color: #fff; }\n\n/* --- the draft, and the field it shares with replies ------------------ */\n\n.osp-overlay .co-draft {\n  position: absolute;\n  width: 288px;\n  max-width: calc(100vw - 16px);\n  padding: 10px;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  animation: co-rise 0.16s var(--co-ease);\n  z-index: 2;\n}\n\n/* The words the pin is about, so the comment is written with them in view\n   rather than behind the box being typed into. */\n.osp-overlay .co-draft-quote {\n  margin-bottom: 8px;\n  padding-left: 8px;\n  border-left: 2px solid var(--co-aim-line);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  overflow-wrap: break-word;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}\n\n.osp-overlay .co-draft-foot { display: flex; gap: 4px; margin-top: 8px; }\n/* Three buttons, one of them chosen. Only the chosen one wears its hue: all\n   three coloured at once would be a row of swatches to decode rather than a\n   question with an answer already in it. */\n.osp-overlay .co-pri-opt {\n  padding: 2px 8px;\n  background: transparent;\n  border-color: transparent;\n  color: var(--co-fg-3);\n  cursor: pointer;\n}\n.osp-overlay .co-pri-opt:hover { color: var(--co-pri-fg); border-color: var(--co-pri-line); }\n.osp-overlay .co-pri-opt[data-on] {\n  background: var(--co-pri-bg);\n  border-color: var(--co-pri-line);\n  color: var(--co-pri-fg);\n}\n\n.osp-overlay .co-input {\n  position: relative;\n  min-height: 30px;\n  border-radius: var(--co-r-2);\n  background: var(--co-bg-2);\n  border: 1px solid transparent;\n  transition: border-color 0.14s, background 0.14s;\n}\n.osp-overlay .co-input:focus-within { border-color: var(--co-pin); background: var(--co-bg); }\n.osp-overlay .co-input textarea {\n  display: block;\n  width: 100%;\n  min-height: 28px;\n  max-height: 200px;\n  padding: 4px 34px 4px 9px;\n  border: 0;\n  border-radius: var(--co-r-2);\n  background: transparent;\n  color: var(--co-fg);\n  font: inherit;\n  line-height: 20px;\n  resize: none;\n  outline: none;\n  overflow: hidden;\n}\n.osp-overlay .co-input textarea::placeholder { color: var(--co-fg-3); }\n.osp-overlay .co-input[data-filled] { min-height: 58px; }\n.osp-overlay .co-input[data-filled] textarea { padding-right: 9px; padding-bottom: 30px; }\n\n.osp-overlay .co-send {\n  position: absolute;\n  right: 4px;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 23px;\n  height: 23px;\n  padding: 0;\n  border: 0;\n  border-radius: 50%;\n  background: var(--co-pin);\n  color: #fff;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.14s, transform 0.14s var(--co-ease);\n}\n.osp-overlay .co-input[data-filled] .co-send { top: auto; bottom: 5px; transform: none; }\n.osp-overlay .co-send:hover:not(:disabled) { background: var(--co-ink); }\n.osp-overlay .co-send:disabled { background: var(--co-line); color: var(--co-fg-3); cursor: default; }\n\n/* --- the modal, for a name and for a confirmation --------------------- */\n\n.osp-overlay .co-scrim {\n  position: fixed;\n  inset: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  pointer-events: auto;\n  background: rgba(10, 12, 15, 0.45);\n  z-index: 3;\n}\n.osp-overlay .co-modal {\n  width: 380px;\n  max-width: calc(100vw - 32px);\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  animation: co-rise 0.18s var(--co-ease);\n}\n.osp-overlay .co-modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  height: 42px;\n  padding: 0 8px 0 16px;\n  border-bottom: 1px solid var(--co-line);\n}\n.osp-overlay .co-modal-head h3 { font-size: 13px; font-weight: 550; }\n.osp-overlay .co-modal-body { padding: 14px 16px 16px; }\n.osp-overlay .co-modal-body p {\n  margin-bottom: 14px;\n  color: var(--co-fg-2);\n  line-height: 19px;\n}\n/* The part of an answer nobody asked for but is owed anyway: what the\n   import left out, and why the number is smaller than expected. */\n.osp-overlay .co-modal-body .co-modal-note {\n  margin-top: -6px;\n  color: var(--co-fg-3);\n  font-size: 11px;\n  line-height: 17px;\n}\n\n.osp-overlay .co-field {\n  width: 100%;\n  height: 34px;\n  margin-bottom: 12px;\n  padding: 0 10px;\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  background: var(--co-bg-2);\n  color: var(--co-fg);\n  font: inherit;\n  outline: none;\n  transition: border-color 0.14s, background 0.14s;\n}\n.osp-overlay .co-field::placeholder { color: var(--co-fg-3); }\n.osp-overlay .co-field:focus { border-color: var(--co-pin); background: var(--co-bg); }\n\n.osp-overlay .co-submit {\n  width: 100%;\n  height: 34px;\n  border: 0;\n  border-radius: var(--co-r-2);\n  background: var(--co-pin);\n  color: #fff;\n  font: inherit;\n  font-weight: 550;\n  transition: background 0.14s, opacity 0.14s;\n}\n.osp-overlay .co-submit:hover:not(:disabled) { background: var(--co-ink); }\n.osp-overlay .co-submit:disabled { opacity: 0.45; cursor: not-allowed; }\n/* Deeper and duller than the mark ink, so the one irreversible button in\n   here is never mistaken for the colour that merely means \"open\". */\n.osp-overlay .co-submit[data-danger] { background: var(--co-danger); }\n.osp-overlay .co-submit[data-danger]:hover:not(:disabled) { background: #751509; }\n\n/* --- motion, for people who have asked for less of it ------------------ */\n\n@media (prefers-reduced-motion: reduce) {\n  .osp-overlay *,\n  .osp-overlay *::before,\n  .osp-overlay *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n  }\n}\n";
+var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correction ink. White on it is 4.57:1, so the numerals inside a pin\n     clear AA on the one surface that is never the reviewer's to restyle. */\n  --co-pin: #d4421e;\n  --co-pin-soft: rgba(212, 66, 30, 0.1);\n  --co-ink: #b3351a;\n  --co-done: #6b7076;\n  --co-bg: #ffffff;\n  --co-bg-2: #f2f3f5;\n  --co-fg: #15181c;\n  --co-fg-2: #596069;\n  --co-fg-3: #6e757d;\n  --co-line: #e1e4e8;\n  --co-danger: #8e1d10;\n\n  /* The three priorities, each its own hue.\n     Deliberately none of them the pin's vermilion: that one already means\n     \"open, not yet dealt with\", and a priority wearing it would make a\n     high-priority comment and an unresolved one the same colour. So high is\n     a crimson rather than an orange-red, which is far enough from the number\n     badge beside it in a panel row to be told apart at a glance. Each pill\n     still carries its arrow as well, because a reader who cannot separate\n     the hues has to be able to read the level anyway. */\n  --co-pri-high-fg: #a3123f;\n  --co-pri-high-bg: #fdeaf0;\n  --co-pri-high-line: #f3bdd0;\n  --co-pri-medium-fg: #7a4e00;\n  --co-pri-medium-bg: #fdf2dc;\n  --co-pri-medium-line: #efd9a4;\n  --co-pri-low-fg: #1f5b7a;\n  --co-pri-low-bg: #e6f2f8;\n  --co-pri-low-line: #bbd9e9;\n\n  /* The outline over the block the cursor is on. Quieter than the mark: it\n     follows the pointer, and anything at full strength that moves with the\n     pointer is a flicker rather than a hint. */\n  --co-aim-line: rgba(212, 66, 30, 0.5);\n\n  --co-r-1: 6px;\n  --co-r-2: 8px;\n  --co-r-3: 12px;\n\n  --co-shadow:\n    0 1px 2px rgba(16, 18, 22, 0.06),\n    0 8px 24px -6px rgba(16, 18, 22, 0.18);\n  --co-shadow-pin:\n    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18))\n    drop-shadow(0 3px 6px rgba(0, 0, 0, 0.16));\n\n  /* Exponential ease-out: everything starts at speed and settles, which is\n     what makes a 180ms transition read as instant rather than as animation. */\n  --co-ease: cubic-bezier(0.22, 1, 0.36, 1);\n\n  font: 13px/20px Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n  color: var(--co-fg);\n}\n\n.osp-overlay[data-theme=\"dark\"] {\n  --co-pin-soft: rgba(212, 66, 30, 0.18);\n  --co-ink: #f2603a;\n  --co-done: #7d858e;\n  --co-bg: #16181c;\n  --co-bg-2: #1e2126;\n  --co-fg: #e6e9ed;\n  --co-fg-2: #9ba3ac;\n  --co-fg-3: #7d858e;\n  --co-line: #2e333a;\n  --co-aim-line: rgba(242, 96, 58, 0.55);\n  /* The same three hues lightened for ink on a dark ground, over a wash of\n     themselves rather than a solid: a saturated chip at this size glows on\n     a dark panel, where the light theme's does not. */\n  --co-pri-high-fg: #ff9ab8;\n  --co-pri-high-bg: rgba(224, 37, 94, 0.16);\n  --co-pri-high-line: rgba(224, 37, 94, 0.42);\n  --co-pri-medium-fg: #f2c468;\n  --co-pri-medium-bg: rgba(201, 146, 24, 0.16);\n  --co-pri-medium-line: rgba(201, 146, 24, 0.42);\n  --co-pri-low-fg: #8cc8e8;\n  --co-pri-low-bg: rgba(56, 150, 200, 0.18);\n  --co-pri-low-line: rgba(56, 150, 200, 0.45);\n  --co-shadow:\n    0 1px 2px rgba(0, 0, 0, 0.5),\n    0 12px 32px -8px rgba(0, 0, 0, 0.6);\n}\n\n.osp-overlay * { box-sizing: border-box; margin: 0; padding: 0; }\n.osp-overlay [hidden] { display: none !important; }\n.osp-overlay button { font: inherit; cursor: pointer; }\n.osp-overlay svg { flex: none; display: block; }\n\n/* Numbers that sit in a fixed box have to be one width, or a pin reading 1\n   and a pin reading 11 are optically off-centre from each other. */\n.osp-overlay .co-num,\n.osp-overlay .co-time,\n.osp-overlay .co-pin span,\n.osp-overlay .co-pop-pos,\n.osp-overlay .co-filter b { font-variant-numeric: tabular-nums; }\n\n/* --- the surfaces the browser draws ---------------------------------- */\n\n/*\n * Selection, caret, focus ring and scrollbar all ship with defaults that\n * belong to no design system, and inside a shadow root they are ours to\n * set. Leaving them is the difference between a thing that was built and a\n * thing that was assembled.\n */\n.osp-overlay ::selection { background: var(--co-pin-soft); color: var(--co-fg); }\n.osp-overlay textarea,\n.osp-overlay input { caret-color: var(--co-pin); }\n\n.osp-overlay :focus-visible {\n  outline: 2px solid var(--co-pin);\n  outline-offset: 2px;\n}\n.osp-overlay textarea:focus-visible,\n.osp-overlay .co-field:focus-visible { outline: none; }\n\n.osp-overlay .co-list,\n.osp-overlay .co-pop {\n  scrollbar-width: thin;\n  scrollbar-color: var(--co-line) transparent;\n}\n.osp-overlay .co-list::-webkit-scrollbar,\n.osp-overlay .co-pop::-webkit-scrollbar { width: 10px; }\n.osp-overlay .co-list::-webkit-scrollbar-track,\n.osp-overlay .co-pop::-webkit-scrollbar-track { background: transparent; }\n.osp-overlay .co-list::-webkit-scrollbar-thumb,\n.osp-overlay .co-pop::-webkit-scrollbar-thumb {\n  background: var(--co-line);\n  border: 3px solid transparent;\n  background-clip: content-box;\n  border-radius: 999px;\n}\n.osp-overlay .co-list::-webkit-scrollbar-thumb:hover,\n.osp-overlay .co-pop::-webkit-scrollbar-thumb:hover { background: var(--co-fg-3); background-clip: content-box; }\n\n/* --- the notch -------------------------------------------------------- */\n\n.osp-overlay .co-notch {\n  position: fixed;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 4px;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: 24px;\n  box-shadow: var(--co-shadow);\n  z-index: 1;\n  /* Picked up by the bar itself; its buttons keep their own cursor. */\n  cursor: grab;\n  touch-action: none;\n  user-select: none;\n}\n\n/* The six docks, each a fixed inset from the window's edges. A centred dock\n   stays in the middle of the window whether the panel is open or not; a\n   reader who wants it elsewhere drags it. */\n.osp-overlay .co-notch[data-dock^=\"bottom\"] { bottom: 24px; }\n.osp-overlay .co-notch[data-dock^=\"top\"] { top: 24px; }\n.osp-overlay .co-notch[data-dock$=\"-left\"] { left: 24px; }\n.osp-overlay .co-notch[data-dock$=\"-right\"] { right: 24px; }\n.osp-overlay .co-notch[data-dock=\"top\"],\n.osp-overlay .co-notch[data-dock=\"bottom\"] {\n  left: 50%;\n  transform: translateX(-50%);\n}\n.osp-overlay .co-notch[data-dragging] { cursor: grabbing; }\n.osp-overlay .co-notch[data-snapping] {\n  transition: left 0.2s var(--co-ease), top 0.2s var(--co-ease);\n}\n.osp-overlay .co-notch button { cursor: pointer; }\n\n.osp-overlay .co-notch-btn {\n  width: 32px;\n  height: 32px;\n  border: 0;\n  border-radius: 50%;\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.15s, color 0.15s;\n}\n.osp-overlay .co-notch-btn:hover { background: var(--co-bg-2); color: var(--co-fg); }\n.osp-overlay .co-notch-btn[data-open] { background: var(--co-bg-2); color: var(--co-fg); }\n\n.osp-overlay .co-notch-div { width: 1px; height: 20px; background: var(--co-line); }\n\n/* The three modes, as one control with a chip that slides between them --\n   which is what makes them read as a choice of one rather than three\n   independent toggles. */\n.osp-overlay .co-modes {\n  position: relative;\n  display: flex;\n  padding: 2px;\n  border: 1px solid var(--co-line);\n  border-radius: 16px;\n  background: var(--co-bg-2);\n}\n.osp-overlay .co-mode-slider {\n  position: absolute;\n  top: 2px;\n  left: 2px;\n  width: calc(33.333% - 2px);\n  height: calc(100% - 4px);\n  background: var(--co-pin);\n  border-radius: 14px;\n  transition: transform 0.22s var(--co-ease);\n  pointer-events: none;\n}\n.osp-overlay .co-mode-slider[data-at=\"1\"] { transform: translateX(100%); }\n.osp-overlay .co-mode-slider[data-at=\"2\"] { transform: translateX(200%); }\n/* Two stops, on a published build where commenting is off. The chip is\n   sized from the number of modes rather than assuming three, or it would\n   cover a third of a control with two buttons in it. */\n.osp-overlay .co-modes[data-modes=\"2\"] .co-mode-slider { width: calc(50% - 2px); }\n\n.osp-overlay .co-mode {\n  position: relative;\n  z-index: 1;\n  padding: 5px 10px;\n  border: 0;\n  border-radius: 14px;\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: color 0.2s;\n}\n.osp-overlay .co-mode[data-active] { color: #fff; }\n.osp-overlay .co-mode:not([data-active]):hover { background: var(--co-bg); color: var(--co-fg); }\n\n/* --- the notch menu --------------------------------------------------- */\n\n.osp-overlay .co-menu {\n  position: absolute;\n  bottom: calc(100% + 8px);\n  left: 0;\n  min-width: 190px;\n  padding: 4px;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  animation: co-rise 0.16s var(--co-ease);\n  z-index: 1;\n}\n/* A notch docked at the top opens its menu downwards, and one docked at the\n   right lines the menu up with its right edge, so it stays on screen. */\n.osp-overlay .co-notch[data-dock^=\"top\"] .co-menu { bottom: auto; top: calc(100% + 8px); }\n.osp-overlay .co-notch[data-dock$=\"-right\"] .co-menu { left: auto; right: 0; }\n.osp-overlay .co-menu-item {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  width: 100%;\n  padding: 7px 10px;\n  border: 0;\n  border-radius: var(--co-r-2);\n  background: transparent;\n  color: var(--co-fg);\n  white-space: nowrap;\n  text-align: left;\n  transition: background 0.15s;\n}\n.osp-overlay .co-menu-item svg { color: var(--co-fg-2); }\n.osp-overlay .co-menu-item:hover { background: var(--co-bg-2); }\n.osp-overlay .co-menu-item:hover svg { color: var(--co-fg); }\n/* Offered but not available, rather than missing: a row that disappears\n   when there is nothing to export leaves the reviewer wondering whether\n   exporting is a thing this does at all. */\n.osp-overlay .co-menu-item[disabled] { color: var(--co-fg-3); cursor: default; }\n.osp-overlay .co-menu-item[disabled] svg { opacity: 0.5; }\n.osp-overlay .co-menu-item[disabled]:hover { background: transparent; }\n.osp-overlay .co-menu-item[disabled]:hover svg { color: var(--co-fg-2); }\n.osp-overlay .co-menu-rule { height: 1px; margin: 4px 0; background: var(--co-line); }\n.osp-overlay .co-menu-key {\n  margin-left: auto;\n  padding-left: 16px;\n  color: var(--co-fg-3);\n  font-size: 11px;\n}\n\n/* --- pins ------------------------------------------------------------- */\n\n/* The container sits at the document origin, so a pin's coordinates are\n   document coordinates and scrolling moves nothing. */\n.osp-overlay .co-pins { position: absolute; top: 0; left: 0; }\n\n/*\n * The mark. A disc on a stem whose tip is the point that was clicked, drawn\n * with a ring in the overlay's own ground so it separates from whatever the\n * reviewer's page put underneath it -- body text, a photograph, a dark\n * callout. A pin that needs the page to be a particular colour to be\n * readable is a pin that fails on the page it was most needed.\n */\n.osp-overlay .co-pin {\n  position: absolute;\n  width: 32px;\n  height: 32px;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  pointer-events: auto;\n  /* The sharp corner is at (5, 27) inside the box, so this puts that corner\n     -- not the box, and not the tag's middle -- on the point that was\n     clicked, and growing from the same origin drops it onto the point. */\n  transform: translate(-5px, -27px);\n  transform-origin: 5px 27px;\n  filter: var(--co-shadow-pin);\n  transition: filter 0.18s var(--co-ease);\n  -webkit-user-select: none;\n  user-select: none;\n}\n.osp-overlay .co-pin svg { position: absolute; inset: 0; width: 100%; height: 100%; }\n/* The ring that holds the mark off the reviewer's own content. It lives\n   here rather than on the element so it follows the theme. */\n.osp-overlay .co-pin svg path { stroke: var(--co-bg); }\n.osp-overlay .co-pin span {\n  position: absolute;\n  left: 5px;\n  top: 3px;\n  width: 24px;\n  height: 24px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #fff;\n  font-size: 12px;\n  font-weight: 650;\n  line-height: 1;\n  letter-spacing: -0.01em;\n  pointer-events: none;\n}\n.osp-overlay .co-pin:hover {\n  filter:\n    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2))\n    drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));\n}\n.osp-overlay .co-pin[data-selected] { z-index: 2; }\n.osp-overlay .co-pin:focus-visible { outline-offset: 1px; border-radius: 999px; }\n\n/* The mark being written, before it is a comment. */\n.osp-overlay .co-ghost { pointer-events: none; animation: co-pin-drop 0.24s var(--co-ease); }\n\n@keyframes co-pin-drop {\n  from { transform: translate(-5px, -33px) scale(0.4); opacity: 0; }\n  to { transform: translate(-5px, -27px) scale(1); opacity: 1; }\n}\n\n@keyframes co-rise {\n  from { opacity: 0; transform: translateY(4px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n/* --- the block under the cursor --------------------------------------- */\n\n/*\n * Which block a click would mark. It sits at the document origin like the\n * pins, so it travels with the text and needs no scroll handler, and it is\n * drawn in here rather than on the page's own element so that nothing about\n * the article being reviewed is changed by looking at it.\n *\n * The transition is on the box itself, so moving between two paragraphs\n * glides rather than cuts -- which is what makes it read as one pointer\n * rather than as two separate highlights appearing.\n */\n.osp-overlay .co-aim {\n  position: absolute;\n  pointer-events: none;\n  border-radius: 5px;\n  background: var(--co-pin-soft);\n  box-shadow: inset 0 0 0 1.5px var(--co-aim-line);\n  transition:\n    left 0.12s var(--co-ease),\n    top 0.12s var(--co-ease),\n    width 0.12s var(--co-ease),\n    height 0.12s var(--co-ease),\n    box-shadow 0.12s var(--co-ease);\n}\n/* Chosen, not hovered. Firmer, because the decision has been made and the\n   outline now says what the comment being written is about. */\n.osp-overlay .co-aim[data-locked] {\n  box-shadow: inset 0 0 0 2px var(--co-pin);\n}\n\n/* --- the capture layer ------------------------------------------------ */\n\n/* Comment mode takes every click so that dropping a pin on a link does not\n   also follow the link. The cursor carries the mode, so there is never a\n   question of which one you are in. */\n.osp-overlay .co-capture {\n  position: fixed;\n  inset: 0;\n  pointer-events: auto;\n  cursor: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 32 32'%3E%3Cpath d='M13 3 L21 3 A8 8 0 0 1 29 11 L29 19 A8 8 0 0 1 21 27 L5 27 L5 11 A8 8 0 0 1 13 3 Z' fill='%23d4421e' stroke='%23ffffff' stroke-width='5' stroke-linejoin='round' paint-order='stroke'/%3E%3Cpath d='M17 10v10M12 15h10' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E\") 4 25, crosshair;\n}\n\n/* --- the side panel --------------------------------------------------- */\n\n.osp-overlay .co-panel {\n  position: fixed;\n  top: 8px;\n  height: calc(100vh - 16px);\n  width: 320px;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  font-size: 11px;\n  z-index: 1;\n}\n.osp-overlay .co-panel[data-side=\"right\"] {\n  right: 8px;\n  animation: co-slide-right 0.2s var(--co-ease);\n}\n.osp-overlay .co-panel[data-side=\"left\"] {\n  left: 8px;\n  animation: co-slide-left 0.2s var(--co-ease);\n}\n\n@keyframes co-slide-right {\n  from { opacity: 0; transform: translateX(12px); }\n  to { opacity: 1; transform: translateX(0); }\n}\n@keyframes co-slide-left {\n  from { opacity: 0; transform: translateX(-12px); }\n  to { opacity: 1; transform: translateX(0); }\n}\n\n.osp-overlay .co-resizer {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  width: 6px;\n  cursor: ew-resize;\n  background: transparent;\n  transition: background 0.1s;\n  z-index: 2;\n}\n.osp-overlay .co-panel[data-side=\"right\"] .co-resizer { left: 0; }\n.osp-overlay .co-panel[data-side=\"left\"] .co-resizer { right: 0; }\n.osp-overlay .co-resizer:hover,\n.osp-overlay .co-resizer[data-dragging] { background: var(--co-pin); opacity: 0.3; }\n\n/*\n * The head says how much work is left, not what the panel is called.\n *\n * It was a centred title reading \"Review comments\", which is a label for a\n * thing already on screen: by the time it can be read the reviewer has\n * opened the panel and knows what it is. The one question a review panel is\n * asked first is how much is still open, and the second is how old the\n * newest mark is, so those are the two lines, left-aligned and read as a\n * sentence rather than centred as a caption.\n *\n * The two buttons are taken out of the flow. Left in the row they shortened\n * every line beneath them, which clipped the end off the meta line; pinned\n * to the corner they shorten the first line only.\n */\n.osp-overlay .co-panel-head {\n  position: relative;\n  flex: none;\n  padding: 11px 8px 10px 16px;\n  border-bottom: 1px solid var(--co-line);\n}\n.osp-overlay .co-panel-tally {\n  padding-right: 56px;\n  color: var(--co-fg);\n  font-size: 14px;\n  font-weight: 600;\n  line-height: 18px;\n  letter-spacing: -0.01em;\n}\n.osp-overlay .co-panel-meta {\n  margin-top: 2px;\n  color: var(--co-fg-3);\n  font-size: 11px;\n  line-height: 15px;\n}\n.osp-overlay .co-panel-acts {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  display: flex;\n  gap: 2px;\n}\n\n.osp-overlay .co-icon-btn {\n  width: 24px;\n  height: 24px;\n  flex: none;\n  border: 0;\n  border-radius: var(--co-r-1);\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.12s, color 0.12s;\n}\n.osp-overlay .co-icon-btn:hover { background: var(--co-bg-2); color: var(--co-fg); }\n\n/* The filter and the order on one line. With a two-line head above it,\n   a filter row and an order row of their own made three bands of chrome\n   before the first comment.\n\n   The margin underneath is the list's breathing space, held here rather\n   than as padding on the list itself: see co-list for why a scroll\n   container's top padding is a strip a sticky heading cannot cover. */\n.osp-overlay .co-controls {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex: none;\n  margin: 8px 8px 7px;\n}\n\n.osp-overlay .co-filters {\n  position: relative;\n  display: flex;\n  flex: 1;\n  min-width: 0;\n  padding: 2px;\n  border: 1px solid var(--co-line);\n  border-radius: 14px;\n  background: var(--co-bg-2);\n}\n.osp-overlay .co-filter-slider {\n  position: absolute;\n  top: 2px;\n  left: 2px;\n  width: calc(33.333% - 2px);\n  height: calc(100% - 4px);\n  background: var(--co-pin);\n  border-radius: 12px;\n  transition: transform 0.22s var(--co-ease);\n  pointer-events: none;\n}\n.osp-overlay .co-filter-slider[data-at=\"1\"] { transform: translateX(100%); }\n.osp-overlay .co-filter-slider[data-at=\"2\"] { transform: translateX(200%); }\n.osp-overlay .co-filter {\n  position: relative;\n  z-index: 1;\n  flex: 1;\n  padding: 4px 0;\n  border: 0;\n  border-radius: 12px;\n  background: transparent;\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  text-align: center;\n  transition: color 0.15s;\n}\n/* The count rides inside the label, so the scope of a filter is readable\n   before it is chosen rather than after. */\n.osp-overlay .co-filter b { font-weight: 550; opacity: 0.75; }\n.osp-overlay .co-filter[data-active] { color: #fff; }\n.osp-overlay .co-filter[data-active] b { opacity: 0.85; }\n.osp-overlay .co-filter:not([data-active]):hover { color: var(--co-fg); }\n\n/*\n * The order the list is in: one chip on the end of the filter row.\n *\n * It has been three things. A small grey word right-aligned in a row of its\n * own, naming the order it would switch *to* -- unseen as a control, and\n * backwards once seen. Then a labelled pair built like the filter row, which\n * fixed both but cost a whole band of chrome, and once the head above it\n * grew to two lines that was three layers before the first comment.\n *\n * So: a chip, on the line the filters already own. It names the order in\n * force rather than the one it would switch to, and the arrows carry the\n * toggle. A bordered chip at the pill's own height reads as a control where\n * a bare word in an empty row did not, which was the original complaint.\n */\n.osp-overlay .co-sort {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  flex: none;\n  padding: 4px 9px;\n  border: 1px solid var(--co-line);\n  border-radius: 14px;\n  background: var(--co-bg-2);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  white-space: nowrap;\n  transition: color 0.14s, border-color 0.14s;\n}\n.osp-overlay .co-sort:hover { color: var(--co-fg); border-color: var(--co-fg-3); }\n.osp-overlay .co-sort svg { opacity: 0.7; }\n\n/*\n * No padding at the top, deliberately.\n *\n * A sticky child is held inside the scroll container's *content* box, not\n * its padding box -- so with `padding-top: 4px` here, a heading asking for\n * `top: 0` came to rest 4px down, and rows scrolled past in the strip of\n * bare panel above it. The breathing space the padding gave the first\n * element belongs above the scroll container instead, as a margin under the\n * controls -- space nothing can scroll through, rather than space the list\n * owns and a stuck heading cannot cover.\n */\n.osp-overlay .co-list { flex: 1; overflow-y: auto; padding: 0 0 8px; }\n\n/*\n * The page a run of rows belongs to.\n *\n * Sticky, because the list is now long enough to scroll past the heading\n * that says which page the rows under the cursor are about -- which is the\n * one fact a grouped list must never make the reader scroll back for. The\n * page being read is named \"This page\" rather than by its filename: it is\n * the group that needs no identifying, and saying so is shorter than\n * saying which.\n */\n.osp-overlay .co-group {\n  position: sticky;\n  top: 0;\n  z-index: 1;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 10px 16px 4px;\n  background: var(--co-bg);\n  color: var(--co-fg-3);\n  font-size: 10px;\n  font-weight: 550;\n  letter-spacing: 0.06em;\n  text-transform: uppercase;\n}\n.osp-overlay .co-group[data-here] { color: var(--co-fg-2); }\n.osp-overlay .co-group-name {\n  flex: 1;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.osp-overlay .co-group-count {\n  flex: none;\n  font-variant-numeric: tabular-nums;\n  letter-spacing: 0;\n}\n/* The kind, as a glyph in front of the name: a file for a note, a window for\n   a page that was published as it was found. Dimmer than the name, which is\n   the part being read. */\n.osp-overlay .co-group svg { opacity: 0.7; }\n\n.osp-overlay .co-row { display: block; padding: 2px 8px; cursor: pointer; }\n/* A row for another page is an anchor, so it arrives wearing the browser's\n   link colour and underline. */\n.osp-overlay a.co-row { color: inherit; text-decoration: none; }\n.osp-overlay .co-row-card {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  padding: 8px;\n  border-radius: var(--co-r-2);\n  transition: background 0.12s;\n}\n.osp-overlay .co-row:hover .co-row-card { background: var(--co-bg-2); }\n.osp-overlay .co-row[data-selected] .co-row-card { background: var(--co-pin-soft); }\n.osp-overlay .co-row[data-resolved] .co-row-name strong {\n  color: var(--co-fg-2);\n  font-weight: 450;\n}\n.osp-overlay .co-row[data-resolved] .co-row-text { color: var(--co-fg-3); }\n\n.osp-overlay .co-num {\n  flex: none;\n  width: 22px;\n  height: 22px;\n  border-radius: 999px;\n  background: var(--co-pin);\n  color: #fff;\n  font-size: 11px;\n  font-weight: 650;\n  line-height: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.osp-overlay .co-row[data-resolved] .co-num,\n.osp-overlay .co-row[data-orphan] .co-num { background: var(--co-done); }\n\n.osp-overlay .co-row-body { flex: 1; min-width: 0; }\n.osp-overlay .co-row-name {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n  min-width: 0;\n}\n.osp-overlay .co-row-name strong {\n  font-weight: 550;\n  font-size: 13px;\n  line-height: 22px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n/*\n * The pill on a comment no person typed. Deliberately not coloured: it is a\n * fact about where a comment came from, not a judgement about it, and the\n * one hue in here is spoken for.\n */\n.osp-overlay .co-tag {\n  flex: none;\n  padding: 1px 6px;\n  border: 1px solid var(--co-line);\n  border-radius: 999px;\n  background: var(--co-bg-2);\n  color: var(--co-fg-2);\n  font-size: 10px;\n  font-weight: 550;\n  line-height: 14px;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n\n/*\n * The same pill carrying an issue number instead of a word, so it keeps the\n * number's own casing and is drawn in the ink: it is the one thing in a row\n * that leads somewhere off the page.\n */\n.osp-overlay a.co-tag[data-ext] {\n  color: var(--co-ink);\n  text-transform: none;\n  letter-spacing: 0;\n  text-decoration: none;\n}\n.osp-overlay a.co-tag[data-ext]:hover { border-color: var(--co-ink); }\n\n.osp-overlay .co-time { flex: none; white-space: nowrap; color: var(--co-fg-2); font-size: 11px; }\n/* In a panel row the time goes to the far edge, so the dates line up in a\n   column of their own instead of sitting wherever the name and the pills\n   happen to end. It is the one thing in a row nobody reads on purpose. */\n.osp-overlay .co-row-name .co-time { margin-left: auto; }\n\n.osp-overlay .co-row-text {\n  margin: 1px 0 0;\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  line-clamp: 3;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}\n/*\n * The foot of a row: where the comment went, and what it is about.\n *\n * The priority spent a while down here, against the quote, and the issue\n * pill sat on the top line beside the name. They have swapped. The popup\n * puts the level in its title bar, at the top of the card, and a reviewer\n * moving between the list and the card should find the same fact in the\n * same place in both -- so the level goes up and the issue comes down,\n * where it is also out of the way of the name and the date.\n */\n.osp-overlay .co-row-foot {\n  display: flex;\n  align-items: center;\n  gap: 7px;\n  min-width: 0;\n  margin-top: 5px;\n}\n/* One line here, whatever it is elsewhere: a row is a summary, and three\n   lines of quoted prose in it would bury the comment above them. */\n.osp-overlay .co-row-foot .co-quote {\n  flex: 1;\n  min-width: 0;\n  margin-top: 0;\n  font-style: italic;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.osp-overlay .co-row-meta { margin-top: 4px; color: var(--co-fg-3); font-size: 11px; }\n\n.osp-overlay .co-quote {\n  padding-left: 7px;\n  border-left: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  overflow-wrap: break-word;\n}\n.osp-overlay .co-row .co-quote { margin-top: 5px; }\n.osp-overlay .co-warn { color: var(--co-ink); font-size: 11px; line-height: 16px; }\n.osp-overlay .co-row .co-warn { margin-top: 4px; }\n\n.osp-overlay .co-empty {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 10px;\n  padding: 48px 28px;\n  text-align: center;\n  color: var(--co-fg-2);\n}\n.osp-overlay .co-empty svg { color: var(--co-fg-3); opacity: 0.55; }\n.osp-overlay .co-empty-title { color: var(--co-fg); font-size: 13px; font-weight: 550; }\n.osp-overlay .co-empty-text { font-size: 11px; line-height: 17px; max-width: 24ch; }\n\n/*\n * Which page a row is on, when the list is one flat queue and the headings\n * are not there to say it.\n *\n * Above the author rather than beside them: it is where the comment is, not\n * who wrote it, and a row whose first line answers \"where\" reads in the\n * order the question is asked.\n */\n.osp-overlay .co-row-page {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  margin-bottom: 2px;\n  color: var(--co-fg-3);\n  font-size: 10px;\n  line-height: 14px;\n  min-width: 0;\n}\n.osp-overlay .co-row-page span {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.osp-overlay .co-row-page svg { opacity: 0.8; }\n/*\n * Which screen of an application a comment was left on.\n *\n * Set in the monospace face and boxed, because it is an address rather than\n * a name: \"#/settings\" read in the panel has to be recognisable as the thing\n * in the address bar when the reviewer gets there. It is the one label in a\n * row that is not prose, so it is the one that should not be set like prose.\n */\n.osp-overlay .co-row-screen {\n  flex: none;\n  max-width: 55%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  padding: 0 4px;\n  border: 1px solid var(--co-line);\n  border-radius: 4px;\n  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;\n  font-size: 9px;\n  line-height: 13px;\n  color: var(--co-fg-2);\n}\n\n/* A row that leads to another page rather than opening a pin on this one.\n   Said with the number badge, which is the part that means \"there is a mark\n   over there wearing this\": hollow here, because the mark is not on screen\n   to be pointed at. */\n.osp-overlay .co-row[data-away] .co-num {\n  background: transparent;\n  border: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n}\n.osp-overlay a.co-row[data-away]:hover .co-num { border-color: var(--co-fg-3); color: var(--co-fg); }\n/* A comment with no page recorded against it -- one written into the review\n   file by hand. It is listed, but there is nowhere for it to lead. */\n.osp-overlay div.co-row[data-away] { cursor: default; }\n\n/* --- the comment popup ------------------------------------------------ */\n\n.osp-overlay .co-pop {\n  position: absolute;\n  width: 360px;\n  max-height: 400px;\n  overflow-y: auto;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  color: var(--co-fg);\n  animation: co-rise 0.15s var(--co-ease);\n  z-index: 2;\n}\n\n/*\n * Stepping from one mark to the next, as a move rather than a cut.\n *\n * The arrows swapped the card's contents where it stood, which left a\n * reviewer to work out for themselves that the card was now about\n * something else -- and about words that were often not on screen at all.\n * So the card travels to the next pin while the page scrolls it into view,\n * and its new contents fade up rather than appearing mid-flight. The two\n * movements are the same length, so they read as one.\n *\n * Only while a step is in progress: the attribute is set by the script for\n * the duration and dropped afterwards, so the card still follows a reflow\n * instantly, and still rises into place rather than sliding in when it is\n * opened for the first time.\n */\n.osp-overlay .co-pop[data-gliding] {\n  transition: left 0.34s var(--co-ease), top 0.34s var(--co-ease);\n}\n.osp-overlay .co-pop[data-gliding] > * { animation: co-fade 0.3s var(--co-ease); }\n@keyframes co-fade {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n/*\n * The title bar: what this is, how much it is asking for, and what can be\n * done to it. Three things, left to right, and the actions pushed to the far\n * edge so the eye has one place to look for a button rather than a row that\n * reflows as a quotation gets longer.\n */\n.osp-overlay .co-pop-head {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-height: 40px;\n  padding: 6px 8px 6px 14px;\n  border-bottom: 1px solid var(--co-line);\n  background: var(--co-bg-2);\n}\n/*\n * Which mark this is, and how many the page has.\n *\n * It said \"Comment\", which the thing it titles is self-evidently already.\n * The number is the pin's own -- comments are numbered by age within a page\n * and so is this -- so the head ties the card to the mark under it and says\n * how far through the page the reviewer is, which is what the arrows beside\n * it are for.\n */\n.osp-overlay .co-pop-pos {\n  flex: none;\n  font-size: 13px;\n  font-weight: 600;\n  letter-spacing: 0.01em;\n}\n.osp-overlay .co-pop-pos span { color: var(--co-fg-3); font-weight: 450; }\n.osp-overlay .co-pop-acts {\n  display: flex;\n  align-items: center;\n  gap: 2px;\n  flex: none;\n  margin-left: auto;\n}\n\n/*\n * Priority as three hues, each carrying its arrow.\n *\n * Three levels read as a scale, and a scale is read fastest by colour, so\n * each level is drawn in its own: crimson, amber, blue. None of them is the\n * pin's vermilion, which already means \"open, not dealt with\" -- see the\n * tokens above for why that boundary is worth keeping. The arrow stays in\n * every pill, because colour alone is not a label: a reader who cannot\n * separate crimson from amber still has to be able to tell high from medium.\n *\n * One rule set serves the pill in the popup, the three buttons in the draft,\n * the rows of the priority menu and the chip in a panel row, so a level is\n * the same colour wherever it appears.\n */\n.osp-overlay .co-pri,\n.osp-overlay .co-pri-opt,\n.osp-overlay .co-row-pri {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n  flex: none;\n  padding: 2px 9px;\n  border: 1px solid var(--co-line);\n  border-radius: 999px;\n  background: var(--co-bg-2);\n  color: var(--co-fg-2);\n  font: inherit;\n  font-size: 11px;\n  font-weight: 550;\n  line-height: 15px;\n  transition: background 0.14s, color 0.14s, border-color 0.14s;\n}\n.osp-overlay .co-pri-mark {\n  width: 8px;\n  text-align: center;\n  font-weight: 700;\n}\n\n/* The one place the hue is named, so every pill of a level matches. */\n.osp-overlay [data-level=\"high\"] {\n  --co-pri-fg: var(--co-pri-high-fg);\n  --co-pri-bg: var(--co-pri-high-bg);\n  --co-pri-line: var(--co-pri-high-line);\n}\n.osp-overlay [data-level=\"medium\"] {\n  --co-pri-fg: var(--co-pri-medium-fg);\n  --co-pri-bg: var(--co-pri-medium-bg);\n  --co-pri-line: var(--co-pri-medium-line);\n}\n.osp-overlay [data-level=\"low\"] {\n  --co-pri-fg: var(--co-pri-low-fg);\n  --co-pri-bg: var(--co-pri-low-bg);\n  --co-pri-line: var(--co-pri-low-line);\n}\n\n.osp-overlay .co-pri[data-level],\n.osp-overlay .co-row-pri[data-level] {\n  background: var(--co-pri-bg);\n  border-color: var(--co-pri-line);\n  color: var(--co-pri-fg);\n}\n.osp-overlay .co-pri[data-level]:hover { border-color: var(--co-pri-fg); }\n\n/* A comment on another page is read in the panel rather than against its\n   pin, so the chip is the only thing saying how much it is asking for. It\n   is quieter than the popup's pill -- the row already carries a number, a\n   name and sometimes an issue -- and says the level with its arrow and hue\n   rather than repeating the word. */\n.osp-overlay .co-row-pri {\n  padding: 1px 6px;\n  font-size: 10px;\n  line-height: 14px;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n.osp-overlay .co-row[data-resolved] .co-row-pri {\n  background: var(--co-bg-2);\n  border-color: var(--co-line);\n  color: var(--co-fg-3);\n}\n\n/*\n * What the comment is attached to, quoted above it.\n *\n * A band rather than a line of text, so \"this is the page talking\" and \"this\n * is a person talking\" are told apart before either is read.\n */\n.osp-overlay .co-pop-sel {\n  display: flex;\n  align-items: flex-start;\n  margin: 12px 16px 0;\n  padding: 8px 10px;\n  border-left: 2px solid var(--co-pin);\n  border-radius: 0 var(--co-r-1) var(--co-r-1) 0;\n  background: var(--co-pin-soft);\n}\n/* Drained, like the pin, once there is nothing left to do about it. */\n.osp-overlay .co-pop-sel[data-resolved],\n.osp-overlay .co-pop-sel[data-orphan] {\n  border-left-color: var(--co-done);\n  background: var(--co-bg-2);\n}\n.osp-overlay .co-pop-quote {\n  flex: 1;\n  min-width: 0;\n  color: var(--co-fg-2);\n  font-size: 12px;\n  line-height: 17px;\n  font-style: italic;\n  overflow-wrap: break-word;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  line-clamp: 3;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}\n.osp-overlay .co-pop-btn {\n  width: 26px;\n  height: 26px;\n  border: 0;\n  border-radius: var(--co-r-1);\n  background: transparent;\n  color: var(--co-fg-2);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.12s, color 0.12s;\n}\n.osp-overlay .co-pop-btn:hover { background: var(--co-bg-2); color: var(--co-fg); }\n.osp-overlay .co-pop-btn[data-on] { color: var(--co-pin); }\n\n/*\n * An arrow with nowhere to go, and an arrow that leaves the page.\n *\n * The arrows walk the whole review, so the next mark is often on another\n * page -- a navigation rather than a scroll, which is a bigger thing than\n * the control looks like it does. The title says which page, but a title is\n * read only by somebody who already wondered; the dot is what makes them\n * wonder, and it costs four pixels.\n */\n.osp-overlay .co-pop-btn:disabled { opacity: 0.3; }\n.osp-overlay .co-pop-btn:disabled:hover { background: transparent; color: var(--co-fg-2); }\n.osp-overlay .co-pop-btn[data-away] { position: relative; }\n.osp-overlay .co-pop-btn[data-away]::after {\n  content: \"\";\n  position: absolute;\n  top: 4px;\n  right: 4px;\n  width: 4px;\n  height: 4px;\n  border-radius: 50%;\n  background: var(--co-pin);\n}\n.osp-overlay .co-pop-btn:disabled::after { display: none; }\n\n.osp-overlay .co-pop-threads {\n  display: flex;\n  flex-direction: column;\n  gap: 10px;\n  padding: 12px 0;\n}\n.osp-overlay .co-pop-sel + .co-pop-threads { padding-top: 10px; }\n.osp-overlay .co-pop-row {\n  position: relative;\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  padding: 0 16px;\n  min-width: 0;\n}\n.osp-overlay .co-avatar {\n  flex: none;\n  width: 24px;\n  height: 24px;\n  border-radius: 999px;\n  background: var(--co-bg-2);\n  border: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  font-weight: 650;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n}\n.osp-overlay .co-pop-wrap { display: flex; flex-direction: column; flex: 1; min-width: 0; }\n.osp-overlay .co-pop-name {\n  display: flex;\n  align-items: baseline;\n  gap: 6px;\n  min-width: 0;\n}\n.osp-overlay .co-pop-name strong {\n  font-weight: 550;\n  font-size: 13px;\n  line-height: 24px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  min-width: 0;\n}\n.osp-overlay .co-pop-body { line-height: 21px; white-space: pre-wrap; word-break: break-word; }\n\n.osp-overlay .co-pop-note {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  margin: 0 16px 12px;\n  padding: 9px 10px;\n  border-radius: var(--co-r-2);\n  background: var(--co-bg-2);\n}\n\n.osp-overlay .co-resolved-row {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 9px 16px;\n  border-top: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 12px;\n}\n.osp-overlay .co-resolved-row > span:first-child {\n  flex: none;\n  width: 24px;\n  height: 24px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: var(--co-done);\n}\n\n/*\n * Why a filing did not happen, under the comment it was attempted on.\n *\n * Built like the resolved row it sits beside, because the two say the same\n * kind of thing: not what the comment is, but what has become of it. Where\n * a comment *did* go is the foot's own button now -- see co-act[data-filed]\n * below -- so this row is only ever a refusal.\n */\n.osp-overlay .co-filed {\n  display: flex;\n  align-items: baseline;\n  flex-wrap: wrap;\n  gap: 6px;\n  padding: 9px 16px;\n  border-top: 1px solid var(--co-line);\n  color: var(--co-fg-2);\n  font-size: 12px;\n}\n.osp-overlay .co-filed .co-warn { flex-basis: 100%; }\n/* A comment still being posted to GitHub, and the thread that lives there. */\n.osp-overlay .co-pin[data-pending] { opacity: 0.55; }\n.osp-overlay .co-shared-note {\n  flex-direction: row;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n/* A comment inside something shut, and the tap that would open it again. */\n.osp-overlay .co-shut {\n  flex-direction: row;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.osp-overlay .co-reopen {\n  flex: none;\n  padding: 4px 10px;\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  background: var(--co-bg);\n  color: var(--co-fg);\n  font: inherit;\n  font-size: 12px;\n  font-weight: 550;\n  cursor: pointer;\n}\n.osp-overlay .co-reopen:hover { border-color: var(--co-fg-2); }\n/*\n * A link that leaves the page, drawn in the ink wherever it appears.\n *\n * The colour was dropped from here when the filed-issue button took it over\n * through `co-act[data-filed]`, which left the one other user of this class\n * -- the address an export tells a reviewer to send the file to -- wearing\n * the browser's default blue and underline inside an overlay that has\n * neither anywhere else.\n */\n.osp-overlay .co-ext {\n  color: var(--co-ink);\n  font-weight: 550;\n  text-decoration: none;\n}\n/* The underline is for a link sitting in a sentence. The filed-issue button\n   wears this class too and has a stroke of its own on all four sides, which\n   a bottom border of its own would fight. */\n.osp-overlay .co-ext:not(.co-act) { border-bottom: 1px solid transparent; }\n.osp-overlay .co-ext:not(.co-act):hover { border-bottom-color: currentColor; }\n\n/*\n * The foot: what can be done about this comment, as words.\n *\n * Resolve and the overflow used to be icons in the title bar, beside the\n * close, where the one button that ends a comment's life looked exactly\n * like the one that dismisses the card. Down here they are a labelled\n * primary and a quiet overflow, which is the ordinary shape of a dialog and\n * takes no learning.\n */\n.osp-overlay .co-pop-foot {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 10px 14px;\n  border-top: 1px solid var(--co-line);\n}\n/*\n * The overflow is pinned to the far end and never shrinks.\n *\n * It holds Edit and Delete, which are the only way to either, so it going\n * missing is worse than any label in here going short. The foot does not\n * wrap -- two rows of buttons under a card this size reads as two separate\n * questions -- so a label that cannot fit is ellipsized instead, and this\n * button keeps its 26px whatever the rest comes to.\n */\n.osp-overlay .co-pop-foot .co-pop-btn { flex: none; margin-left: auto; }\n.osp-overlay .co-act {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  flex: 0 1 auto;\n  min-width: 0;\n  padding: 7px 14px;\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  background: var(--co-bg);\n  color: var(--co-fg);\n  font-size: 12px;\n  font-weight: 550;\n  text-decoration: none;\n  transition: border-color 0.14s, background 0.14s, filter 0.14s;\n}\n.osp-overlay .co-act:hover { border-color: var(--co-fg-3); }\n/* The icon stays; the word gives way. A button whose label is cut short\n   still says which button it is, where one pushed off the card says\n   nothing at all. */\n.osp-overlay .co-act svg { flex: none; }\n.osp-overlay .co-act span {\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n/* The primary keeps its label whole. Its three wordings are known and\n   short; what has to give way is the issue key beside it, which is as long\n   as somebody's repository happens to be. */\n.osp-overlay .co-act[data-primary] {\n  flex: none;\n  background: var(--co-pin);\n  border-color: var(--co-pin);\n  color: #fff;\n}\n.osp-overlay .co-act[data-primary]:hover { filter: brightness(1.06); }\n/*\n * Filed, and saying so in the ink.\n *\n * The action and its result were the same button in two states that looked\n * alike, so whether an issue already existed had to be read off the label.\n * The stroke answers it first, and the ink is the same one the issue key\n * wears everywhere else: this is the one control in the overlay that leaves\n * the page.\n */\n.osp-overlay .co-act[data-filed] {\n  border-color: var(--co-ink);\n  color: var(--co-ink);\n}\n.osp-overlay .co-act[data-filed]:hover {\n  background: var(--co-pin-soft);\n  border-color: var(--co-ink);\n}\n.osp-overlay .co-act[disabled] { opacity: 0.5; cursor: default; }\n.osp-overlay .co-act[disabled]:hover { border-color: var(--co-line); }\n\n.osp-overlay .co-pop-reply {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  padding: 10px 16px;\n  border-top: 1px solid var(--co-line);\n}\n.osp-overlay .co-pop-reply .co-avatar { margin-top: 2px; }\n.osp-overlay .co-pop-reply .co-input { flex: 1; }\n.osp-overlay .co-pop-reply .co-input textarea { max-height: 120px; }\n\n.osp-overlay .co-pop-menu {\n  position: absolute;\n  padding: 4px;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  box-shadow: var(--co-shadow);\n  white-space: nowrap;\n  animation: co-rise 0.14s var(--co-ease);\n  z-index: 10;\n}\n.osp-overlay .co-pop-menu-item {\n  display: block;\n  width: 100%;\n  padding: 6px 12px;\n  border: 0;\n  border-radius: var(--co-r-1);\n  background: transparent;\n  color: var(--co-fg);\n  font-size: 12px;\n  text-align: left;\n  transition: background 0.12s;\n}\n.osp-overlay .co-pop-menu[data-pri] .co-pop-menu-item {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 6px 14px 6px 10px;\n}\n.osp-overlay .co-pop-menu[data-pri] .co-pop-menu-item .co-pri-mark {\n  color: var(--co-pri-fg);\n}\n.osp-overlay .co-pop-menu[data-pri] .co-pop-menu-item[data-on] {\n  background: var(--co-pri-bg);\n  color: var(--co-pri-fg);\n  font-weight: 550;\n}\n.osp-overlay .co-pop-menu-item:hover { background: var(--co-bg-2); }\n.osp-overlay .co-pop-menu-item[data-danger]:hover { background: var(--co-danger); color: #fff; }\n\n/* --- the draft, and the field it shares with replies ------------------ */\n\n.osp-overlay .co-draft {\n  position: absolute;\n  width: 288px;\n  max-width: calc(100vw - 16px);\n  padding: 10px;\n  pointer-events: auto;\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  animation: co-rise 0.16s var(--co-ease);\n  z-index: 2;\n}\n\n/* The words the pin is about, so the comment is written with them in view\n   rather than behind the box being typed into. */\n.osp-overlay .co-draft-quote {\n  margin-bottom: 8px;\n  padding-left: 8px;\n  border-left: 2px solid var(--co-aim-line);\n  color: var(--co-fg-2);\n  font-size: 11px;\n  line-height: 16px;\n  overflow-wrap: break-word;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  line-clamp: 2;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n}\n\n.osp-overlay .co-draft-foot { display: flex; gap: 4px; margin-top: 8px; }\n/* Three buttons, one of them chosen. Only the chosen one wears its hue: all\n   three coloured at once would be a row of swatches to decode rather than a\n   question with an answer already in it. */\n.osp-overlay .co-pri-opt {\n  padding: 2px 8px;\n  background: transparent;\n  border-color: transparent;\n  color: var(--co-fg-3);\n  cursor: pointer;\n}\n.osp-overlay .co-pri-opt:hover { color: var(--co-pri-fg); border-color: var(--co-pri-line); }\n.osp-overlay .co-pri-opt[data-on] {\n  background: var(--co-pri-bg);\n  border-color: var(--co-pri-line);\n  color: var(--co-pri-fg);\n}\n\n.osp-overlay .co-input {\n  position: relative;\n  min-height: 30px;\n  border-radius: var(--co-r-2);\n  background: var(--co-bg-2);\n  border: 1px solid transparent;\n  transition: border-color 0.14s, background 0.14s;\n}\n.osp-overlay .co-input:focus-within { border-color: var(--co-pin); background: var(--co-bg); }\n.osp-overlay .co-input textarea {\n  display: block;\n  width: 100%;\n  min-height: 28px;\n  max-height: 200px;\n  padding: 4px 34px 4px 9px;\n  border: 0;\n  border-radius: var(--co-r-2);\n  background: transparent;\n  color: var(--co-fg);\n  font: inherit;\n  line-height: 20px;\n  resize: none;\n  outline: none;\n  overflow: hidden;\n}\n.osp-overlay .co-input textarea::placeholder { color: var(--co-fg-3); }\n.osp-overlay .co-input[data-filled] { min-height: 58px; }\n.osp-overlay .co-input[data-filled] textarea { padding-right: 9px; padding-bottom: 30px; }\n\n.osp-overlay .co-send {\n  position: absolute;\n  right: 4px;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 23px;\n  height: 23px;\n  padding: 0;\n  border: 0;\n  border-radius: 50%;\n  background: var(--co-pin);\n  color: #fff;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: background 0.14s, transform 0.14s var(--co-ease);\n}\n.osp-overlay .co-input[data-filled] .co-send { top: auto; bottom: 5px; transform: none; }\n.osp-overlay .co-send:hover:not(:disabled) { background: var(--co-ink); }\n.osp-overlay .co-send:disabled { background: var(--co-line); color: var(--co-fg-3); cursor: default; }\n\n/* --- the modal, for a name and for a confirmation --------------------- */\n\n.osp-overlay .co-scrim {\n  position: fixed;\n  inset: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  pointer-events: auto;\n  background: rgba(10, 12, 15, 0.45);\n  z-index: 3;\n}\n.osp-overlay .co-modal {\n  width: 380px;\n  max-width: calc(100vw - 32px);\n  background: var(--co-bg);\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-3);\n  box-shadow: var(--co-shadow);\n  animation: co-rise 0.18s var(--co-ease);\n}\n.osp-overlay .co-modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  height: 42px;\n  padding: 0 8px 0 16px;\n  border-bottom: 1px solid var(--co-line);\n}\n.osp-overlay .co-modal-head h3 { font-size: 13px; font-weight: 550; }\n.osp-overlay .co-modal-body { padding: 14px 16px 16px; }\n.osp-overlay .co-modal-body p {\n  margin-bottom: 14px;\n  color: var(--co-fg-2);\n  line-height: 19px;\n}\n/* The part of an answer nobody asked for but is owed anyway: what the\n   import left out, and why the number is smaller than expected. */\n.osp-overlay .co-modal-body .co-modal-note {\n  margin-top: -6px;\n  color: var(--co-fg-3);\n  font-size: 11px;\n  line-height: 17px;\n}\n\n.osp-overlay .co-field {\n  width: 100%;\n  height: 34px;\n  margin-bottom: 12px;\n  padding: 0 10px;\n  border: 1px solid var(--co-line);\n  border-radius: var(--co-r-2);\n  background: var(--co-bg-2);\n  color: var(--co-fg);\n  font: inherit;\n  outline: none;\n  transition: border-color 0.14s, background 0.14s;\n}\n.osp-overlay .co-field::placeholder { color: var(--co-fg-3); }\n.osp-overlay .co-field:focus { border-color: var(--co-pin); background: var(--co-bg); }\n\n.osp-overlay .co-submit {\n  width: 100%;\n  height: 34px;\n  border: 0;\n  border-radius: var(--co-r-2);\n  background: var(--co-pin);\n  color: #fff;\n  font: inherit;\n  font-weight: 550;\n  transition: background 0.14s, opacity 0.14s;\n}\n.osp-overlay .co-submit:hover:not(:disabled) { background: var(--co-ink); }\n.osp-overlay .co-submit:disabled { opacity: 0.45; cursor: not-allowed; }\n/* Deeper and duller than the mark ink, so the one irreversible button in\n   here is never mistaken for the colour that merely means \"open\". */\n.osp-overlay .co-submit[data-danger] { background: var(--co-danger); }\n.osp-overlay .co-submit[data-danger]:hover:not(:disabled) { background: #751509; }\n\n/* --- motion, for people who have asked for less of it ------------------ */\n\n@media (prefers-reduced-motion: reduce) {\n  .osp-overlay *,\n  .osp-overlay *::before,\n  .osp-overlay *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n  }\n}\n";
 (function () {
   var holder = document.querySelector('meta[name="osp-review"]');
   if (!holder) return;
+
+  // Not inside a frame the site itself drew: a prototype embedded in a note
+  // or shown as a thumbnail on the prototypes page. A toolbar per frame is
+  // clutter, and a pin left at a scaled-down width lands nowhere useful;
+  // the frame's "Open full page" is where a page is reviewed. Reading
+  // frameElement throws across origins, which means it is not ours.
+  try {
+    var host = window.frameElement;
+    if (host && host.closest && host.closest(".osp-html-embed, .osp-proto-card")) return;
+    /*
+     * Nor inside a page that is itself being reviewed: the screen of a
+     * prototype drawn in a phone or tablet frame, which is a second page in
+     * an <iframe> of the first. Both carry the overlay, so both drew a
+     * toolbar. The outer one reaches into this document itself (see
+     * `reviewFrames`), so its pins land on what is on the screen, and this
+     * copy has nothing left to do.
+     */
+    if (host && host.ownerDocument.querySelector('meta[name="osp-review"]')) return;
+  } catch (e) {}
 
   var config;
   try {
@@ -38,7 +57,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
   var DEEP_PARAM = "osp-comment";
   var BLOCK_ATTR = "data-osp-block";
   var TEXT_LIMIT = 80;
-  var SCHEMA = 10;
+  var SCHEMA = 11;
   /*
    * Whether this page's blocks are ours to mark, and keep marking.
    *
@@ -89,6 +108,23 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * consulted for the kind that can have a plugin behind it.
    */
   var PUBLISHED = config.published === true;
+
+  /*
+   * Where this published site keeps its shared comments: a public
+   * repository whose issues every visitor reads and any reader can add to,
+   * through GitHub's own form. See `overlay/shared.ts` for the marker that
+   * makes an issue a review comment. Null on a preview, and on a site that
+   * does not share.
+   */
+  var SHARED =
+    PUBLISHED &&
+    config.shared &&
+    typeof config.shared.owner === "string" &&
+    typeof config.shared.repo === "string" &&
+    config.shared.owner &&
+    config.shared.repo
+      ? { owner: config.shared.owner, repo: config.shared.repo }
+      : null;
 
   /*
    * Where a reader should send a review they have exported.
@@ -177,9 +213,9 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     "main, header, footer, nav, aside, section, article, dialog, form, " +
     "fieldset, details, summary, button, a, label, td, th, [role]";
 
-  function stampBlocks() {
+  function stampBlocks(doc) {
     var selector = PROSE_BLOCKS + ", " + UI_BLOCKS;
-    var nodes = document.querySelectorAll(selector);
+    var nodes = (doc || document).querySelectorAll(selector);
     var seen = {};
     for (var i = 0; i < nodes.length; i++) {
       var text = normalizeBlockText(nodes[i].textContent || "");
@@ -192,6 +228,60 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       seen[key] = count + 1;
       nodes[i].setAttribute(BLOCK_ATTR, count === 0 ? base : base + "-" + count);
     }
+
+    /*
+     * The rows of anything that scrolls.
+     *
+     * An application's list is rarely a `ul`: it is a scrolling `div` or
+     * `main` of `div` rows, none of which is in the vocabulary above. So a
+     * pin on a row anchored to the scroller around it, and stayed where it
+     * was while the list scrolled underneath -- on a different row a flick
+     * later. A box that scrolls is the one place where "which child" is
+     * exactly what a reviewer meant, so its children are stamped too, by
+     * the same hash of tag and text and after everything else, which keeps
+     * every id the pass above gives out unchanged.
+     */
+    var scrollers = scrollersIn(doc || document);
+    for (var s = 0; s < scrollers.length; s++) {
+      var rows = scrollers[s].children;
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r];
+        if (row.hasAttribute(BLOCK_ATTR)) continue;
+        var rowText = normalizeBlockText(row.textContent || "");
+        if (!rowText) continue;
+        var rowBase = hashBlockText(row.tagName.toLowerCase() + "\u0000" + rowText);
+        var rowKey = "k" + rowBase;
+        var n = Object.prototype.hasOwnProperty.call(seen, rowKey) ? seen[rowKey] : 0;
+        seen[rowKey] = n + 1;
+        row.setAttribute(BLOCK_ATTR, n === 0 ? rowBase : rowBase + "-" + n);
+      }
+    }
+  }
+
+  /*
+   * The elements that scroll their own content, found by asking the computed
+   * style of the candidates that can: anything with two or more children.
+   * Capped, because it runs on somebody else's page on a timer.
+   */
+  var SCROLLER_SCAN_LIMIT = 1500;
+
+  function scrollersIn(doc) {
+    var out = [];
+    var view = doc.defaultView || window;
+    if (!view.getComputedStyle) return out;
+    var all = doc.body ? doc.body.getElementsByTagName("*") : [];
+    var asked = 0;
+    for (var i = 0; i < all.length && asked < SCROLLER_SCAN_LIMIT; i++) {
+      var el = all[i];
+      if (el.children.length < 2 || el.id === "osp-overlay-host") continue;
+      asked++;
+      var style = view.getComputedStyle(el);
+      if (!style) continue;
+      var y = style.overflowY;
+      var x = style.overflowX;
+      if (y === "auto" || y === "scroll" || x === "auto" || x === "scroll") out.push(el);
+    }
+    return out;
   }
 
   if (STAMP_AT_RUNTIME) stampBlocks();
@@ -213,6 +303,19 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * one document at one URL, and recording a route for it would mean a
    * comment made while reading the preview through the review server was
    * hidden when the same file was opened from disk, where the path differs.
+   *
+   * **Relative to the page, not to the host.** A route used to be the whole
+   * of `location.pathname` plus the query and fragment, and a pathname is
+   * not portable: the preview serves a prototype at `/app/index.html`, the
+   * published site at `/<repo>/app/`, and a pin left on one was hidden on
+   * the other -- as was a pin left at `/app/` when the page was opened as
+   * `/app/index.html` on the same host. So when the browser is on the
+   * page's own file, the path is dropped and the route is `./` followed by
+   * the query and fragment, which reads the same wherever the file is
+   * served. A path that is not the page's own (a router that routes on the
+   * path) still records the old absolute form, which is all there is to go
+   * on there. `sameRoute` reads both forms, so a review written before this
+   * matches as it did.
    */
   function currentRoute() {
     if (!STAMP_AT_RUNTIME) return null;
@@ -227,7 +330,82 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       }
       search = kept.length ? "?" + kept.join("&") : "";
     }
-    return location.pathname + search + location.hash;
+    return portableRoute(location.pathname + search + location.hash);
+  }
+
+  /*
+   * Whether a pathname is this page's own file, however it was asked for:
+   * `.../app/index.html`, `.../app/`, or `.../notes/plan` for a host that
+   * serves `plan.html` without its extension. Matched on the end of the
+   * path, so the prefix the host adds -- a repository name, a preview
+   * folder, a directory on disk -- does not matter.
+   */
+  function isOwnPath(pathname) {
+    var path = String(pathname || "");
+    try {
+      path = decodeURIComponent(path);
+    } catch (err) {
+      // A malformed escape: compare it as it stands.
+    }
+    var file = String(PAGE || "");
+    if (!file) return false;
+    var dir = file.slice(0, file.lastIndexOf("/") + 1);
+    var bare = file.replace(/\.html?$/i, "");
+    var candidates = ["/" + file, "/" + bare];
+    if (/(^|\/)index\.html?$/i.test(file)) candidates.push("/" + dir);
+    for (var i = 0; i < candidates.length; i++) {
+      var tail = candidates[i];
+      if (path === tail || path.slice(-tail.length) === tail) return true;
+      // A page at the site root, served from a host that adds no prefix.
+      if (tail === "/" && path === "/") return true;
+    }
+    return false;
+  }
+
+  /* The page-relative form of a route, where it has one. */
+  function portableRoute(route) {
+    if (!route) return route;
+    var text = withoutPreviewToken(String(route));
+    if (text.slice(0, 2) === "./") return text;
+    var cut = text.search(/[?#]/);
+    var path = cut === -1 ? text : text.slice(0, cut);
+    var rest = cut === -1 ? "" : text.slice(cut);
+    return isOwnPath(path) ? "./" + rest : text;
+  }
+
+  /*
+   * The preview server's access token, taken out of a route.
+   *
+   * The server now moves the token out of the address bar as soon as it has
+   * set its cookie, but before it did, the first page a reviewer opened
+   * carried `?t=<token>` -- and a prototype records its address as the
+   * screen a comment is on. The token is new every time the server starts,
+   * so those comments were hidden in every later session and on the
+   * published site. Only a `t` that has the token's own shape is removed,
+   * so an application's own `?t=dark` is left alone.
+   */
+  function withoutPreviewToken(route) {
+    return route
+      .replace(/([?&])t=[a-z0-9]{24,32}(&|(?=#)|$)/, function (all, lead, tail) {
+        return tail === "&" ? lead : "";
+      })
+      .replace(/\?(?=#|$)/, "");
+  }
+
+  function sameRoute(a, b) {
+    return portableRoute(a) === portableRoute(b);
+  }
+
+  /*
+   * A route as somewhere to send the browser. The page-relative form is
+   * aimed at the page's own file by name rather than at `./`, which for a
+   * page that is not an `index.html` would be its folder.
+   */
+  function routeHref(base) {
+    var text = String(base || "");
+    if (text.slice(0, 2) !== "./") return text;
+    var file = String(PAGE || "").split("/").pop() || "";
+    return encodeURIComponent(file) + text.slice(2);
   }
 
   /*
@@ -237,7 +415,310 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    */
   function onThisRoute(comment) {
     if (!comment.route) return true;
-    return comment.route === currentRoute();
+    return sameRoute(comment.route, currentRoute());
+  }
+
+  /* --- screens in frames ------------------------------------------- */
+
+  /*
+   * A prototype drawn inside a device.
+   *
+   * The common way to show an app "on a phone" is a page that draws the
+   * phone and puts the app in an <iframe> as its screen. Both pages carry
+   * this script, and until now each ran its own overlay: two toolbars, and
+   * neither could pin anything across the glass -- the outer one saw only
+   * an <iframe>, and the inner one was a toolbar squeezed into the screen.
+   *
+   * So the outer page reviews both. The inner copy stands down when it sees
+   * it is framed by a reviewed page (the top of this script), and the outer
+   * one reaches in: it hit-tests through the frame, stamps the screen's
+   * blocks, measures them in its own coordinates and redraws when the
+   * screen scrolls, changes or navigates. A comment left on the screen
+   * carries `frame` (which <iframe>) and `froute` (where that frame was), as
+   * a comment on a page carries `route`, so a pin left on screen two of the
+   * app does not appear over screen one.
+   *
+   * Same origin only, which is what a published site is: the frame's own
+   * document cannot be read otherwise, and such a frame is left alone.
+   */
+  var FRAME_DEPTH = 3;
+
+  /** The window an element belongs to. */
+  function viewOf(node) {
+    var doc = node && (node.nodeType === 9 ? node : node.ownerDocument);
+    return (doc && doc.defaultView) || window;
+  }
+
+  /** A frame's document, or null when it is not ours to read. */
+  function frameDoc(frame) {
+    try {
+      var doc = frame.contentDocument;
+      return doc && doc.documentElement ? doc : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /*
+   * The <iframe> a document is shown in, for a document this overlay reviews
+   * through one, or null at the top. Takes a node or a document.
+   */
+  function frameOf(node) {
+    var doc = node && (node.nodeType === 9 ? node : node.ownerDocument);
+    if (!doc || doc === document) return null;
+    try {
+      var frame = doc.defaultView && doc.defaultView.frameElement;
+      return frame || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /*
+   * What an <iframe> is called among its siblings, by the same preference
+   * order as a page of a deck: what its author named it, then where it is.
+   */
+  function frameNameOf(frame) {
+    if (frame.id) return "#" + frame.id;
+    var name = frame.getAttribute("name");
+    if (name) return "name=" + name;
+    var title = frame.getAttribute("title");
+    if (title) return "title=" + title;
+    var all = frame.ownerDocument.getElementsByTagName("iframe");
+    for (var i = 0; i < all.length; i++) {
+      if (all[i] === frame) return "iframe:" + i + "/" + all.length;
+    }
+    return "iframe";
+  }
+
+  /** The key of the frame a document is in: names joined outermost first. */
+  function frameKeyOf(doc) {
+    var names = [];
+    var frame = frameOf(doc);
+    while (frame) {
+      names.unshift(frameNameOf(frame));
+      frame = frameOf(frame);
+    }
+    return names.length ? names.join(" > ") : null;
+  }
+
+  /*
+   * Every same-origin frame under this page, nested ones included, as
+   * `{ frame, doc, key }`.
+   */
+  function reviewFrames() {
+    var out = [];
+    (function walk(doc, depth) {
+      if (depth > FRAME_DEPTH) return;
+      var frames = doc.getElementsByTagName("iframe");
+      for (var i = 0; i < frames.length; i++) {
+        var inner = frameDoc(frames[i]);
+        if (!inner || !inner.body) continue;
+        out.push({ frame: frames[i], doc: inner, key: frameKeyOf(inner) });
+        walk(inner, depth + 1);
+      }
+    })(document, 1);
+    return out;
+  }
+
+  /** The document a comment was left in: the page's, or a frame's. */
+  function docFor(comment) {
+    if (!comment || !comment.frame) return document;
+    var frames = reviewFrames();
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i].key === comment.frame) return frames[i].doc;
+    }
+    return null;
+  }
+
+  /*
+   * Where a framed document is, relative to this page's folder.
+   *
+   * The screen of a device frame usually navigates between files of its
+   * own -- `screens/home.html` to `screens/cart.html` -- while the <iframe>
+   * element stays the same, so the frame alone does not say which screen a
+   * comment is on. Relative, for the reason `route` is: the preview and the
+   * published site put the folder under different prefixes.
+   */
+  function frameRouteOf(doc) {
+    var view = doc && doc.defaultView;
+    if (!view) return null;
+    var place;
+    try {
+      place = view.location;
+    } catch (e) {
+      return null;
+    }
+    var path = String(place.pathname || "");
+    var top = String(location.pathname || "");
+    var dir = top.slice(0, top.lastIndexOf("/") + 1);
+    if (dir && path.indexOf(dir) === 0) path = path.slice(dir.length);
+    try {
+      path = decodeURIComponent(path);
+    } catch (e) {
+      // Compared as it stands.
+    }
+    return path + String(place.search || "") + String(place.hash || "");
+  }
+
+  /** Whether a framed comment's frame is showing the screen it was left on. */
+  function onFrameRoute(comment) {
+    if (!comment.frame) return true;
+    var doc = docFor(comment);
+    if (!doc) return false;
+    if (!comment.froute) return true;
+    return frameRouteOf(doc) === comment.froute;
+  }
+
+  /*
+   * A frame's content box in its parent window's coordinates, and how much
+   * the frame is scaled. A device mockup commonly shrinks its screen with a
+   * CSS transform, so a frame 390 wide may be drawn 300 wide, and every
+   * point inside it has to be scaled on the way out.
+   */
+  function frameBox(frame) {
+    var box = frame.getBoundingClientRect();
+    var scale = frame.offsetWidth ? box.width / frame.offsetWidth : 1;
+    if (!scale || !isFinite(scale)) scale = 1;
+    var pad = { left: 0, top: 0 };
+    var view = viewOf(frame);
+    if (view.getComputedStyle) {
+      var style = view.getComputedStyle(frame);
+      pad.left = parseFloat(style.paddingLeft) || 0;
+      pad.top = parseFloat(style.paddingTop) || 0;
+    }
+    var left = box.left + ((frame.clientLeft || 0) + pad.left) * scale;
+    var top = box.top + ((frame.clientTop || 0) + pad.top) * scale;
+    var width = (frame.clientWidth ? frame.clientWidth - pad.left : box.width / scale) * scale;
+    var height = (frame.clientHeight ? frame.clientHeight - pad.top : box.height / scale) * scale;
+    return { left: left, top: top, width: width, height: height, scale: scale };
+  }
+
+  /* A frame's content box -- its glass -- in this window's coordinates. */
+  function glassOf(frame) {
+    var near = frameBox(frame);
+    var outer = frameOf(frame);
+    if (!outer) return near;
+    var lift = topRect(frame);
+    var raw = frame.getBoundingClientRect();
+    var k = raw.width ? lift.width / raw.width : 1;
+    return {
+      left: lift.left + (near.left - raw.left) * k,
+      top: lift.top + (near.top - raw.top) * k,
+      width: near.width * k,
+      height: near.height * k,
+      scale: near.scale * k,
+    };
+  }
+
+  /*
+   * An element's box in this window's coordinates, however many frames
+   * deep it is. For an element of this page it is its own box.
+   */
+  function topRect(node) {
+    var r = node.getBoundingClientRect();
+    var rect = { left: r.left, top: r.top, width: r.width, height: r.height };
+    var frame = frameOf(node);
+    while (frame) {
+      var outer = frameBox(frame);
+      rect.left = outer.left + rect.left * outer.scale;
+      rect.top = outer.top + rect.top * outer.scale;
+      rect.width *= outer.scale;
+      rect.height *= outer.scale;
+      frame = frameOf(frame);
+    }
+    rect.right = rect.left + rect.width;
+    rect.bottom = rect.top + rect.height;
+    return rect;
+  }
+
+  /*
+   * The part of the window an element can be seen through, in this window's
+   * coordinates, or null for "not clipped by anything worth asking about".
+   *
+   * This is what keeps a pin with the thing it is on when that thing is
+   * moved out of sight rather than hidden. A bottom sheet parked below the
+   * window with a transform, a drawer slid off the side, a menu scrolled out
+   * of its list: each is still displayed, opaque and in the document, so
+   * every other test here says it is showing. What says otherwise is that
+   * the point the pin would sit on is outside everything the element is
+   * seen through -- an ancestor that clips its overflow, the window for
+   * something held to the window, and the glass of a device frame.
+   *
+   * The document itself is not a clip. A paragraph below the fold is on the
+   * page, and its pin scrolls into view with it.
+   */
+  function clipOf(node) {
+    var clip = null;
+    function cut(box) {
+      if (!clip) {
+        clip = { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+        return;
+      }
+      clip.left = Math.max(clip.left, box.left);
+      clip.top = Math.max(clip.top, box.top);
+      clip.right = Math.min(clip.right, box.right);
+      clip.bottom = Math.min(clip.bottom, box.bottom);
+    }
+
+    var el = node;
+    while (el) {
+      var doc = el.ownerDocument;
+      var view = viewOf(el);
+      var fixed = false;
+      for (var at = el.parentNode; at && at.nodeType === 1; at = at.parentNode) {
+        if (at === doc.body || at === doc.documentElement) break;
+        if (!view.getComputedStyle) break;
+        var style = view.getComputedStyle(at);
+        if (!style) continue;
+        if (style.position === "fixed") fixed = true;
+        if (
+          (style.overflowX && style.overflowX !== "visible") ||
+          (style.overflowY && style.overflowY !== "visible")
+        ) {
+          var box = topRect(at);
+          if (box.width || box.height) cut(box);
+        }
+      }
+      if (!fixed && view.getComputedStyle) {
+        var own = view.getComputedStyle(el);
+        if (own && own.position === "fixed") fixed = true;
+      }
+      var frame = frameOf(el);
+      if (frame) {
+        // Inside a frame everything is clipped by the glass.
+        var glass = glassOf(frame);
+        cut({
+          left: glass.left,
+          top: glass.top,
+          right: glass.left + glass.width,
+          bottom: glass.top + glass.height,
+        });
+      } else if (fixed && hasLayout()) {
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var h = window.innerHeight || document.documentElement.clientHeight;
+        if (w && h) cut({ left: 0, top: 0, right: w, bottom: h });
+      }
+      el = frame;
+    }
+    return clip;
+  }
+
+  /*
+   * Whether a point, in this window's coordinates, can be seen. A little
+   * slack, because a pin dropped on the very edge of a sheet should not
+   * flicker as the sheet settles by a pixel.
+   */
+  function seenAt(clip, x, y) {
+    if (!clip) return true;
+    if (clip.right <= clip.left || clip.bottom <= clip.top) return false;
+    var slack = 2;
+    return (
+      x >= clip.left - slack &&
+      x <= clip.right + slack &&
+      y >= clip.top - slack &&
+      y <= clip.bottom + slack
+    );
   }
 
   /* --- which page of a deck that is one file ------------------------- */
@@ -333,8 +814,12 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     if (el.hasAttribute("hidden")) return false;
     if (el.getAttribute("aria-hidden") === "true") return false;
 
-    if (window.getComputedStyle) {
-      var style = window.getComputedStyle(el);
+    // The element's own window: one inside a frame is styled by that
+    // frame's stylesheets, and asking this window about it is asking the
+    // wrong document.
+    var view = viewOf(el);
+    if (view.getComputedStyle) {
+      var style = view.getComputedStyle(el);
       if (style) {
         if (style.display === "none") return false;
         if (style.visibility === "hidden" || style.visibility === "collapse") {
@@ -361,9 +846,17 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * levels up is exactly the case that matters.
    */
   function showing(el) {
-    for (var node = el; node && node.nodeType === 1; node = node.parentNode) {
-      if (!shownSelf(node)) return false;
-      if (!sawFixed && heldToViewport(node)) sawFixed = true;
+    var node = el;
+    while (node) {
+      for (; node && node.nodeType === 1; node = node.parentNode) {
+        if (!shownSelf(node)) return false;
+        if (!sawFixed && node.ownerDocument === document && heldToViewport(node)) {
+          sawFixed = true;
+        }
+      }
+      // Out of a frame's document and on through the <iframe> it is in: a
+      // phone frame that is hidden hides everything on its screen.
+      node = frameOf(node);
     }
     return true;
   }
@@ -389,8 +882,9 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * listener below, which is most pages the overlay is on.
    */
   function heldToViewport(node) {
-    if (!window.getComputedStyle) return false;
-    var style = window.getComputedStyle(node);
+    var view = viewOf(node);
+    if (!view.getComputedStyle) return false;
+    var style = view.getComputedStyle(node);
     if (!style) return false;
     return style.position === "fixed" || style.position === "sticky";
   }
@@ -649,7 +1143,62 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       var value = el.getAttribute(VIEW_ATTRS[i]);
       if (value) return VIEW_ATTRS[i] + "=" + value;
     }
-    return "";
+    return popupKeyOf(el);
+  }
+
+  /*
+   * A name for a sheet, a popup or a menu that its author did not name.
+   *
+   * Most of them are not named: a bottom sheet is a `div class="sheet"`, a
+   * popover a `div class="popover is-open"`. Without a key, a pin dropped
+   * in one had no context, and when the sheet was taken out of the document
+   * on close -- which is how most frameworks close one -- the pin fell back
+   * to the point it was dropped on and stayed there, over the page the
+   * sheet had covered.
+   *
+   * So something that *says* it comes and goes is keyed by what it says it
+   * is: its tag and its classes, without the ones that only describe its
+   * state, since `sheet is-open` and `sheet` are the same sheet open and
+   * shut. Or by its role, when that is all there is. Only these: keying any
+   * unnamed `div` would make every wrapper a context, and a wrapper never
+   * closes.
+   */
+  var POPUP_ROLES = /^(dialog|alertdialog|menu|listbox|tooltip)$/;
+  var POPUP_CLASS =
+    /(^|[-_])(modal|sheet|bottomsheet|drawer|popup|popover|dialog|dropdown|menu|toast|tooltip|overlay|lightbox|snackbar)([-_]|$)/i;
+  var STATE_CLASS =
+    /^(is|has)-|(^|[-_])(open|opened|active|show|shown|showing|visible|in|out|enter|entering|entered|leave|leaving|exit|exiting|hidden|closed|closing|expanded|collapsed|on|off|up|down|animating|animated|transition|transitioning)$/i;
+
+  function stableClasses(el) {
+    var raw = String(el.getAttribute("class") || "").split(/\s+/);
+    var out = [];
+    for (var i = 0; i < raw.length; i++) {
+      if (raw[i] && !STATE_CLASS.test(raw[i])) out.push(raw[i]);
+    }
+    return out.sort();
+  }
+
+  function popupKeyOf(el) {
+    var tag = el.tagName.toLowerCase();
+    var role = el.getAttribute("role") || "";
+    var classes = stableClasses(el);
+    var says =
+      tag === "dialog" ||
+      POPUP_ROLES.test(role) ||
+      el.getAttribute("aria-modal") === "true" ||
+      el.hasAttribute("popover");
+    for (var i = 0; !says && i < classes.length; i++) {
+      if (POPUP_CLASS.test(classes[i])) says = true;
+    }
+    if (!says) return "";
+    if (classes.length) return "~" + tag + "." + classes.join(".");
+    if (role) return "~" + tag + "[role=" + role + "]";
+    return "~" + tag;
+  }
+
+  /* Whether an element is what a `~` key describes. */
+  function matchesPopupKey(el, key) {
+    return popupKeyOf(el) === key;
   }
 
   /*
@@ -662,9 +1211,10 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    */
   function contextOf(node) {
     if (!STAMP_AT_RUNTIME) return null;
+    var doc = node && node.ownerDocument ? node.ownerDocument : document;
     var up = 0;
     for (var el = node; el && el.nodeType === 1; el = el.parentNode) {
-      if (el === document.body || el === document.documentElement) break;
+      if (el === doc.body || el === doc.documentElement) break;
       if (++up > CONTEXT_LIMIT) break;
       var key = contextKeyOf(el);
       if (key) return key;
@@ -686,37 +1236,240 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * for a context that is open somewhere is the behaviour this had before,
    * and a pin wrongly hidden is a comment the reviewer cannot find.
    */
-  function contextNode(key) {
-    if (!key) return null;
+  function contextNode(key, inDoc) {
+    var nodes = contextNodes(key, inDoc);
+    for (var j = 0; j < nodes.length; j++) {
+      if (showing(nodes[j]) && inSight(nodes[j])) return nodes[j];
+    }
+    return null;
+  }
+
+  /* Every element a context key names, shown or not. */
+  function contextNodes(key, inDoc) {
+    if (!key) return [];
+    var doc = inDoc || document;
     var text = String(key);
     var nodes = [];
 
     if (text.charAt(0) === "#") {
-      var one = document.getElementById(text.slice(1));
+      var one = doc.getElementById(text.slice(1));
       if (one) nodes.push(one);
+    } else if (text.charAt(0) === "~") {
+      var tag = text.slice(1).split(/[.\[]/)[0] || "*";
+      var candidates = doc.getElementsByTagName(tag);
+      for (var c = 0; c < candidates.length; c++) {
+        if (matchesPopupKey(candidates[c], text)) nodes.push(candidates[c]);
+      }
     } else {
       var eq = text.indexOf("=");
-      if (eq === -1) return null;
+      if (eq === -1) return [];
       var name = text.slice(0, eq);
       var value = text.slice(eq + 1);
-      var found = document.querySelectorAll("[" + name + "]");
+      var found = doc.querySelectorAll("[" + name + "]");
       for (var i = 0; i < found.length; i++) {
         if (found[i].getAttribute(name) === value) nodes.push(found[i]);
       }
     }
 
-    for (var j = 0; j < nodes.length; j++) if (showing(nodes[j])) return nodes[j];
-    return null;
+    return nodes;
+  }
+
+  /*
+   * Whether any of an element can be seen through what clips it.
+   *
+   * A sheet closed by sliding it below the window is still displayed and
+   * opaque, so `showing` calls it open -- and a comment in it was listed
+   * as if its pin were on screen, with nothing to say where it had gone.
+   * Its box lies wholly outside the window it is held to, which is what
+   * "closed" means for something that closes by moving.
+   */
+  function inSight(el) {
+    if (!hasLayout()) return true;
+    var clip = clipOf(el);
+    if (!clip) return true;
+    var box = topRect(el);
+    var w = Math.min(box.right, clip.right) - Math.max(box.left, clip.left);
+    var h = Math.min(box.bottom, clip.bottom) - Math.max(box.top, clip.top);
+    return w > 1 && h > 1;
+  }
+
+  /* --- bringing back what a comment is about ------------------------ */
+
+  /*
+   * A comment opened from the panel whose sheet, drawer or popup is shut.
+   *
+   * The pin cannot be drawn, and "sheet (closed)" says where it is without
+   * showing it. So the overlay puts the thing back on screen, in one of two
+   * ways depending on how the prototype shut it.
+   *
+   * **Still in the page, hidden or parked.** Most sheets and drawers close
+   * by a class or a style, and stay in the document. When a pin is dropped
+   * in one, the attributes that make it open are recorded -- on it and on a
+   * few ancestors, since the open state is often on a wrapper -- and opening
+   * the comment writes them back. The same trick as turning a deck to a
+   * slide: the result is a state the prototype itself produced, in its own
+   * vocabulary. It is undone when the card closes, and only where the
+   * prototype has not since changed the attribute itself.
+   *
+   * **Taken out of the page.** A popup a script built on a tap and removed
+   * on the next can only be built again by the prototype. So the tap that
+   * was made just before the pin was dropped is remembered, and the card
+   * offers to make it again. Offered rather than done, because it runs the
+   * prototype's own code, and the tap that opened a confirmation may be the
+   * one that deletes something.
+   */
+  var REVEAL_ATTRS = [
+    "class",
+    "style",
+    "hidden",
+    "open",
+    "inert",
+    "aria-hidden",
+    "aria-expanded",
+    "data-state",
+    "data-open",
+    "data-visible",
+  ];
+  var REVEAL_DEPTH = 4;
+  var REVEAL_VALUE_LIMIT = 600;
+
+  /* The open state of a context: its own attributes, then its ancestors'. */
+  function revealStateOf(holder) {
+    var doc = holder.ownerDocument;
+    var out = [];
+    var el = holder;
+    for (var level = 0; level < REVEAL_DEPTH; level++) {
+      if (!el || el.nodeType !== 1 || el === doc.body || el === doc.documentElement) break;
+      var attrs = {};
+      for (var i = 0; i < REVEAL_ATTRS.length; i++) {
+        var value = el.getAttribute(REVEAL_ATTRS[i]);
+        if (value !== null) attrs[REVEAL_ATTRS[i]] = String(value).slice(0, REVEAL_VALUE_LIMIT);
+      }
+      out.push(attrs);
+      el = el.parentNode;
+    }
+    return out;
+  }
+
+  var peek = null;
+
+  /* Puts a closed context back the way it was when the pin was dropped. */
+  function peekFor(comment) {
+    if (peek && peek.id === comment.id) return true;
+    endPeek();
+    if (!comment.context || !comment.reveal || !comment.reveal.length) return false;
+    if (!contextClosed(comment)) return false;
+    var doc = docFor(comment);
+    if (!doc) return false;
+    var holder = contextNodes(comment.context, doc)[0];
+    if (!holder) return false;
+
+    var changes = [];
+    var el = holder;
+    for (var level = 0; level < comment.reveal.length; level++) {
+      if (!el || el.nodeType !== 1 || el === doc.body) break;
+      var saved = comment.reveal[level] || {};
+      for (var i = 0; i < REVEAL_ATTRS.length; i++) {
+        var name = REVEAL_ATTRS[i];
+        var want = Object.prototype.hasOwnProperty.call(saved, name) ? saved[name] : null;
+        var have = el.getAttribute(name);
+        if (want === have) continue;
+        changes.push({ el: el, name: name, before: have, after: want });
+        if (want === null) el.removeAttribute(name);
+        else el.setAttribute(name, want);
+      }
+      el = el.parentNode;
+    }
+    if (!changes.length) return false;
+    peek = { id: comment.id, changes: changes };
+    return true;
+  }
+
+  /*
+   * Undoes a peek, newest change first. An attribute the prototype has
+   * written since is the prototype's, and is left as it is.
+   */
+  function endPeek() {
+    if (!peek) return;
+    var changes = peek.changes;
+    peek = null;
+    for (var i = changes.length - 1; i >= 0; i--) {
+      var change = changes[i];
+      if (!change.el.isConnected) continue;
+      if (change.el.getAttribute(change.name) !== change.after) continue;
+      if (change.before === null) change.el.removeAttribute(change.name);
+      else change.el.setAttribute(change.name, change.before);
+    }
+  }
+
+  /*
+   * The last tap a reviewer made on the page, as the block it landed on. It
+   * is what a pin dropped a moment later in something that had just opened
+   * records as that thing's opener.
+   */
+  var lastTap = null;
+  var TAP_MEMORY_MS = 120000;
+
+  function noteTap(event) {
+    if (mode !== "view") return;
+    var target = event.target;
+    if (!target || target.nodeType !== 1 || target === host) return;
+    var block = nearestBlock(target);
+    if (!block) return;
+    lastTap = {
+      node: block,
+      block: block.getAttribute(BLOCK_ATTR),
+      text: clip(block.textContent),
+      doc: block.ownerDocument,
+      at: Date.now(),
+    };
+  }
+
+  document.addEventListener("click", noteTap, true);
+
+  /* The element a comment's opener names, now, in the comment's document. */
+  function openerNode(comment) {
+    if (!comment.opener || !comment.opener.block) return null;
+    var doc = docFor(comment);
+    if (!doc) return null;
+    var map = comment.frame ? blocksFor(comment) : blocks;
+    var direct = map[comment.opener.block];
+    if (direct) return direct;
+    // Renumbered, as a row's buttons are when the list above them changes:
+    // the same rule as an anchor, one candidate or none.
+    var base = baseOf(comment.opener.block);
+    var found = null;
+    for (var key in map) {
+      if (!Object.prototype.hasOwnProperty.call(map, key)) continue;
+      if (baseOf(key) !== base && key !== base) continue;
+      if (found) return null;
+      found = map[key];
+    }
+    return found;
+  }
+
+  /* Makes the opening tap again, then waits for the pin to appear. */
+  function replayOpener(comment) {
+    var node = openerNode(comment);
+    if (!node) return false;
+    if (typeof node.click === "function") node.click();
+    else node.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+    chaseMark(comment);
+    return true;
   }
 
   /** Whether a comment's context is on screen, or it has none to be in. */
   function contextOpen(comment) {
     if (!comment.context) return true;
-    return !!contextNode(comment.context);
+    var doc = docFor(comment);
+    return !!doc && !!contextNode(comment.context, doc);
   }
 
   /** The one case a reviewer needs told: it is in something, and it is shut. */
   function contextClosed(comment) {
+    // On a screen the frame is not showing, nothing about it is known --
+    // "closed" would send the reviewer looking for a dialog to open.
+    if (comment.frame && !onFrameRoute(comment)) return false;
     return !!comment.context && !contextOpen(comment);
   }
 
@@ -734,17 +1487,27 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     var keys = [];
     var seenKey = Object.create(null);
 
+    var probe = Object.create(null);
     for (var i = 0; i < rows.length; i++) {
-      var key = rows[i].context;
-      if (!key || seenKey[key]) continue;
+      if (!rows[i].context) continue;
+      // The frame is part of the key: the same `#menu` on two screens is two
+      // menus.
+      var key = (rows[i].frame ? rows[i].frame + " | " : "") + rows[i].context;
+      if (seenKey[key]) continue;
       seenKey[key] = true;
       keys.push(key);
+      probe[key] = rows[i];
     }
 
     keys.sort();
     var out = [];
     for (var k = 0; k < keys.length; k++) {
-      out.push(keys[k] + (contextNode(keys[k]) ? "+" : "-"));
+      out.push(keys[k] + (contextOpen(probe[keys[k]]) ? "+" : "-"));
+    }
+    // Which screen each frame is on, so a frame navigating is a change too.
+    var frames = reviewFrames();
+    for (var f = 0; f < frames.length; f++) {
+      out.push(frames[f].key + "@" + frameRouteOf(frames[f].doc));
     }
     return out.join(">");
   }
@@ -869,6 +1632,35 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * form and the second one is the reason this exists -- "3 of 7" is a page
    * of a deck, and "section:2/7" is a bug report.
    */
+  /* "~section.sheet" is a sheet; "~div[role=dialog]" a dialog. */
+  function popupLabel(key) {
+    var body = String(key).slice(1);
+    var role = /\[role=([^\]]+)\]/.exec(body);
+    var bits = body.replace(/\[.*$/, "").split(".");
+    for (var i = 1; i < bits.length; i++) {
+      var said = POPUP_CLASS.exec(bits[i]);
+      if (said) return said[2].toLowerCase();
+    }
+    if (role) return role[1];
+    return bits[1] || bits[0] || "popup";
+  }
+
+  /* "screens/cart.html#step-2" as "cart #step-2". */
+  function frameScreenLabel(froute) {
+    var text = String(froute || "");
+    if (!text) return "";
+    var cut = text.search(/[?#]/);
+    var path = cut === -1 ? text : text.slice(0, cut);
+    var rest = cut === -1 ? "" : text.slice(cut);
+    var file = path.split("/").pop() || path;
+    var name = file.replace(/\.html?$/i, "");
+    if (name === "index" || !name) {
+      var dirs = path.split("/");
+      name = dirs.length > 1 ? dirs[dirs.length - 2] || "index" : "index";
+    }
+    return rest ? name + " " + rest : name;
+  }
+
   function viewLabel(key) {
     var parts = String(key).split(">");
     var out = [];
@@ -877,6 +1669,12 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       var part = parts[i];
       if (part.charAt(0) === "#") {
         out.push(part.slice(1));
+        continue;
+      }
+      // An unnamed popup (see `popupKeyOf`): by the word that says what it
+      // is -- "sheet", "popover" -- rather than by its markup.
+      if (part.charAt(0) === "~") {
+        out.push(popupLabel(part));
         continue;
       }
       var eq = part.indexOf("=");
@@ -972,6 +1770,21 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     // Which page of a single-file deck, for the screens the address bar
     // does not tell apart.
     row.view = typeof row.view === "string" && row.view ? row.view : null;
+    // On a screen inside a frame (see `reviewFrames`). Removed rather than
+    // nulled when absent, so a comment that never had one stores as before.
+    if (typeof row.frame === "string" && row.frame) {
+      row.froute = typeof row.froute === "string" ? row.froute : null;
+      row.fx = typeof row.fx === "number" ? row.fx : null;
+      row.fy = typeof row.fy === "number" ? row.fy : null;
+    } else {
+      delete row.frame;
+      delete row.froute;
+      delete row.fx;
+      delete row.fy;
+    }
+    if (row.pending !== true) delete row.pending;
+    if (!Array.isArray(row.reveal)) delete row.reveal;
+    if (!row.opener || typeof row.opener.block !== "string") delete row.opener;
     row.blockText = typeof row.blockText === "string" ? row.blockText : "";
     row.resolved = row.resolved === true;
     row.priority = priOf(row.priority);
@@ -1044,9 +1857,20 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     }
   }
 
+  /*
+   * The comments this browser made, without the ones read from the site's
+   * shared issues. Those live on GitHub: storing or exporting them would
+   * hand the reader a copy of everybody else's comments as their own.
+   */
+  function ownRows() {
+    var out = [];
+    for (var i = 0; i < all.length; i++) if (!all[i].shared) out.push(all[i]);
+    return out;
+  }
+
   function writeAll() {
     try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(all));
+      localStorage.setItem(STORE_KEY, JSON.stringify(ownRows()));
     } catch (e) {}
     // localStorage first and unconditionally: it is the copy that survives
     // the plugin not running, and it must not depend on a request.
@@ -1175,7 +1999,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       version: SCHEMA,
       site: SITE,
       exportedAt: new Date().toISOString(),
-      comments: all,
+      comments: ownRows(),
       withdrawn: withdrawn,
     });
   }
@@ -1518,6 +2342,11 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
        `resolve` was carrying "this is about a comment" that the button it
        now sits in says in words. */
     check: [["path", { d: "M20 6 9 17l-5-5" }]],
+    /* Lucide's link, for copying the address of one comment. */
+    link: [
+      ["path", { d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" }],
+      ["path", { d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" }],
+    ],
     /* Out of the browser, and back into it: the two halves of carrying a
        review between builds. */
     download: [
@@ -2079,19 +2908,38 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
 
   /* --- blocks ------------------------------------------------------- */
 
-  function blockIndex() {
+  function blockIndex(doc) {
     var map = Object.create(null);
-    var nodes = document.querySelectorAll("[" + BLOCK_ATTR + "]");
+    var nodes = (doc || document).querySelectorAll("[" + BLOCK_ATTR + "]");
     for (var i = 0; i < nodes.length; i++) {
       var key = nodes[i].getAttribute(BLOCK_ATTR);
       if (key && !map[key]) map[key] = nodes[i];
     }
+    if (!doc) frameBlocks = Object.create(null);
+    return map;
+  }
+
+  /*
+   * The blocks of a framed screen, indexed when first asked for and kept
+   * until the page's own index is rebuilt -- which every path that changes
+   * anything already does -- so a pass over the pins indexes each frame once.
+   */
+  var frameBlocks = Object.create(null);
+
+  function blocksFor(comment) {
+    if (!comment || !comment.frame) return blocks;
+    var key = comment.frame;
+    if (frameBlocks[key]) return frameBlocks[key];
+    var doc = docFor(comment);
+    var map = doc ? blockIndex(doc) : Object.create(null);
+    frameBlocks[key] = map;
     return map;
   }
 
   function nearestBlock(node) {
     var current = node;
-    while (current && current !== document.body) {
+    var body = node && node.ownerDocument ? node.ownerDocument.body : document.body;
+    while (current && current !== body) {
       if (current.nodeType === 1 && current.hasAttribute(BLOCK_ATTR)) return current;
       current = current.parentNode;
     }
@@ -2120,6 +2968,24 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     host.style.display = "none";
     var node = document.elementFromPoint(clientX, clientY);
     host.style.display = saved;
+    /*
+     * Through the glass. A point over an <iframe> whose document can be read
+     * is asked again of that document, in its own coordinates -- scaled,
+     * for a screen a mockup has shrunk -- so a pin on a phone's screen is a
+     * pin on the button under it, not on the frame.
+     */
+    var x = clientX;
+    var y = clientY;
+    for (var depth = 0; node && node.tagName === "IFRAME" && depth < FRAME_DEPTH; depth++) {
+      var inner = frameDoc(node);
+      if (!inner || !inner.elementFromPoint) break;
+      var glass = frameBox(node);
+      x = (x - glass.left) / glass.scale;
+      y = (y - glass.top) / glass.scale;
+      var below = inner.elementFromPoint(x, y);
+      if (!below) break;
+      node = below;
+    }
     return node;
   }
 
@@ -2148,7 +3014,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       return;
     }
     var base = host.getBoundingClientRect();
-    var box = target.getBoundingClientRect();
+    var box = topRect(target);
     // The measured box is kept exactly, since it is what the next mouse move
     // is tested against. What is drawn is 3px wider all round: an outline
     // hugging the glyphs reads as an error state rather than as a target.
@@ -2204,6 +3070,18 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      */
     if (!contextOpen(comment)) return null;
 
+    /*
+     * On a screen in a frame: the frame has to be here, showing, and on the
+     * screen the comment was left on.
+     */
+    var inFrame = null;
+    if (comment.frame) {
+      var doc = docFor(comment);
+      if (!doc || !onFrameRoute(comment)) return null;
+      inFrame = frameOf(doc);
+      if (!inFrame || !showing(inFrame)) return null;
+    }
+
     var target = anchorFor(comment);
 
     /*
@@ -2216,14 +3094,30 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      */
     if (target && !showing(target)) return null;
 
+    /*
+     * A block that holds the context rather than sitting inside it: a pin
+     * dropped on a popover's text, which is no block, anchored to the page
+     * section the popover was put in. The popover is the nearer thing, and
+     * its own box is what the pin should move with.
+     */
+    if (target && comment.context && typeof comment.cx === "number") {
+      var nearer = contextNode(comment.context, docFor(comment));
+      if (nearer && nearer !== target && target.contains(nearer)) target = null;
+    }
+
     if (target) {
-      var box = target.getBoundingClientRect();
+      var box = topRect(target);
       var rx = typeof comment.rx === "number" ? comment.rx : 0;
       var ry = typeof comment.ry === "number" ? comment.ry : 0;
-      return {
-        left: box.left - base.left + rx * box.width,
-        top: box.top - base.top + ry * box.height,
-      };
+      var px = box.left + rx * box.width;
+      var py = box.top + ry * box.height;
+      /*
+       * Out of sight without being hidden: a sheet parked below the window,
+       * a drawer slid off the side, a row scrolled out of its list or off a
+       * phone's screen. See `clipOf`.
+       */
+      if (!seenAt(clipOf(target), px, py)) return null;
+      return { left: px - base.left, top: py - base.top };
     }
 
     /*
@@ -2269,14 +3163,28 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      * `rx`/`ry` do for a block.
      */
     if (comment.context && typeof comment.cx === "number") {
-      var holder = contextNode(comment.context);
+      var holder = contextNode(comment.context, docFor(comment));
       if (holder) {
-        var area = holder.getBoundingClientRect();
-        return {
-          left: area.left - base.left + comment.cx * area.width,
-          top: area.top - base.top + comment.cy * area.height,
-        };
+        var area = topRect(holder);
+        var hx = area.left + comment.cx * area.width;
+        var hy = area.top + comment.cy * area.height;
+        if (!seenAt(clipOf(holder), hx, hy)) return null;
+        return { left: hx - base.left, top: hy - base.top };
       }
+    }
+
+    /*
+     * A point on a framed screen is kept as a fraction of the glass, since
+     * the frame moves with the page around it and a document coordinate
+     * would not.
+     */
+    if (inFrame) {
+      if (typeof comment.fx !== "number") return null;
+      var glass = glassOf(inFrame);
+      return {
+        left: glass.left - base.left + comment.fx * glass.width,
+        top: glass.top - base.top + comment.fy * glass.height,
+      };
     }
 
     return { left: comment.x, top: comment.y };
@@ -2322,9 +3230,13 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    */
   function recovered(comment) {
     if (!comment.block) return null;
+    var blocks = blocksFor(comment);
     var base = baseOf(comment.block);
     var claimed = Object.create(null);
     for (var i = 0; i < all.length; i++) {
+      // Only claims in the same document: a screen in a frame numbers its
+      // blocks on its own.
+      if ((all[i].frame || null) !== (comment.frame || null)) continue;
       if (all[i].block && blocks[all[i].block]) claimed[all[i].block] = true;
     }
     var found = null;
@@ -2348,6 +3260,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    */
   function anchorFor(comment) {
     if (!comment.block) return null;
+    var blocks = blocksFor(comment);
     var direct = blocks[comment.block];
     if (direct) return direct;
     var moved = recovered(comment);
@@ -2355,6 +3268,12 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
   }
 
   function orphaned(comment) {
+    // A screen the frame is not showing cannot be searched, which is not
+    // the same thing as the block being gone from it.
+    if (comment.frame && !onFrameRoute(comment)) return false;
+    // Inside something that is shut: the block went with it, and the panel
+    // says so by naming what it is in. "Rewritten" would be untrue.
+    if (contextClosed(comment)) return false;
     return !!comment.block && !anchorFor(comment);
   }
 
@@ -2372,6 +3291,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    */
   function whyLost(comment) {
     if (!comment.block) return "";
+    var blocks = blocksFor(comment);
     var base = baseOf(comment.block);
     var copies = 0;
     for (var key in blocks) {
@@ -2607,7 +3527,14 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * screen to be told apart from.
    */
   function screenName(comment) {
-    var route = comment.route ? String(comment.route) : "";
+    var route = comment.route ? withoutPreviewToken(String(comment.route)) : "";
+
+    /*
+     * A screen inside a device frame is named by its own file, which is
+     * what the app calls it: `screens/cart.html` is "cart". It leads,
+     * because it is the screen the reviewer has to be on to see the pin.
+     */
+    var framed = comment.frame ? frameScreenLabel(comment.froute) : "";
 
     /*
      * The deck's page first, where there is one.
@@ -2639,6 +3566,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      * redrawn when the answer changes -- see `contextsTurned`.
      */
     var where = [];
+    if (framed) where.push(framed);
     if (comment.view) where.push(viewLabel(comment.view));
     if (contextClosed(comment)) {
       where.push(viewLabel(comment.context) + " (closed)");
@@ -2703,6 +3631,8 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       pin.setAttribute("data-comment", comment.id);
       pin.setAttribute("title", squash(comment.text));
       if (comment.resolved) pin.setAttribute("data-resolved", "");
+      // Not on GitHub yet: drawn faded until the issue it becomes is read.
+      if (comment.pending) pin.setAttribute("data-pending", "");
       if (comment.id === selected) pin.setAttribute("data-selected", "");
       // Correction ink while it is open, graphite once it is dealt with, so
       // what is left to do on a page is readable from the pins alone.
@@ -2885,8 +3815,8 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     panelTally.textContent = rows.length
       ? open_ + " open, " + (rows.length - open_) + " resolved"
       : "Nothing marked yet";
-    panelMeta.textContent = panelSummary(rows);
-    panelMeta.hidden = !rows.length;
+    panelMeta.textContent = sharedError || panelSummary(rows);
+    panelMeta.hidden = !rows.length && !sharedError;
 
     var now = sortBy === "priority" ? ORDERS[1] : ORDERS[0];
     var other = sortBy === "priority" ? ORDERS[0] : ORDERS[1];
@@ -2995,9 +3925,11 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
             ? "Left inside " +
               viewLabel(comment.context) +
               ", which is closed -- open it to see the pin"
-            : comment.view && screen === viewLabel(comment.view)
-              ? "Left on this page of the deck: " + viewLabel(comment.view)
-              : "Left on this screen: " + comment.route,
+            : comment.frame
+              ? "Left on this screen of the prototype: " + (comment.froute || comment.frame)
+              : comment.view && screen === viewLabel(comment.view)
+                ? "Left on this page of the deck: " + viewLabel(comment.view)
+                : "Left on this screen: " + comment.route,
         );
         where.appendChild(at);
       }
@@ -3051,7 +3983,9 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      * against a different one, which is the difference between "this is
      * wrong" and "this was wrong when they read it".
      */
-    if (comment.imported) {
+    // A shared comment is not imported from anywhere: it is an issue on the
+    // site's repository, read live, and the issue link beside it says so.
+    if (comment.imported && !comment.shared) {
       var came = el("span", "co-tag", "Imported");
       came.setAttribute("title", "Imported from " + comment.imported);
       name.appendChild(came);
@@ -3144,6 +4078,13 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      * the panel while its dialog is closed, which should stay open and be
      * readable. Both look identical to a check made after the fact.
      */
+    /*
+     * Brought back if it is shut, before the latch below is read, so a
+     * reopened sheet counts as open: the prototype closing it again then
+     * takes the card with it, as it would for any open sheet.
+     */
+    if (peek && peek.id !== id) endPeek();
+    if (peekFor(comment)) frameBlocks = Object.create(null);
     selectedContextOpen = contextOpen(comment);
     // A refusal belongs to one attempt. Opening a popup starts again.
     relayError = null;
@@ -3155,6 +4096,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
   function closePopup() {
     selected = null;
     editing = null;
+    endPeek();
     popup.hidden = true;
     closePopMenu();
     renderPins();
@@ -3194,12 +4136,15 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     // A span rather than a button where nothing here may be changed: a
     // control that opens a menu to set a value, on a build that cannot set
     // it, is worse than the plain statement of the value.
-    var priBtn = el(CAN_COMMENT ? "button" : "span", "co-pri");
+    // A shared comment's priority is what its poster chose; nobody else's
+    // browser can change it on GitHub.
+    var setsPri = CAN_COMMENT && !comment.shared;
+    var priBtn = el(setsPri ? "button" : "span", "co-pri");
     priBtn.setAttribute("data-level", comment.priority);
     priBtn.setAttribute("title", "Priority: " + PRI[comment.priority].label);
     priBtn.appendChild(el("span", "co-pri-mark", PRI[comment.priority].mark));
     priBtn.appendChild(el("span", null, PRI[comment.priority].label));
-    if (CAN_COMMENT) {
+    if (setsPri) {
       priBtn.addEventListener("click", function (event) {
         event.stopPropagation();
         togglePriMenu(comment, priBtn);
@@ -3259,6 +4204,9 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
 
     acts.appendChild(prevBtn);
     acts.appendChild(nextBtn);
+    // Published pages only: a preview's address is `localhost` or a file
+    // on disk, which is no use to whoever the link would be sent to.
+    if (PUBLISHED) acts.appendChild(copyLinkButton(comment));
     acts.appendChild(closeBtn);
     head.appendChild(acts);
     popup.appendChild(head);
@@ -3292,6 +4240,32 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     }
     popup.appendChild(threads);
 
+    /*
+     * Shut, and not brought back by `peekFor`: say what it is in, and
+     * offer to make the tap that opened it, naming the tap.
+     */
+    if (contextClosed(comment) && !(peek && peek.id === comment.id)) {
+      var shut = el("div", "co-pop-note co-shut");
+      shut.appendChild(
+        el("div", "co-warn", "Left inside " + viewLabel(comment.context) + ", which is closed."),
+      );
+      if (comment.opener && openerNode(comment)) {
+        var again = el("button", "co-reopen", "Reopen");
+        again.setAttribute("data-reopen", "");
+        again.setAttribute(
+          "title",
+          "Taps “" + (comment.opener.text || "the control") + "” again, as it was tapped to open this",
+        );
+        again.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          replayOpener(comment);
+        });
+        shut.appendChild(again);
+      }
+      popup.appendChild(shut);
+    }
+
     if (orphaned(comment)) {
       var note = el("div", "co-pop-note");
       note.appendChild(el("div", "co-warn", whyLost(comment)));
@@ -3322,7 +4296,17 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       var mark = el("span");
       mark.appendChild(icon(ICONS.resolve));
       done.appendChild(mark);
-      done.appendChild(el("span", null, "Resolved"));
+      done.appendChild(
+        el(
+          "span",
+          null,
+          comment.shared
+            ? comment.declined
+              ? "Closed on GitHub as not planned"
+              : "Closed on GitHub"
+            : "Resolved",
+        ),
+      );
       popup.appendChild(done);
     }
 
@@ -3332,7 +4316,48 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
      * and an input that discards what is typed into it is worse than no
      * input.
      */
-    if (CAN_COMMENT) {
+    if (comment.shared) {
+      /*
+       * A shared comment's thread is the issue's, on GitHub: reading it
+       * there costs nothing, and fetching every issue's comments here would
+       * cost a request each out of sixty an hour.
+       */
+      var talk = el("div", "co-pop-note co-shared-note");
+      var count_ = comment.replyCount || 0;
+      var link = el(
+        "a",
+        "co-ext",
+        count_ === 1
+          ? "1 reply on GitHub"
+          : count_
+            ? count_ + " replies on GitHub"
+            : "Reply on GitHub",
+      );
+      link.setAttribute("href", comment.external ? comment.external.url : "#");
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener");
+      talk.appendChild(link);
+      popup.appendChild(talk);
+    } else if (comment.pending) {
+      var waiting = el("div", "co-pop-note co-shared-note");
+      waiting.appendChild(
+        el(
+          "div",
+          "co-warn",
+          "Posting: finish in the GitHub tab. Everyone sees it once it is posted.",
+        ),
+      );
+      var retry = el("button", "co-reopen", "Open the form again");
+      retry.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.open(issueFormUrl(comment), "_blank", "noopener");
+      });
+      waiting.appendChild(retry);
+      popup.appendChild(waiting);
+    }
+
+    if (CAN_COMMENT && !comment.shared && !SHARED) {
       var reply = el("div", "co-pop-reply");
       reply.appendChild(el("div", "co-avatar", initial(author)));
       var replyField = field(
@@ -3371,6 +4396,8 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     // away from it would be answering a question nobody asked.
     var onward = !comment.resolved && siblings.length > 1;
     var resolveBtn = el("button", "co-act");
+    // Closing the issue is how a shared comment is resolved, on GitHub.
+    if (comment.shared || comment.pending) resolveBtn.hidden = true;
     resolveBtn.setAttribute("data-primary", "");
     resolveBtn.setAttribute("title", comment.resolved ? "Reopen" : "Resolve");
     resolveBtn.appendChild(icon(ICONS.check, 15));
@@ -3422,7 +4449,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       foot.appendChild(sendBtn);
     }
 
-    if (CAN_COMMENT) {
+    if (CAN_COMMENT && !comment.shared) {
       var moreBtn = el("button", "co-pop-btn");
       moreBtn.setAttribute("title", "More");
       moreBtn.appendChild(icon(ICONS.more));
@@ -3600,6 +4627,18 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * the comment belongs to a screen this one is not showing yet.
    */
   function revealMark(comment) {
+    /*
+     * On a framed screen the pin is only drawn while its block is on the
+     * glass, so the screen is scrolled to the block first; the pin is then
+     * there to be scrolled to like any other.
+     */
+    if (comment.frame) {
+      var inside = anchorFor(comment);
+      if (inside && inside.scrollIntoView) {
+        inside.scrollIntoView({ block: "nearest" });
+        renderPins();
+      }
+    }
     var pin = pins.querySelector('[data-comment="' + comment.id + '"]');
     if (!pin || !pin.scrollIntoView) return false;
     pin.scrollIntoView({ behavior: moving() ? "smooth" : "auto", block: "center" });
@@ -3647,12 +4686,45 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     }
 
     if (onThisRoute(next)) {
+      // On a screen the frame is not showing: send the frame there first.
+      if (next.frame && !onFrameRoute(next) && sendFrameTo(next)) {
+        glide();
+        openPopup(next.id);
+        chaseMark(next);
+        return;
+      }
       glide();
       openPopup(next.id);
       revealMark(next);
       return;
     }
     crossTo(next);
+  }
+
+  /*
+   * Points a framed screen at the screen a comment was left on, as the
+   * reviewer would by tapping through the app. True when it was sent.
+   *
+   * Only a frame whose own address can be set: the frame is found by the
+   * key it was recorded under, and its `froute` is relative to this page's
+   * folder, which is exactly what a relative URL from this page means.
+   */
+  function sendFrameTo(comment) {
+    if (!comment.froute) return false;
+    var frames = reviewFrames();
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i].key !== comment.frame) continue;
+      try {
+        frames[i].doc.defaultView.location.href = new URL(
+          comment.froute,
+          location.href,
+        ).href;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
   }
 
   /*
@@ -3708,16 +4780,99 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * the link: the overlay on the other side opens it on arrival.
    */
   function crossTo(next) {
-    var there = splitRoute(next.route);
+    var there = splitRoute(portableRoute(next.route));
     var here = splitRoute(currentRoute());
     if (there.base !== here.base) {
-      location.href = there.base + deepQuery(there.base, next.id) + there.hash;
+      var href = routeHref(there.base);
+      location.href = href + deepQuery(href, next.id) + there.hash;
       return;
     }
     glide();
     openPopup(next.id);
     location.hash = there.hash;
     chaseMark(next);
+  }
+
+  /*
+   * The address of one comment, to hand to somebody else.
+   *
+   * The page, the screen the comment was left on, and the comment itself in
+   * the query, so the overlay on the other end opens it on arrival -- the
+   * same deep link the panel uses between pages, made absolute. A route in
+   * the page-relative form keeps its query too (`?variant=b`), since that
+   * may be what tells two screens apart; an old absolute route keeps only
+   * its fragment, because its path names whichever host it was left on.
+   */
+  function commentLink(comment) {
+    var route = splitRoute(portableRoute(comment.route));
+    var href;
+    if (comment.page === PAGE && route.base.slice(0, 2) === "./") {
+      var base = routeHref(route.base);
+      href = base + deepQuery(base, comment.id);
+    } else {
+      href = pageHref(comment);
+    }
+    try {
+      return new URL(href + route.hash, location.href).href;
+    } catch (err) {
+      return href + route.hash;
+    }
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    // An insecure context has no async clipboard; the old command still
+    // works there, from a field that exists only for the copy.
+    return new Promise(function (resolve, reject) {
+      var field = document.createElement("textarea");
+      field.value = text;
+      field.setAttribute("readonly", "");
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.appendChild(field);
+      field.select();
+      var done = false;
+      try {
+        done = document.execCommand("copy");
+      } catch (err) {
+        done = false;
+      }
+      field.remove();
+      if (done) resolve();
+      else reject(new Error("copy refused"));
+    });
+  }
+
+  function copyLinkButton(comment) {
+    var btn = el("button", "co-pop-btn");
+    btn.setAttribute("title", "Copy link to this comment");
+    btn.setAttribute("data-copy-link", "");
+    btn.appendChild(icon(ICONS.link));
+    btn.addEventListener("click", function (event) {
+      event.stopPropagation();
+      var link = commentLink(comment);
+      copyText(link).then(
+        function () {
+          clear(btn);
+          btn.appendChild(icon(ICONS.check));
+          btn.setAttribute("title", "Link copied");
+          setTimeout(function () {
+            if (!btn.isConnected) return;
+            clear(btn);
+            btn.appendChild(icon(ICONS.link));
+            btn.setAttribute("title", "Copy link to this comment");
+          }, 1500);
+        },
+        function () {
+          // Nothing to copy with: show the address so it can be copied by
+          // hand, rather than failing in silence.
+          btn.setAttribute("title", link);
+        },
+      );
+    });
+    return btn;
   }
 
   function splitRoute(route) {
@@ -3753,15 +4908,38 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       // or two, so which page is up is re-asked on every look.
       checkView();
       blocks = blockIndex();
+      // A screen that has just loaded has its sheet to bring back now.
+      if (!peek) peekFor(comment);
       renderPins();
       if (selected === comment.id) placePopup(comment);
-      if (revealMark(comment)) return;
-      if (++tries > 8) return;
+      if (revealMark(comment)) {
+        /*
+         * It came back -- reopened by a tap, or its screen loaded. The card
+         * still says it is closed, so it is redrawn, and it now follows the
+         * thing shut like any card opened over an open sheet.
+         */
+        if (selected === comment.id && popup.querySelector(".co-shut") && contextOpen(comment)) {
+          // Stamped now rather than on the watcher's next pass, or the card
+          // calls the block it has just brought back "lost".
+          var shown = docFor(comment);
+          if (shown && (STAMP_AT_RUNTIME || shown !== document)) stampBlocks(shown);
+          blocks = blockIndex();
+          selectedContextOpen = true;
+          renderPopup();
+          placePopup(comment);
+        }
+        return;
+      }
+      // A framed screen navigating has a page to load, which takes longer
+      // than a deck takes to turn.
+      if (++tries > (comment.frame ? 30 : 8)) return;
       window.setTimeout(look, 70);
     })();
   }
 
   function resolveAndNext(comment) {
+    // Resolved on GitHub, by closing the issue, by whoever can.
+    if (comment.shared) return;
     var reopening = comment.resolved;
     comment.resolved = !comment.resolved;
     writeAll();
@@ -3967,6 +5145,12 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
         context: null,
         cx: null,
         cy: null,
+        frame: null,
+        froute: null,
+        fx: null,
+        fy: null,
+        reveal: null,
+        opener: null,
       };
 
       /*
@@ -3976,11 +5160,39 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
        * the pin that used to have nothing holding it.
        */
       var hit = hitAt(clientX, clientY);
+
+      // On a screen in a frame: which frame, which screen it was showing,
+      // and where on its glass, for when nothing nearer can be named.
+      var hitDoc = hit && hit.ownerDocument ? hit.ownerDocument : document;
+      if (hitDoc !== document && frameOf(hitDoc)) {
+        point.frame = frameKeyOf(hitDoc);
+        point.froute = frameRouteOf(hitDoc);
+        var glass = glassOf(frameOf(hitDoc));
+        point.fx = glass.width ? (clientX - glass.left) / glass.width : 0;
+        point.fy = glass.height ? (clientY - glass.top) / glass.height : 0;
+      }
+
       point.context = contextOf(hit);
       if (point.context) {
-        var holder = contextNode(point.context);
+        var holder = contextNode(point.context, hitDoc);
         if (holder) {
-          var area = holder.getBoundingClientRect();
+          point.reveal = revealStateOf(holder);
+          /*
+           * The tap that opened it, when the last tap was on this screen,
+           * recent, and outside the thing it opened -- a tap inside the
+           * sheet was a tap on the sheet, not the one that raised it.
+           */
+          if (
+            lastTap &&
+            lastTap.doc === hitDoc &&
+            Date.now() - lastTap.at < TAP_MEMORY_MS &&
+            lastTap.block &&
+            lastTap.node.isConnected &&
+            !holder.contains(lastTap.node)
+          ) {
+            point.opener = { block: lastTap.block, text: lastTap.text };
+          }
+          var area = topRect(holder);
           point.cx = area.width ? (clientX - area.left) / area.width : 0;
           point.cy = area.height ? (clientY - area.top) / area.height : 0;
         }
@@ -3988,7 +5200,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
 
       var target = nearestBlock(hit);
       if (target) {
-        var box = target.getBoundingClientRect();
+        var box = topRect(target);
         point.block = target.getAttribute(BLOCK_ATTR);
         // The fraction, not the pixel offset: a paragraph that re-wraps at a
         // different width keeps the pin on roughly the same words, where a
@@ -4067,6 +5279,15 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       route: currentRoute(),
       view: viewKey || null,
       context: point.context,
+      // Only on a comment left on a framed screen, so a review written
+      // before frames were reached into reads exactly as it did.
+      frame: point.frame || undefined,
+      froute: point.frame ? point.froute : undefined,
+      fx: point.frame ? point.fx : undefined,
+      fy: point.frame ? point.fy : undefined,
+      // What it takes to bring the context back; see `peekFor`.
+      reveal: point.reveal || undefined,
+      opener: point.opener || undefined,
       x: point.x,
       y: point.y,
       rx: point.rx,
@@ -4087,6 +5308,17 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       replies: [],
     });
 
+    var made = all[all.length - 1];
+    if (SHARED) {
+      /*
+       * Posted by the reader, on GitHub, in a tab of its own. Opened here,
+       * inside the click that sent the comment, which is what lets the
+       * browser open a tab at all. The comment waits in this browser,
+       * marked as posting, until the issue it becomes is read back.
+       */
+      made.pending = true;
+      window.open(issueFormUrl(made), "_blank", "noopener");
+    }
     writeAll();
     closeDraft();
     render();
@@ -4377,7 +5609,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
   }
 
   function exportComments() {
-    if (!all.length) return;
+    if (!ownRows().length) return;
     var name = exportName();
     var blob = new Blob([payload()], { type: "application/json" });
     var url = URL.createObjectURL(blob);
@@ -4736,7 +5968,7 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
    * comments on pages they were not looking at went with it.
    */
   function confirmClear() {
-    var total = all.length;
+    var total = ownRows().length;
     var elsewhere = total - mine().length;
     openModal("Clear all comments?", function (body) {
       body.appendChild(
@@ -4758,8 +5990,15 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
       go.setAttribute("data-danger", "");
       go.disabled = !total;
       go.addEventListener("click", function () {
-        for (var i = 0; i < all.length; i++) withdraw(all[i]);
+        // Only this browser's own: the shared ones are issues on GitHub,
+        // and clearing a local list does not delete anybody's issue.
+        var kept = [];
+        for (var i = 0; i < all.length; i++) {
+          if (all[i].shared) kept.push(all[i]);
+          else withdraw(all[i]);
+        }
         all.length = 0;
+        for (var k = 0; k < kept.length; k++) all.push(kept[k]);
         selected = null;
         popup.hidden = true;
         writeAll();
@@ -5112,6 +6351,467 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
     };
   }
 
+  /* --- screens in frames, scrolling boxes and things in motion ----------- */
+
+  /*
+   * Anything that moves a pin without a resize, a mutation or a scroll of
+   * the window: a list scrolled inside its own box, a sheet sliding up, a
+   * dialog fading in, and everything a framed screen does. Each one used to
+   * leave the pins where they were until something else happened to repaint
+   * them -- so a pin on a sheet's button stayed at the bottom of the window
+   * while the sheet rose, and arrived at the button only when the sheet
+   * stopped.
+   */
+  var motionRuns = 0;
+  var motionUntil = 0;
+  var motionTick = null;
+
+  function hasPins() {
+    return mine().length > 0;
+  }
+
+  function followFrames() {
+    if (motionTick !== null) return;
+    motionTick = window.requestAnimationFrame(function step() {
+      motionTick = null;
+      reposition();
+      var now = Date.now();
+      // A transition that never reported its end -- its element removed
+      // mid-flight -- must not keep this running, hence the cap.
+      if (now < motionUntil || (motionRuns > 0 && now < motionUntil + 2000)) {
+        motionTick = window.requestAnimationFrame(step);
+      } else {
+        motionRuns = 0;
+      }
+    });
+  }
+
+  function watchMotion(doc) {
+    function began() {
+      if (!hasPins()) return;
+      motionRuns++;
+      motionUntil = Date.now() + 1000;
+      followFrames();
+    }
+    function ended() {
+      motionRuns = Math.max(0, motionRuns - 1);
+      if (!motionRuns) motionUntil = Math.min(motionUntil, Date.now() + 80);
+    }
+    doc.addEventListener("transitionrun", began, true);
+    doc.addEventListener("animationstart", began, true);
+    doc.addEventListener("transitionend", ended, true);
+    doc.addEventListener("transitioncancel", ended, true);
+    doc.addEventListener("animationend", ended, true);
+    doc.addEventListener("animationcancel", ended, true);
+    // A box scrolling inside the page: `scroll` does not bubble, so it is
+    // caught on the way down. The window's own scroll is handled above.
+    doc.addEventListener(
+      "scroll",
+      function (event) {
+        if (!hasPins()) return;
+        if (doc === document && event.target === document) return;
+        reposition();
+      },
+      { capture: true, passive: true },
+    );
+  }
+
+  watchMotion(document);
+
+  /* Something about a framed screen changed: indexes, contexts, pins. */
+  function framesChanged() {
+    frameBlocks = Object.create(null);
+    if (!contextsTurned()) {
+      reposition();
+      if (anchorsChanged()) renderPanel();
+    }
+  }
+
+  var frameObservers = [];
+
+  function watchFrame(doc) {
+    if (doc.ospReviewed) return;
+    doc.ospReviewed = true;
+    stampBlocks(doc);
+
+    var view = doc.defaultView;
+    var settle = null;
+    function changed() {
+      if (settle !== null) return;
+      settle = window.setTimeout(function () {
+        settle = null;
+        if (!doc.defaultView) return;
+        stampBlocks(doc);
+        watchFrames();
+        framesChanged();
+      }, 150);
+    }
+    var Observer = (view && view.MutationObserver) || window.MutationObserver;
+    if (Observer && doc.documentElement) {
+      var nodes = new Observer(changed);
+      nodes.observe(doc.documentElement, { childList: true, subtree: true, characterData: true });
+      // The same attributes the page's own watcher listens for, and for the
+      // same reason: `data-osp-block` is not among them.
+      var attrs = new Observer(changed);
+      attrs.observe(doc.documentElement, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: [
+          "class",
+          "style",
+          "hidden",
+          "open",
+          "aria-hidden",
+          "aria-expanded",
+          "data-state",
+          "data-active",
+          "data-visible",
+        ],
+      });
+      frameObservers.push(nodes, attrs);
+    }
+
+    watchMotion(doc);
+    // A screen scrolling inside the glass moves every pin on it.
+    doc.addEventListener("scroll", reposition, { capture: true, passive: true });
+    if (view) {
+      view.addEventListener("resize", reposition);
+      view.addEventListener("hashchange", framesChanged);
+      view.addEventListener("popstate", framesChanged);
+    }
+    // A frame inside this one finishing loading.
+    doc.addEventListener("load", frameLoaded, true);
+    // Taps on the screen, for what a pin dropped next was opened by.
+    doc.addEventListener("click", noteTap, true);
+  }
+
+  function watchFrames() {
+    var frames = reviewFrames();
+    for (var i = 0; i < frames.length; i++) watchFrame(frames[i].doc);
+    return frames.length;
+  }
+
+  /*
+   * A frame loaded or navigated. Its document is a new one each time, so
+   * the watch above is set up again on it, and the pins are redrawn for
+   * whichever screen it is now on.
+   */
+  function frameLoaded(event) {
+    var target = event && event.target;
+    if (!target || target.tagName !== "IFRAME") return;
+    if (watchFrames()) framesChanged();
+  }
+
+  document.addEventListener("load", frameLoaded, true);
+  if (watchFrames()) framesChanged();
+
+  // Replaced on a second run of this script, as the page watcher is.
+  if (window.ospFrameWatcher) window.ospFrameWatcher.stop();
+  window.ospFrameWatcher = {
+    stop: function () {
+      for (var i = 0; i < frameObservers.length; i++) frameObservers[i].disconnect();
+      frameObservers = [];
+      document.removeEventListener("load", frameLoaded, true);
+    },
+  };
+
+  /* --- shared comments, kept as GitHub issues ------------------------ */
+
+  /*
+   * The published site's side of `overlay/shared.ts`.
+   *
+   * Reading: the repository's issues, fetched without signing in -- which a
+   * public repository allows, sixty requests an hour per visitor -- once per
+   * visit rather than per page, kept for a few minutes in the tab's session
+   * storage, and drawn as pins wherever their marker says.
+   *
+   * Writing: GitHub's own "new issue" form, opened prefilled, so the reader
+   * posts as themselves and nothing here ever holds a token.
+   */
+  var SHARED_MARKER = "osp-review";
+  var SHARED_TTL = 5 * 60 * 1000;
+  var SHARED_PAGES = 3;
+  var SHARED_TEXT_LIMIT = 4000;
+  var sharedError = "";
+  var sharedLoading = false;
+  var sharedFetchedAt = 0;
+
+  function sharedCacheKey() {
+    return "osp-shared:" + SHARED.owner + "/" + SHARED.repo;
+  }
+
+  function readSharedCache() {
+    try {
+      var raw = sessionStorage.getItem(sharedCacheKey());
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && Array.isArray(parsed.issues) ? parsed : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeSharedCache(issues) {
+    try {
+      sessionStorage.setItem(
+        sharedCacheKey(),
+        JSON.stringify({ at: Date.now(), issues: issues }),
+      );
+    } catch (e) {}
+  }
+
+  /* Only what is read back, so the cache stays small. */
+  function trimIssue(issue) {
+    return {
+      number: issue.number,
+      title: issue.title || "",
+      body: issue.body || "",
+      state: issue.state || "",
+      state_reason: issue.state_reason || null,
+      html_url: issue.html_url || "",
+      created_at: issue.created_at || "",
+      comments: issue.comments || 0,
+      user: { login: issue.user && issue.user.login ? issue.user.login : "" },
+    };
+  }
+
+  /* The marker in an issue body, as `readSharedMarker` reads it. */
+  function readMarker(body) {
+    var match = /<!--\s*osp-review\s+(\{[\s\S]*?\})\s*-->/.exec(String(body || ""));
+    if (!match) return null;
+    try {
+      var pin = JSON.parse(match[1]);
+      if (!pin || typeof pin.id !== "string" || typeof pin.page !== "string") return null;
+      return pin;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /* What the reader wrote, as `sharedText` reads it. */
+  function markerText(body, fallback) {
+    var text = String(body || "");
+    var cut = text.search(/(^|\n)-{3,}\s*\n/);
+    var above = (cut === -1
+      ? text.replace(/<!--\s*osp-review\s+(\{[\s\S]*?\})\s*-->/, "")
+      : text.slice(0, cut)
+    ).trim();
+    var lines = above.split("\n");
+    while (lines.length && /^\s*>/.test(lines[lines.length - 1])) lines.pop();
+    var out = lines.join("\n").trim();
+    return out || fallback || "";
+  }
+
+  /* An issue as a comment row, flagged as shared. */
+  function rowFromIssue(issue) {
+    var pin = readMarker(issue.body);
+    if (!pin) return null;
+    var closed = issue.state === "closed";
+    var row = {
+      id: "gh-" + SHARED.owner + "-" + SHARED.repo + "-" + issue.number,
+      shared: true,
+      origin: pin.id,
+      page: pin.page,
+      sourcePath: pin.page,
+      block: pin.block || null,
+      blockText: typeof pin.blockText === "string" ? pin.blockText : "",
+      route: pin.route || null,
+      view: pin.view || null,
+      context: pin.context || null,
+      frame: pin.frame || undefined,
+      froute: pin.froute || null,
+      fx: typeof pin.fx === "number" ? pin.fx : null,
+      fy: typeof pin.fy === "number" ? pin.fy : null,
+      x: typeof pin.x === "number" ? pin.x : 0,
+      y: typeof pin.y === "number" ? pin.y : 0,
+      rx: typeof pin.rx === "number" ? pin.rx : null,
+      ry: typeof pin.ry === "number" ? pin.ry : null,
+      cx: typeof pin.cx === "number" ? pin.cx : null,
+      cy: typeof pin.cy === "number" ? pin.cy : null,
+      author: issue.user && issue.user.login ? issue.user.login : "Anonymous",
+      text: markerText(issue.body, issue.title),
+      createdAt: issue.created_at || "",
+      // Closed is closed, here: the pin goes grey either way, and the card
+      // says which kind of closed it was.
+      resolved: closed,
+      declined: closed && issue.state_reason === "not_planned",
+      priority: pin.priority,
+      replyCount: issue.comments || 0,
+      agent: null,
+      imported: "github",
+      external: {
+        provider: "github",
+        key: SHARED.owner + "/" + SHARED.repo + "#" + issue.number,
+        url:
+          issue.html_url ||
+          "https://github.com/" + SHARED.owner + "/" + SHARED.repo + "/issues/" + issue.number,
+        filedAt: issue.created_at || "",
+      },
+      replies: [],
+    };
+    return tidy(row);
+  }
+
+  /*
+   * Puts the latest shared issues in the list, in place of the last lot, and
+   * lets go of this browser's own comments that have now been posted: the
+   * issue is the comment from here on.
+   */
+  function useSharedIssues(issues) {
+    var rows = [];
+    var posted = Object.create(null);
+    for (var i = 0; i < issues.length; i++) {
+      var row = rowFromIssue(issues[i]);
+      if (!row) continue;
+      rows.push(row);
+      posted[row.origin] = true;
+    }
+
+    var kept = [];
+    var dropped = false;
+    for (var k = 0; k < all.length; k++) {
+      if (all[k].shared) continue;
+      if (all[k].pending && posted[all[k].id]) {
+        if (selected === all[k].id) selected = null;
+        dropped = true;
+        continue;
+      }
+      kept.push(all[k]);
+    }
+    all.length = 0;
+    for (var m = 0; m < kept.length; m++) all.push(kept[m]);
+    for (var n = 0; n < rows.length; n++) all.push(rows[n]);
+
+    if (dropped) {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(ownRows()));
+      } catch (e) {}
+    }
+    render();
+  }
+
+  function sharedPage(number) {
+    return (
+      "https://api.github.com/repos/" +
+      encodeURIComponent(SHARED.owner) +
+      "/" +
+      encodeURIComponent(SHARED.repo) +
+      "/issues?state=all&per_page=100&sort=created&direction=desc&page=" +
+      number
+    );
+  }
+
+  /*
+   * Fetches the issues, at most a few pages of a hundred, newest first. A
+   * fresh copy in the session is used instead unless `force` says the
+   * reader has just posted something and is waiting to see it.
+   */
+  function loadShared(force) {
+    if (!SHARED || !window.fetch || sharedLoading) return;
+    var cached = readSharedCache();
+    if (cached) useSharedIssues(cached.issues);
+    if (cached && !force && Date.now() - cached.at < SHARED_TTL) return;
+
+    sharedLoading = true;
+    var got = [];
+    (function next(number) {
+      fetch(sharedPage(number), { headers: { Accept: "application/vnd.github+json" } })
+        .then(function (response) {
+          if (!response.ok) throw response.status;
+          return response.json();
+        })
+        .then(function (list) {
+          if (!Array.isArray(list)) throw 0;
+          for (var i = 0; i < list.length; i++) {
+            if (!list[i].pull_request) got.push(trimIssue(list[i]));
+          }
+          if (list.length === 100 && number < SHARED_PAGES) {
+            next(number + 1);
+            return;
+          }
+          sharedLoading = false;
+          sharedFetchedAt = Date.now();
+          sharedError = "";
+          writeSharedCache(got);
+          useSharedIssues(got);
+        })
+        .catch(function (status) {
+          sharedLoading = false;
+          sharedFetchedAt = Date.now();
+          sharedError =
+            status === 403 || status === 429
+              ? "GitHub is limiting requests from this connection, so shared comments may be out of date for a while."
+              : "Could not reach GitHub to load the shared comments.";
+          renderPanel();
+        });
+    })(1);
+  }
+
+  /*
+   * Back from the GitHub tab with something still posting: look again, but
+   * not more than every fifteen seconds, which is one request out of sixty
+   * an hour each time.
+   */
+  function lookForPosted() {
+    if (!SHARED) return;
+    var waiting = false;
+    for (var i = 0; i < all.length; i++) if (all[i].pending) waiting = true;
+    if (!waiting) return;
+    if (Date.now() - sharedFetchedAt < 15000) return;
+    loadShared(true);
+  }
+
+  if (SHARED) {
+    window.addEventListener("focus", lookForPosted);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") lookForPosted();
+    });
+  }
+
+  /*
+   * The prefilled "new issue" form for a comment: what the reader wrote,
+   * the words it is about, a link to where it was left, and the marker.
+   */
+  function issueFormUrl(comment) {
+    var pin = { v: 1, id: comment.id, page: comment.page || SOURCE_PATH };
+    var fields = [
+      "block", "blockText", "route", "view", "context", "frame", "froute",
+      "rx", "ry", "cx", "cy", "fx", "fy", "x", "y", "priority",
+    ];
+    for (var i = 0; i < fields.length; i++) {
+      var value = comment[fields[i]];
+      if (value === null || value === undefined || value === "") continue;
+      pin[fields[i]] = typeof value === "number" ? Math.round(value * 10000) / 10000 : value;
+    }
+    if (pin.blockText) pin.blockText = clip(pin.blockText);
+
+    var text = String(comment.text || "").slice(0, SHARED_TEXT_LIMIT);
+    var here = location.href.split("#")[0].replace(/[?&]osp-comment=[^&]*/, "");
+    var page = document.title || comment.page || "this page";
+    var body =
+      text +
+      (comment.blockText ? "\n\n> " + clip(comment.blockText) : "") +
+      "\n\n---\n" +
+      "Left on [" + page.replace(/[\[\]]/g, "") + "](" + here + ")" +
+      (screenName(comment) ? ", " + screenName(comment) : "") +
+      ".\n\n" +
+      // `>` escaped so nothing the reader wrote can close the comment early.
+      "<!-- " + SHARED_MARKER + " " + JSON.stringify(pin).replace(/>/g, "\\u003e") + " -->";
+
+    var first = text.split("\n")[0].replace(/\s+/g, " ").trim();
+    var title = first.length > 80 ? first.slice(0, 79).replace(/\s+\S*$/, "") + "…" : first;
+    return (
+      "https://github.com/" +
+      encodeURIComponent(SHARED.owner) +
+      "/" +
+      encodeURIComponent(SHARED.repo) +
+      "/issues/new?title=" +
+      encodeURIComponent(title || "Review comment") +
+      "&body=" +
+      encodeURIComponent(body)
+    );
+  }
+
   /* --- arriving from another page's panel ---------------------------- */
 
   /*
@@ -5157,4 +6857,5 @@ var OSP_OVERLAY_CSS="\n:host { all: initial; }\n\n.osp-overlay {\n  /* Correctio
   setMode("view");
   showWanted();
   pull();
+  loadShared(false);
 })();
